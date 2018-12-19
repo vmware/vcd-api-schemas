@@ -8,7 +8,7 @@ The schemas that represent all public interfacing into vCloud Director, includin
 ## Try it out
 The schemas are available in XSD and YAML formats for direct consumption in whatever project you prefer. They are also available as Maven packages for integrating into Maven or Gradle-based projects.
 
-To build the language-specific bindings, execute `mvn install` from the root director.
+To build the language-specific bindings, execute `mvn install` from the root directory.
 
 ## Contributing
 
