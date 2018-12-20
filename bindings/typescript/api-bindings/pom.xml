@@ -61,7 +61,6 @@
                   <artifactId>vcd-openapi-schemas</artifactId>
                   <version>${project.version}</version>
                   <type>jar</type>
-                  <overWrite>true</overWrite>
                   <outputDirectory>${project.build.directory}/openapi-schemas</outputDirectory>
                   <excludes>META-INF/**</excludes>
                 </artifactItem>

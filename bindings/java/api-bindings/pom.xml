@@ -127,7 +127,6 @@
                   <artifactId>vcd-rest-api-schemas</artifactId>
                   <version>${project.version}</version>
                   <type>jar</type>
-                  <overWrite>true</overWrite>
                   <outputDirectory>${unpacked.schema.dir}</outputDirectory>
                   <excludes>META-INF/**</excludes>
                 </artifactItem>
@@ -136,7 +135,6 @@
                   <artifactId>vcd-openapi-schemas</artifactId>
                   <version>${project.version}</version>
                   <type>jar</type>
-                  <overWrite>true</overWrite>
                   <outputDirectory>${unpacked.openapi.schema.dir}</outputDirectory>
                   <excludes>META-INF/**</excludes>
                 </artifactItem>
@@ -284,7 +282,6 @@
             <configuration>
               <target>
                 <delete includeemptydirs="true" quiet="true">
-                  <fileset dir="${unpacked.openapi.schema.dir}" includes="**/**"/>
                   <fileset dir="${project.build.directory}/generated-sources/openapi/src/main/java/io" includes="**/**"/>
                   <fileset dir="${project.build.directory}/generated-sources/openapi/deprecated-impl" includes="**/**"/>
                 </delete>

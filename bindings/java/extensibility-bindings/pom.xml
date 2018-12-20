@@ -77,7 +77,6 @@
                   <artifactId>vcd-extensibility-schemas</artifactId>
                   <version>${project.version}</version>
                   <type>jar</type>
-                  <overWrite>true</overWrite>
                   <outputDirectory>${unpacked.extensibility.schema.dir}</outputDirectory>
                   <excludes>META-INF/**</excludes>
                 </artifactItem>
