@@ -19,6 +19,7 @@
   <properties>
     <unpacked.extensibility.schema.dir>${project.build.directory}/extensibility-api-schemas</unpacked.extensibility.schema.dir>
   </properties>
+  <inceptionYear>2016</inceptionYear>
   <dependencies>
     <dependency>
       <groupId>com.vmware.vcloud</groupId>

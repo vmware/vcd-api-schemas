@@ -16,8 +16,7 @@
   <packaging>jar</packaging>
   <name>${project.artifactId} :: vCloud Director REST API schemas</name>
   <description>vCloud Director REST API schemas</description>
-  <dependencies>
-  </dependencies>
+  <inceptionYear>2013</inceptionYear>
   <build>
     <plugins>
       <!--

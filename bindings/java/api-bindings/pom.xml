@@ -20,6 +20,7 @@
     <unpacked.schema.dir>${project.build.directory}/rest-api-schemas</unpacked.schema.dir>
     <unpacked.openapi.schema.dir>${project.build.directory}/openapi-schemas</unpacked.openapi.schema.dir>
   </properties>
+  <inceptionYear>2013</inceptionYear>
   <dependencies>
     <dependency>
       <groupId>com.vmware.vcloud</groupId>

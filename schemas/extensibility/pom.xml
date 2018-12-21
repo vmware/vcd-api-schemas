@@ -16,6 +16,7 @@
   <packaging>jar</packaging>
   <name>${project.artifactId} :: Object Extensibility API schemas</name>
   <description>Object Extensibility API schemas</description>
+  <inceptionYear>2016</inceptionYear>
   <build>
     <plugins>
       <plugin>
