@@ -178,20 +178,20 @@
         <version>1.16</version>
         <configuration>
           <verbose>false</verbose>
+          <licenseName>bsd_2</licenseName>
+          <extraExtensions>
+            <xsd>xml</xsd>
+          </extraExtensions>
+          <includes>**/pom.xml,**/*.java,**/*.xml,**/*.xsd</includes>
+          <excludes>**/target/**/*,**/external/xml.xsd,**/ovf1.1/dsp8027_1.1.0.xsd,**/ovf1.1/dsp8023_1.1.0.xsd,**/ovf1.1/common.xsd,**/CIM_ResourceAllocationSettingData.xsd,**/CIM_VirtualSystemSettingData.xsd</excludes>
         </configuration>
         <executions>
           <execution>
             <id>update-file-headers</id>
             <goals>
-              <goal>check-file-header</goal>
+              <goal>update-file-header</goal>
             </goals>
             <phase>process-sources</phase>
-            <configuration>
-              <licenseName>bsd_2</licenseName>
-              <roots>
-                <root>src</root>
-              </roots>
-            </configuration>
           </execution>
         </executions>
       </plugin>
