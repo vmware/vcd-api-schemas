@@ -178,6 +178,7 @@
         <version>1.16</version>
         <configuration>
           <verbose>false</verbose>
+          <licenseName>bsd_2</licenseName>
           <extraExtensions>
             <xsd>xml</xsd>
           </extraExtensions>
@@ -191,9 +192,6 @@
               <goal>update-file-header</goal>
             </goals>
             <phase>process-sources</phase>
-            <configuration>
-              <licenseName>bsd_2</licenseName>
-            </configuration>
           </execution>
         </executions>
       </plugin>
