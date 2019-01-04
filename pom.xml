@@ -12,6 +12,7 @@
   <packaging>pom</packaging>
   <name>${project.artifactId} :: vCloud Director API Schema parent</name>
   <description>Parent for projects related to exposing vCloud Director schemas and producing language-specific bindings for those schemas</description>
+  <url>https://github.com/vmware/vcd-api-schemas</url>
   <organization>
     <name>VMware</name>
     <url>http://www.vmware.com/</url>
