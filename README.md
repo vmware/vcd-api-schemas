@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/vmware/vcd-api-schemas.svg?branch=master)](https://travis-ci.org/vmware/vcd-api-schemas)
+[![Build Status](https://travis-ci.com/vmware/vcd-api-schemas.svg?branch=master)](https://travis-ci.com/vmware/vcd-api-schemas)
 
 # vCloud Director API Schemas
 
