@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-#  This script will upload release versions to Maven Central.
+#  This script will upload release versions to Maven Central and NPM.
 #
 
 # Prerun the script to download all the dependent artifacts
@@ -23,5 +23,5 @@ else
 
 fi
 
-# Push to Sonatype/Maven Central
+# Push to Sonatype/Maven Central and NPM
 mvn -Prelease --settings build-resources/travis-settings.xml deploy
