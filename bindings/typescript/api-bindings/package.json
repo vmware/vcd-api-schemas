@@ -9,9 +9,10 @@
     "clean": "rimraf target/build && rimraf target/dist",
     "tsc": "tsc",
     "copy-metadata": "cpy package.dist.json target/dist --rename=package.json",
-    "build": "yarn run clean && yarn run tsc && ncp build/ dist/ && yarn run copy-metadata",
-    "mvn:compile": "yarn run tsc",
-    "mvn:prepare-package": "ncp target/build/ target/dist/ && yarn run copy-metadata"
+    "build": "npm run clean && npm run tsc && ncp build/ dist/ && npm run copy-metadata",
+    "mvn:compile": "npm run tsc",
+    "mvn:prepare-package": "ncp target/build/ target/dist/ && npm run copy-metadata",
+    "mvn:deploy": "cpy .npmrc.dist .npmrc && npm publish target/dist --access public --dry-run && rimraf .npmrc"
   },
   "devDependencies": {
     "cpy-cli": "^2.0.0",
