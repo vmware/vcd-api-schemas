@@ -9,4 +9,4 @@ deploy:
   on:
     tags: true
     branch: master
-after_script: "cat /home/travis/.npm/_logs/*.log"
+after_script: "cat /home/travis/.npm/_logs/*.log && sleep 10"
