@@ -4,6 +4,6 @@
   "description": "Typescript bindings for the vCloud Director API",
   "author": "VMware",
   "license": "BSD-2-Clause",
-  "main": "./index.js",
+  "es2015": "./index.js",
   "typings": "./index.d.ts"
 }
