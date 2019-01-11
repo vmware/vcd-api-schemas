@@ -12,7 +12,7 @@
     "build": "npm run clean && npm run tsc && ncp build/ dist/ && npm run copy-metadata",
     "mvn:compile": "npm run tsc",
     "mvn:prepare-package": "ncp target/build/ target/dist/ && npm run copy-metadata",
-    "mvn:deploy": "cpy .npmrc.dist .npmrc && npm publish target/dist --access public && rimraf .npmrc"
+    "mvn:deploy": "cpy .npmrc.dist . --rename=.npmrc && npm publish target/dist --access public && rimraf .npmrc"
   },
   "devDependencies": {
     "cpy-cli": "^2.0.0",
