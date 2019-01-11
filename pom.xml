@@ -609,28 +609,31 @@
               <stagingProfileId>863e26d72b942f</stagingProfileId>
             </configuration>
           </plugin>
-          
-          <!--
-           NPM deployment
-          -->
-          <plugin>
-            <groupId>com.github.eirslett</groupId>
-            <artifactId>frontend-maven-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-              <execution>
-                <id>npm deploy</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <phase>deploy</phase>
-                <configuration>
-                  <arguments>run mvn:deploy</arguments>
-                </configuration>
-             </execution>
-           </executions>
-         </plugin>
         </plugins>
+        <pluginManagement>
+          <plugins>
+            <!--
+             NPM deployment
+            -->
+            <plugin>
+              <groupId>com.github.eirslett</groupId>
+              <artifactId>frontend-maven-plugin</artifactId>
+              <version>1.6</version>
+              <executions>
+                <execution>
+                  <id>npm deploy</id>
+                  <goals>
+                    <goal>npm</goal>
+                  </goals>
+                  <phase>deploy</phase>
+                  <configuration>
+                    <arguments>run mvn:deploy</arguments>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
