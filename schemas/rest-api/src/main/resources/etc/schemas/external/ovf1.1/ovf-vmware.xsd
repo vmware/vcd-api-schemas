@@ -1,54 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  #%L
-  vcd-rest-api-schemas :: vCloud Director REST API schemas
-  %%
-  Copyright (C) 2013 - 2018 VMware
-  %%
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-  
-  1. Redistributions of source code must retain the above copyright notice,
-     this list of conditions and the following disclaimer.
-  2. Redistributions in binary form must reproduce the above copyright notice,
-     this list of conditions and the following disclaimer in the documentation
-     and/or other materials provided with the distribution.
-  
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-  POSSIBILITY OF SUCH DAMAGE.
-  #L%
-  -->
-
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
+    Copyright 2013 VMware, Inc.  All rights reserved. - VMware Confidential
 
     Remark: The OVF Specification 1.0 Annex D defines a set of relaxations on how
     this XML Schema 1.0 definition is to be interpreted.
--->
-<xs:schema targetNamespace="http://www.vmware.com/schema/ovf"
-    xmlns:vmw="http://www.vmware.com/schema/ovf"
-    xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
-    xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common"
-    xmlns:meta="http://www.vmware.com/vcloud/meta"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-    jaxb:extensionBindingPrefixes="meta"
-    attributeFormDefault="qualified"
-    elementFormDefault="qualified">
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:meta="http://www.vmware.com/vcloud/meta" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" targetNamespace="http://www.vmware.com/schema/ovf" attributeFormDefault="qualified" elementFormDefault="qualified">
 
     <!-- Include and import sections -->
-    <xs:import namespace="http://schemas.dmtf.org/ovf/envelope/1"
-        schemaLocation="http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd"/>
-    <xs:import namespace="http://schemas.dmtf.org/wbem/wscim/1/common"
-        schemaLocation="http://schemas.dmtf.org/wbem/wscim/1/common.xsd"/>
+    <xs:import namespace="http://schemas.dmtf.org/ovf/envelope/1" schemaLocation="http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd"/>
+    <xs:import namespace="http://schemas.dmtf.org/wbem/wscim/1/common" schemaLocation="http://schemas.dmtf.org/wbem/wscim/1/common.xsd"/>
 
     <xs:annotation>
         <xs:documentation>
@@ -59,8 +18,7 @@
     </xs:annotation>
 
 
-    <xs:element name="IpAssignmentSection" type="vmw:IpAssignmentSection_Type"
-        substitutionGroup="ovf:Section">
+    <xs:element name="IpAssignmentSection" type="vmw:IpAssignmentSection_Type" substitutionGroup="ovf:Section">
         <xs:annotation>
             <xs:documentation>Element substitutable for Section since
                 IpAssignmentSection_Type is a derivation of Section_Type
@@ -81,8 +39,7 @@
                             values are: dhcp and ovfenv</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="protocols" type="xs:string" default="IPv4"
-                    use="optional">
+                <xs:attribute name="protocols" type="xs:string" default="IPv4" use="optional">
                     <xs:annotation>
                         <xs:documentation>List of supported IP protocols. Valid values
                             are: IPv4 and IPv6 </xs:documentation>
@@ -93,8 +50,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="CpuCompatibilitySection" type="vmw:CpuCompatibilitySection_Type"
-        substitutionGroup="ovf:Section">
+    <xs:element name="CpuCompatibilitySection" type="vmw:CpuCompatibilitySection_Type" substitutionGroup="ovf:Section">
         <xs:annotation>
             <xs:documentation>Element substitutable for Section since
                 CpuCompatibilitySection_Type is a derivation of Section_Type
@@ -113,8 +69,7 @@
                     <xs:element name="Level" maxOccurs="unbounded">
                         <xs:complexType>
                             <xs:attribute name="level" type="vmw:intOrHex" use="required"/>
-                            <xs:attribute name="vendor" type="xs:string" default=""
-                                use="optional"/>
+                            <xs:attribute name="vendor" type="xs:string" default="" use="optional"/>
                             <xs:attribute name="eax" type="xs:string" use="optional"/>
                             <xs:attribute name="ebx" type="xs:string" use="optional"/>
                             <xs:attribute name="ecx" type="xs:string" use="optional"/>
@@ -177,8 +132,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="BootOrderSection" type="vmw:BootOrderSection_Type"
-        substitutionGroup="ovf:Section">
+    <xs:element name="BootOrderSection" type="vmw:BootOrderSection_Type" substitutionGroup="ovf:Section">
         <xs:annotation>
             <xs:documentation>Element substitutable for Section since
                 BootOrderSection_Type is a derivation of Section_Type
@@ -237,7 +191,7 @@
             <xs:documentation>Config element</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="vmw:ConfigKeyValue_Type" />
+            <xs:extension base="vmw:ConfigKeyValue_Type"/>
         </xs:complexContent>
     </xs:complexType>
 
@@ -253,7 +207,7 @@
             <xs:documentation>ExtraConfig element</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="vmw:ConfigKeyValue_Type" />
+            <xs:extension base="vmw:ConfigKeyValue_Type"/>
         </xs:complexContent>
     </xs:complexType>
 
