@@ -94,7 +94,7 @@
       <plugin>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-codegen-maven-plugin</artifactId>
-        <version>2.3.1</version>
+        <version>2.2.3</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -110,10 +110,11 @@
           <generateApis>false</generateApis>
           <generateModelTests>false</generateModelTests>
           <generateModelDocumentation>false</generateModelDocumentation>
-          <generateSupportingFiles>false</generateSupportingFiles>
-          <modelPackage>vcloud.rest.openapi.model</modelPackage>
+          <generateSupportingFiles>true</generateSupportingFiles>
+          <!-- <modelPackage>vcloud.rest.openapi</modelPackage> -->
           <configOptions>
             <modelPropertyNaming>original</modelPropertyNaming>
+            <packageName>vcloud.rest.openapi</packageName>
           </configOptions>
         </configuration>
       </plugin>
