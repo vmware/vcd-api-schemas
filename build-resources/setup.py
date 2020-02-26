@@ -39,7 +39,8 @@ def package_files(path):
         path_temp = path_temp + dir +'/'
         with open(os.path.join(path_temp, '__init__.py'), 'w'):
             pass
-    os.system('cp '+ path + swagger_init_path + '/models/__init__.py' + path+swagger_dir+'/models')
+    print(path + swagger_init_path + '/models/__init__.py')
+    os.system('cp '+ path + swagger_init_path + '/models/__init__.py ' + path+swagger_dir+'/models')
     os.system('cp -r ' + path + 'vcloud/' +' '+curr_dir)
 
 swagger_init_path = 'vcloud.rest.openapi'
