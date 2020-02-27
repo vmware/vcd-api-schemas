@@ -1,4 +1,8 @@
+dist: trusty
 language: java
+jdk:
+  - oraclejdk8
+
 before_install:
   - mvn license:check-file-header -Dlicense.failOnNotUptodateHeader=true -Dlicense.failOnMissingHeader=true
 
