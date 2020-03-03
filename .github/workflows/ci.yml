@@ -2,9 +2,9 @@ name: vcd-api-schemas CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, v10.0]
   pull_request:
-    branches: [master]
+    branches: [master, v10.0]
 
 jobs:
   build:
