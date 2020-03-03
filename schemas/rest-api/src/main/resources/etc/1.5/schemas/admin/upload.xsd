@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2019 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,17 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!--
+Copyright © 2013 VMware, Inc. All rights reserved.
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:meta="http://www.vmware.com/vcloud/meta"
-           jaxb:version="2.0"
-           jaxb:extensionBindingPrefixes="meta"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.vmware.com/vcloud/v1.5"
-           version="1.0">
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights, are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software.
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0" jaxb:extensionBindingPrefixes="meta" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
 
     <xs:include schemaLocation="../vcloud/common.xsd"/>
 
@@ -51,7 +52,7 @@
     <xs:complexType name="CertificateUpdateParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.certificateUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -69,7 +70,7 @@
     <xs:complexType name="CertificateUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.certificateUploadSocketType</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -78,7 +79,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="FileUploadSocketType" />
+            <xs:extension base="FileUploadSocketType"/>
         </xs:complexContent>
     </xs:complexType>
 
@@ -86,7 +87,7 @@
     <xs:complexType name="KeystoreUpdateParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.keystoreUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -114,7 +115,7 @@
     <xs:complexType name="KeystoreUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.keystoreUploadSocketType</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -123,7 +124,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="FileUploadSocketType" />
+            <xs:extension base="FileUploadSocketType"/>
         </xs:complexContent>
     </xs:complexType>
 
@@ -131,7 +132,7 @@
     <xs:complexType name="SspiKeytabUpdateParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.sspiKeytabUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -159,7 +160,7 @@
     <xs:complexType name="SspiKeytabUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.sspiKeytabUploadSocketType</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -168,7 +169,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="FileUploadSocketType" />
+            <xs:extension base="FileUploadSocketType"/>
         </xs:complexContent>
     </xs:complexType>
 
@@ -176,7 +177,7 @@
     <xs:complexType name="TrustStoreUpdateParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.trustStoreUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -204,7 +205,7 @@
     <xs:complexType name="TrustStoreUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.trustStoreUploadSocketType</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -213,7 +214,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="FileUploadSocketType" />
+            <xs:extension base="FileUploadSocketType"/>
         </xs:complexContent>
     </xs:complexType>
 

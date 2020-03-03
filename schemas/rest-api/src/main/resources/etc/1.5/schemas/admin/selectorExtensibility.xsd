@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2019 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,21 +27,32 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!-- Copyright © 2015 VMware, Inc. All rights reserved. Permission is hereby
+    granted, free of charge, to any person obtaining a copy of this software
+    and associated documentation files (the "Software"), to deal in the Software
+    without restriction, including without limitation the rights to use, copy,
+    modify, merge, publish, distribute, sublicense, and/or sell copies of the
+    Software, and to permit persons to whom the Software is furnished to do so,
+    subject to the following conditions: The above copyright notice and this
+    permission notice shall be included in all copies or substantial portions
+    of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+    KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE. Except as explicitly provided herein, no express
+    or implied licenses, under any VMware patents, copyrights, trademarks, or
+    any other intellectual property rights, are granted or waived by implication,
+    exhaustion, estoppel, or otherwise, on modified versions of the Software. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:tns="http://www.vmware.com/vcloud/v1.5" xmlns:ext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0" jaxb:extensionBindingPrefixes="meta" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-    xmlns:tns="http://www.vmware.com/vcloud/v1.5" xmlns:ext="http://www.vmware.com/vcloud/extension/v1.5"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-    xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0"
-    jaxb:extensionBindingPrefixes="meta" elementFormDefault="qualified"
-    targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
-
-    <xs:include schemaLocation="../vcloud/common.xsd" />
+    <xs:include schemaLocation="../vcloud/common.xsd"/>
 
     <xs:complexType name="PhasesType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="OBJECT_EXTENSIBILITY" />
-                <meta:content-type>application/vnd.vmware.admin.extensibility.selector</meta:content-type>
+                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
+                <meta:content-type>application/vnd.vmware.admin.extensibility.phases</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">OBJECT_EXTENSIBILITY
             </xs:documentation>
@@ -55,8 +66,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Phase" maxOccurs="unbounded"
-                minOccurs="1">
+            <xs:element name="Phase" maxOccurs="unbounded" minOccurs="1">
                <xs:annotation>
                   <xs:documentation>
                      A point in a workflow where object extensibility is
@@ -72,14 +82,14 @@
                     <xs:attribute name="name" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:pattern value="urn:extensionPoint:.+" />
+                                <xs:pattern value="urn:extensionPoint:.+"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="type" use="required">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always
                             </xs:documentation>
@@ -97,14 +107,14 @@
                         </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:pattern value=".+" />
+                                <xs:pattern value=".+"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="optional" use="optional" default="false">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
@@ -117,23 +127,23 @@
                             </xs:documentation>
                         </xs:annotation>
                         <xs:simpleType>
-                            <xs:restriction base="xs:boolean" />
+                            <xs:restriction base="xs:boolean"/>
                         </xs:simpleType>
                     </xs:attribute>
                 </xs:complexType>
                 <xs:unique name="uniquePhase">
-                    <xs:selector xpath="tns:Phase" />
-                    <xs:field xpath="@name" />
+                    <xs:selector xpath="tns:Phase"/>
+                    <xs:field xpath="@name"/>
                 </xs:unique>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:element name="SelectorExtension" type="SelectorExtensionType" />
+    <xs:element name="SelectorExtension" type="SelectorExtensionType"/>
     <xs:complexType name="SelectorExtensionType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                 <meta:content-type>application/vnd.vmware.admin.extensibility.selector</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">OBJECT_EXTENSIBILITY</xs:documentation>
@@ -151,11 +161,10 @@
             <xs:extension base="IdentifiableResourceType">
                 <xs:sequence>
 
-                    <xs:element name="Enabled" type="xs:boolean"
-                        minOccurs="0" maxOccurs="1">
+                    <xs:element name="Enabled" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always
                             </xs:documentation>
@@ -168,11 +177,10 @@
                         </xs:annotation>
                     </xs:element>
 
-                    <xs:element name="Priority" type="xs:integer"
-                        minOccurs="0" maxOccurs="1">
+                    <xs:element name="Priority" type="xs:integer" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always
                             </xs:documentation>
@@ -189,7 +197,7 @@
                     <xs:element name="ObjectExtensionId" type="xs:string">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">create
                             </xs:documentation>
@@ -201,8 +209,7 @@
                         </xs:annotation>
                     </xs:element>
 
-                    <xs:element name="Phases" minOccurs="0"
-                        maxOccurs="1" nillable="true" type="PhasesType">
+                    <xs:element name="Phases" minOccurs="0" maxOccurs="1" nillable="true" type="PhasesType">
                         <xs:annotation>
                            <xs:documentation>One or more Phases implemented by this
                            extension in the context of this Selector.
@@ -217,11 +224,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="SelectorExtensions" type="SelectorExtensionsType" />
+    <xs:element name="SelectorExtensions" type="SelectorExtensionsType"/>
     <xs:complexType name="SelectorExtensionsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                 <meta:content-type>application/vnd.vmware.admin.extensibility.selectors</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">OBJECT_EXTENSIBILITY</xs:documentation>
@@ -234,11 +241,10 @@
         <xs:complexContent>
             <xs:extension base="ResourceType">
                 <xs:sequence>
-                    <xs:element name="SelectorExtension" type="SelectorExtensionType"
-                        minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="SelectorExtension" type="SelectorExtensionType" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="OBJECT_EXTENSIBILITY" />
+                                <meta:version added-in="OBJECT_EXTENSIBILITY"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always
                             </xs:documentation>
