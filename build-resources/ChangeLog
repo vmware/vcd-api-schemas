@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+* Add the v10.0 branch to the CI pipeline
+* Convert to GitHub Actions. (#18)
+* Update .travis.yml
+* Removed version number as it should pick the latest tag from github repo
+* Adding of openapi model in pypi packages, fixed
+* Update schemas to vCD 10.0
+* Added files to push the end-delieverable for python to PyPi
 * Added support for python
 
 v9.1.1
