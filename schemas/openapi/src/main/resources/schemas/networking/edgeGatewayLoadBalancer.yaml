@@ -1,0 +1,1196 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2020 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+swagger: "2.0"
+info:
+  description: |
+    API for Load Balancer configuration of an edge gateway. Users can create a load balancer to
+    distrbute traffic to a set of servers.
+  version: "1.0"
+  title: Edge Gateway Load Balancer API
+
+paths:
+
+  loadbalancer:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalanacer
+      summary: Retrieves the Load Balancer configuration for a given Edge Gateway.
+      description: |
+        Retrieves the general load balancer configuration for an edge gateway.
+      operationId: getLoadBalancerConfig
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancer'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalanacer
+      summary: |
+        Updates the Load Balancer configuration on the Edge Gateway.
+      operationId: updateLoadBalancerConfig
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancer'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  virtualServerSummaries:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualServers
+      summary: Retrieves all Load Balancer Virtual Server Summaries for a given Edge Gateway
+      operationId: getLoadBalancerVirtualServers
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerVirtualServerSummaries'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  virtualServers:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+            - arg: gateway
+
+    post:
+      x-vcloud-added-in: 34.0
+      tags:
+          - edgeGatewayLoadBalancerVirtualServers
+      summary: Creates a Load Balancer Virtual Server on the Edge Gateway.
+      operationId: createLoadBalancerVirtualServer
+      consumes:
+          - application/json
+      parameters:
+        - name: loadBalancerVirtualServer
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerVirtualServer'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+
+  virtualServer:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: virtualServerId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualServer
+      summary: Retrieves a specific Load Balancer Virtual Server for a given Edge Gateway.
+      operationId: getLoadBalancerVirtualServer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerVirtualServer'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualServer
+      summary: Updates a specific Load Balancer Virtual Server for a given Edge Gateway.
+      operationId: updateLoadBalancerVirtualServer
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerVirtualServer
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerVirtualServer'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualServer
+      summary: Deletes a specific Load Balancer Virtual Server for a given Edge Gateway.
+      operationId: deleteLoadBalancerVirtualServer
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  poolSummaries:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerPools
+      summary: Retrieves all Load Balancer Pools for a given Edge Gateway.
+      description: |
+        Retrieves all of the Load Balancer Pools that are configured for an edge gateway.
+        Results can be sorted by only a single parameter. Sorting by combination of parameters (sortAsc=foo&sortDesc=bar) is not allowed.
+      operationId: getLoadBalancerPools
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPoolSummaries'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  pools:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+    post:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerPools
+      summary: Creates a Load Balancer Pool on the Edge Gateway.
+      operationId: createLoadBalancerPool
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerPool
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPool'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  pool:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: poolId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerPool
+      summary: Retrieves a specific Load Balancer Pool for a given Edge Gateway.
+      operationId: getLoadBalancerPool
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPool'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerPool
+      summary: Updates a specific Load Balancer Pool for a given Edge Gateway.
+      operationId: updateLoadBalancerPool
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerPool
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPool'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayLoadBalancerPool
+      summary: Deletes a specific Load Balancer Pool for a given Edge Gateway.
+      operationId: deleteLoadBalancerPool
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeLoadBalancer:
+    x-vcloud-added-in: 34.0
+    description: Specifies the Edge Gateway Load Balancer configuration.
+    type: object
+    properties:
+      state:
+        description: |
+          Specifies current state of Load Balancer configuration on an edge gateway.
+        $ref: '#/definitions/LoadBalancerStateType'
+      size:
+        description: The size of the load balancer. A larger sized load balancer handles more traffic.
+        $ref: '#/definitions/LoadBalancerSizeType'
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - size
+      - state
+    x-vcloud-property-annotations:
+      state:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      size:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerSizeType:
+    x-vcloud-added-in: 34.0
+    description: |
+      Different sized load balancers are available to address various performance and scalability requirements.
+      In general, as load balancer size increases, throughput performance increases but scalability decreases.
+    type: string
+    enum:
+      - SMALL
+      - MEDIUM
+      - LARGE
+
+  LoadBalancerStateType:
+    x-vcloud-added-in: 34.0
+    description: |
+      Describes the current state of Load Balancer configuration on an edge gateway.
+      <ul>
+        <li> ENABLED - Load Balancer service is configured and enabled.
+        <li> DISABLED - Load Balancer service is configured and disabled.
+        <li> UNDEPLOYED - Load Balancer service is not configured.
+      </ul>
+    type: string
+    enum:
+      - ENABLED
+      - DISABLED
+      - UNDEPLOYED
+
+  EdgeLoadBalancerPoolSummaries:
+    x-vcloud-added-in: 34.0
+    description: Specifies the Load Balancer pools.
+    type: object
+    properties:
+      values:
+        type: array
+        description: The list of Load Balancer Pools.
+        items:
+          $ref: '#/definitions/EdgeLoadBalancerPoolSummary'
+
+  EdgeLoadBalancerPoolSummary:
+    x-vcloud-added-in: 34.0
+    description: Specifies a summary of a  Load Balancer pool.
+    type: object
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - properties:
+          id:
+            type: string
+            description: |
+              The unique id of this Load Balancer Pool. On updates, the id is required for the pool, while for create a new id will be generated.
+          name:
+            type: string
+            description: Name for the pool.
+          description:
+            type: string
+          algorithm:
+            description: The algorithm for choosing a server for each new connection.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerPoolAlgorithmType'
+          members:
+            description: The number of members
+            type: integer
+          enablePassiveMonitor:
+            description: |
+              Whether passive monitoring for this pool is enabled or not.
+            type: boolean
+            default: false
+          enableActiveMonitor:
+            description: |
+              Whether active monitoring for this pool is enabled or not.
+            type: boolean
+            default: false
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      description:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      algorithm:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      members:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enablePassiveMonitor:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enableActiveMonitor:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerPool:
+    x-vcloud-added-in: 34.0
+    description: Specifies the Load Balancer pool configuration.
+    type: object
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - properties:
+          id:
+            type: string
+            description: |
+              The unique id of this Load Balancer Pool. On updates, the id is required for the pool, while for create a new id will be generated.
+          name:
+            type: string
+            description: Name for the pool.
+          description:
+            type: string
+          algorithm:
+            description: The algorithm for choosing a server for each new connection.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerPoolAlgorithmType'
+          members:
+            description: |
+              The list of members in this load balancer pool.
+            type: array
+            items:
+              $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerPoolMember'
+          monitoring:
+            description: The monitoring configuration for the load balancer pool.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerPoolMonitor'
+          minimumActiveMembers:
+            description: The minimum number of members that must be available for the pool to be considered active.
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            default: 1
+            format: int32
+    required:
+      - name
+      - algorithm
+      - monitoring
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      algorithm:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      members:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      monitoring:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      minimumActiveMembers:
+        x-vcloud-constraints:
+        - constraint: NonSearchable
+        - constraint: NonSortable
+
+  LoadBalancerPoolAlgorithmType:
+    x-vcloud-added-in: 34.0
+    type: string
+    description: |
+      The Load Balancing algorithm used to select a server for each new connection from the list of members in the pool.
+      <ul>
+      <li> ROUND_ROBIN - Servers are selected using round robin.
+      <li> WEIGHTED_ROUND_ROBIN - Servers are selected using weighted round robin.
+      <li> LEAST_CONNECTION - The server with the least number of connections is selected.
+      <li> WEIGHTED_LEAST_CONNECTION - The server with the least number of connections is selected with weights considered.
+      <li> IP_HASH - The client IP is consistently hashed. This assures that the same server IP is used for a given client IP assuming no servers are added or removed.
+      </ul>
+    enum:
+      - ROUND_ROBIN
+      - WEIGHTED_ROUND_ROBIN
+      - LEAST_CONNECTION
+      - WEIGHTED_LEAST_CONNECTION
+      - IP_HASH
+
+  LoadBalancerPoolMember:
+    x-vcloud-added-in: 34.0
+    description: Specifies the configuration of a member in a load balancer server pool.
+    type: object
+    properties:
+      name:
+        description: The name of the pool member.
+        type: string
+      ipAddress:
+        description: The ip address of the pool member.
+        type: string
+      port:
+        description: The port number of the pool member. If unset, the port that the client used to connect will be used.
+        type: integer
+      weight:
+        description: The weight of the pool member. This weight is only used for the WEIGHTED_ROUND_ROBIN balancing algorithm.
+        type: integer
+        minimum: 1
+        maximum: 256
+        default: 1
+        format: int32
+      maxConcurrentConnections:
+        description: The maximum number of concurrent connections to this specific member. If unset, the number of connections is unlimited.
+        type: integer
+        minimum: 1
+        maximum: 2147483647
+      enabled:
+        description: Whether the pool member is enabled or not.
+        type: boolean
+        default: true
+    required:
+      - name
+      - ipAddress
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ipAddress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      port:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      weight:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      maxConcurrentConnections:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerPoolMonitor:
+    x-vcloud-added-in: 34.0
+    description: Specifies the monitoring configuration for a Load Balancer Pool
+    type: object
+    properties:
+      enablePassiveMonitor:
+        description: |
+          Whether passive monitoring for this pool is enabled or not. After 5 consecutive failed connections to a pool member, the member is temporarily unavailable
+          and will not be sent new connections for 5 seconds.
+        type: boolean
+        default: false
+      enableActiveMonitor:
+        description: |
+          Whether active monitoring for this pool is enabled or not. If enabled, a health check will be used
+          to monitor the servers to check for responsiveness.
+        type: boolean
+        default: false
+      activeMonitorProfileType:
+        description: |
+          Whether to use the default settings or user defined settings for active monitoring.
+          <ul>
+          <li> DEFAULT - Use default NSX settings active monitoring.
+          <li> CUSTOM - Use user-defined values for active monitoring.
+          </ul>
+        $ref: '#/definitions/LoadBalancerProfileType'
+      monitorPort:
+        description: The port that is used for the active monitoring health check.
+        type: integer
+      monitorInterval:
+        description: The interval of the active health check in seconds.
+        type: integer
+        minimum: 1
+        format: int32
+      monitorTimeout:
+        description: The timeout of the active health check in seconds.
+        type: integer
+        minimum: 1
+        format: int32
+      monitorFallCount:
+        description: The number of consecutive health check failures required to change the pool member status to DOWN.
+        type: integer
+        minimum: 1
+        format: int32
+      monitorRiseCount:
+        description: The number of consecutive health check successes required to change the pool member status to UP.
+        type: integer
+        minimum: 1
+        format: int32
+    x-vcloud-property-annotations:
+      enablePassiveMonitor:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enableActiveMonitor:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      activeMonitorProfileType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      monitorPort:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      monitorInterval:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      monitorTimeout:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      monitorFallCount:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      monitorRiseCount:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerVirtualServerSummaries:
+    x-vcloud-added-in: 34.0
+    description: Specifies the Load Balancer virtual servers.
+    type: object
+    properties:
+      values:
+        type: array
+        description: The list of Load Balancer Virtual Servers.
+        items:
+          $ref: '#/definitions/EdgeLoadBalancerVirtualServerSummary'
+
+  EdgeLoadBalancerVirtualServerSummary:
+    x-vcloud-added-in: 34.0
+    description: A summary of a Load Balancer virtual server.
+    type: object
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - properties:
+          id:
+            type: string
+            description: |
+              The unique id of this Load Balancer Virtual Server. On updates, the id is required for the pool, while for create a new id will be generated.
+          name:
+            type: string
+            description: The name for the virtual server.
+          ipAddress:
+            type: string
+            description: The virtual IP address (VIP) of the virtual server.
+          port:
+            type: integer
+            description: The port for the virtual server.
+          pool:
+            type: string
+            description: The server pool used for the virtual server.
+          type:
+            description: The virtual server type. This describes the type of traffic the virtual server services.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerVirtualServerType'
+          enabled:
+            description: Whether the virtual server is enabled or not.
+            type: boolean
+            default: true
+    required:
+      - name
+      - ipAddress
+      - port
+      - type
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      ipAddress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      port:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      pool:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+
+  LoadBalancerVirtualServerType:
+    x-vcloud-added-in: 34.0
+    description: |
+      The type of virtual server. This describes the type of traffic the virtual server services.
+      Currently only L7_HTTP is supported.
+    type: string
+    enum:
+      - L7_HTTP
+      - L4_TCP
+      - L4_UDP
+
+  EdgeLoadBalancerVirtualServer:
+    x-vcloud-added-in: 34.0
+    description: |
+      Specifies a Load Balancer virtual server configuration. A virtual server is used to balance incoming traffic between a
+      set of servers in a pool.
+    type: object
+    allOf:
+      - $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerVirtualServerSummary'
+      - properties:
+          maxConcurrentConnections:
+            description: Maximum number of concurrent connections allowed. If not specified then the number of concurrent connections is unlimited.
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          maxNewConnectionRate:
+            description: Maximum number of new connections per second. If not specified then the new connection rate is unlimited.
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+          sorryServerPool:
+            description: |
+              When the load balancer cannot send the request to any server in the default pool, the request is served by the sorry server pool.
+            type: string
+          defaultMemberPort:
+            description: The default port to use for pool members that do not have a specified port.
+            type: integer
+          persistenceProfile:
+            description: |
+              The virtual server persistence configuration. This defines how relevant requests for a specific session are handled.
+              If unset, then no session persistence will be used.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerPersistenceProfile'
+          applicationProfile:
+            description: |
+              Specifies the application configuration for a virtual server.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerApplicationProfile'
+          sslConfiguration:
+            description: Specifies the ssl configuration for a virtual server. This is only valid for an L7_HTTP virtual server.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/LoadBalancerSslConfiguration'
+    x-vcloud-property-annotations:
+      maxConcurrentConnections:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      maxNewConnectionRate:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      sorryServerPool:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      defaultMemberPort:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      persistenceProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      applicationProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      sslConfiguration:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerPersistenceProfile:
+    x-vcloud-added-in: 34.0
+    description: |
+      Specifies a Load Balancer virtual server persistence configuration. This configuration determines how requests for a given session are handled.
+    type: object
+    properties:
+      type:
+        description: |
+          The persistence type specifies what information in the incoming request should be used determine where the request should be forwarded to
+          if there is an active session.
+          <ul>
+          <li> COOKIE - A Cookie is set on each outgoing response and is used to determine which server to use. Only valid for L7_HTTP Load Balancers.
+          <li> SOURCE_IP - The source IP of the connecting client is used to determine which server to use.
+          </ul>
+        $ref: '#/definitions/LoadBalancerPersistenceProfileType'
+      cookiePersistenceProfile:
+        description: A configuration for session persistence using the cookie of the incoming requests. Only used for type COOKIE.
+        $ref: '#/definitions/LoadBalancerPersistenceCookieProfile'
+      sourceIpPersistenceProfile:
+        description: A configuration for session persistence using the source IP of the incoming requests. Only used for type SOURCE_IP.
+        $ref: '#/definitions/LoadBalancerPersistenceSourceIpProfile'
+    required:
+      - type
+    x-vcloud-property-annotations:
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookiePersistenceProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      sourceIpPersistenceProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerPersistenceProfileType:
+    x-vcloud-added-in: 34.0
+    type: string
+    description: |
+      The persistence type specifies what information in the incoming request should be used determine where the request should be forwarded to
+      if there is an active session.
+      <ul>
+      <li> COOKIE - A Cookie is set on each outgoing response and is used to determine which server to use. Only valid for L7_HTTP Load Balancers.
+      <li> SOURCE_IP - The source IP of the connecting client is used to determine which server to use.
+      </ul>
+    enum:
+      - COOKIE
+      - SOURCE_IP
+
+  LoadBalancerPersistenceCookieProfile:
+    x-vcloud-added-in: 34.0
+    description: Specifies the configuration for persisting sessions based on an incoming cookie.
+    type: object
+    properties:
+      profileType:
+        description: |
+          Whether to use the default settings or user defined settings for this profile.
+          <ul>
+          <li> DEFAULT - Use default NSX settings for the given profile.
+          <li> CUSTOM - Use user-defined values for the Cookie persistence profile.
+          </ul>
+        $ref: '#/definitions/LoadBalancerProfileType'
+      cookieName:
+        description: The name of the cookie.
+        type: string
+      cookieFallback:
+        description: |
+          If cookie fallback is enabled and the cookie points to a server that is down, another server is selected to handle the request.
+          If cookie fallback is disabled, the request will be rejected instead.
+        type: boolean
+      cookieGarbling:
+        description: |
+          If cookie garbling is enabled, the cookie value will be encrypted. Otherwise the cookie value will be plain text.
+        type: boolean
+      cookieMode:
+        description: |
+          The cookie persistence mode.
+        $ref: '#/definitions/LoadBalancerPersistenceCookieMode'
+      cookiePath:
+        description: The HTTP cookie path. This is valid only for INSERT cookie mode.
+        type: string
+        example: '/application'
+      cookieDomain:
+        description: The HTTP cookie domain. This is valid only for INSERT cookie mode.
+        type: string
+        pattern: '.*\..+'
+        example: 'example.com'
+      cookieMaxIdleTime:
+        description: |
+          The maximum interval, in seconds, a cookie is valid from the last time it was seen in a request. If unset, it is unlimited.
+          This is valid only for INSERT cookie mode.
+        type: integer
+      cookieMaxAge:
+        description: |
+          The maximum interval, in seconds, a cookie is valid from the first time it is seen in a request. If unset, it is unlimited.
+          This is valid only for INSERT cookie mode.
+        type: integer
+    required:
+      - profileType
+    x-vcloud-property-annotations:
+      profileType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieFallback:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieGarbling:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieMode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookiePath:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieDomain:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieMaxIdleTime:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      cookieMaxAge:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerPersistenceCookieMode:
+    x-vcloud-added-in: 34.0
+    description: |
+      The mode for persisting the cookie in the HTTP response to the client.
+      <ul>
+      <li> INSERT - The load balancer inserts a cookie in the response.
+      <li> PREFIX - The server IP and port are prepended to the server cookie's value.
+      <li> REWRITE - The server IP and port replace the server cookie's value.
+      </ul>
+    type: string
+    enum:
+      - INSERT
+      - PREFIX
+      - REWRITE
+
+  LoadBalancerPersistenceSourceIpProfile:
+    x-vcloud-added-in: 34.0
+    description: Specifies the configuration for persisting sessions based on the source IP of the incoming request.
+    type: object
+    properties:
+      profileType:
+        description: |
+          Whether to use the default settings or user defined settings for this profile.
+          <ul>
+          <li> DEFAULT - Use default NSX settings for the given profile.
+          <li> CUSTOM - Use user-defined values for the Source IP persistence profile.
+          </ul>
+        $ref: '#/definitions/LoadBalancerProfileType'
+      entryTimeout:
+        description: |
+          The timeout, in seconds, for purging the source IP entry from the persistence table after all connections complete.
+        type: integer
+        minimum: 1
+        format: int32
+      purgeEntriesWhenFull:
+        description: |
+          If enabled, older source IP entries will be purged if there is a new source IP and the lookup table is full.
+          If disabled, the request is rejected when there is no room in the source IP table and the request is using a source IP not in the table.
+        type: boolean
+    required:
+      - profileType
+    x-vcloud-property-annotations:
+      entryTimeout:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      purgeEntriesWhenFull:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      profileType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerApplicationProfile:
+    x-vcloud-added-in: 34.0
+    description: Specifies the application configuration for a Load Balancer virtual server.
+    type: object
+    properties:
+      httpProfile:
+        description: Specifies the application configuration for an L7_HTTP virtual server.
+        $ref: '#/definitions/LoadBalancerHttpApplicationProfile'
+    required:
+      - httpProfile
+    x-vcloud-property-annotations:
+      httpProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerHttpApplicationProfile:
+    x-vcloud-added-in: 34.0
+    description: Specifies the application configuration for an L7_HTTP virtual server. This configures http requests and responses forwarded by the virtual server.
+    type: object
+    properties:
+      profileType:
+        desription: |
+          Whether to use the default settings or user defined settings for this profile.
+          <ul>
+          <li> DEFAULT - Use default NSX settings for the given profile.
+          <li> CUSTOM - Use user-defined values for the HTTP application profile.
+          </ul>
+        $ref: '#/definitions/LoadBalancerProfileType'
+      requestHeaderSize:
+        description: The maximum size of the buffer used to store the HTTP request headers in bytes.
+        type: integer
+        format: int32
+        minimum: 1
+      responseHeaderSize:
+        description: The maximum size of the buffer used to store the HTTP response headers in bytes.
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 65536
+      redirectToHttps:
+        description: If enabled, non-SSL connections will automatically be redirected to use SSL.
+        type: boolean
+      httpRedirectUrl:
+        description: If set, the virtual server will redirect requests to the given URL.
+        type: string
+        pattern: 'http(s)*:\/\/.*\..*'
+        example: 'https://example.com'
+      xForwardedFor:
+        description: |
+          The X-Forwarded-For (XFF) HTTP Header is used to identifying the originating IP address of the connecting client.
+          <ul>
+          <li> INSERT - If the XFF header is not present on the incoming request, the load balancer inserts a new header with the client IP
+          address. If the header is already present, the client IP address will be appending to the existing header.
+          <li> REPLACE - If the XFF header is present on the incoming request, the load balancer will replace the XFF header.
+          <li> NONE - The load balancer will not insert or replace the client IP address into the XFF header.
+          </ul>
+        type: string
+        enum: [NONE, INSERT, REPLACE]
+      requestBodySize:
+        description: The maximum size of the buffer used to store the HTTP request body in bytes. If unset, the request body size max is unlimited.
+        type: integer
+        format: int32
+      responseTimeout:
+        description: The maximum server response timeout in seconds.
+        type: integer
+        format: int32
+        minimum: 1
+      enableNTLMAuthentication:
+        description: If enabled, the load balancer will use NTLM challenge/response methodology for authentication over HTTP.
+        type: boolean
+    required:
+      - profileType
+    x-vcloud-property-annotations:
+      profileType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      requestHeaderSize:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      responseHeaderSize:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      redirectToHttps:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      httpRedirectUrl:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      xForwardedFor:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      requestBodySize:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      responseTimeout:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enableNTLMAuthentication:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerProfileType:
+    x-vcloud-added-in: 34.0
+    description: |
+      Whether to use the default settings or user defined settings for this profile.
+      <ul>
+      <li> DEFAULT - Use default NSX settings for the given profile.
+      <li> CUSTOM - Use user defined values for the profile fields.
+      </ul>
+    type: string
+    enum:
+      - DEFAULT
+      - CUSTOM
+
+  LoadBalancerSslConfiguration:
+    x-vcloud-added-in: 34.0
+    description: Specifies the SSL configuration for a Load Balancer virtual server.
+    type: object
+    properties:
+      clientSslEnabled:
+        description: If enabled, SSL termination will be performed by the load balancer.
+        type: boolean
+        default: false
+      serverCertificate:
+        description: Which certificate to use for SSL termination. Required if client SSL is enabled.
+        $ref: '#/definitions/EntityReference'
+      securityProfile:
+        description: |
+          The SSL security profile determines which SSL ciphers and protocols are allowed.
+          <ul>
+          <li> BALANCED - A balanced set of ciphers and protocols for both security and compatability.
+          <li> HIGH_SECURITY - A restricted set of ciphers and protocols for higher security.
+          <li> HIGH_COMPATABILITY - A relaxed set of ciphers and protocols for higher compatability
+          </ul>
+        type: string
+        enum: [BALANCED, HIGH_SECURITY, HIGH_COMPATABILITY]
+        default: 'BALANCED'
+    x-vcloud-property-annotations:
+      clientSslEnabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      serverCertificate:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      securityProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'

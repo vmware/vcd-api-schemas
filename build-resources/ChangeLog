@@ -1,0 +1,42 @@
+CHANGES
+=======
+
+* Add the v10.0 branch to the CI pipeline
+* Convert to GitHub Actions. (#18)
+* Update .travis.yml
+* Removed version number as it should pick the latest tag from github repo
+* Adding of openapi model in pypi packages, fixed
+* Update schemas to vCD 10.0
+* Added files to push the end-delieverable for python to PyPi
+* Added support for python
+
+v9.1.1
+------
+
+* Consume new version of bindings libraries. (#9)
+
+v9.1.0
+------
+
+* Update package.json
+* Update .travis.yml
+* Update .travis.yml
+* Update .travis.yml
+* Publish the @vcd/bindings npm package
+* Fix npm use in Maven release profile. (#8)
+* Update README.md
+* Add support for publishing to NPM (#7)
+* Fix deploy issues to Sonatype staging repository. (#6)
+* Add GPG artifact signing to TravisCI deploy process. (#3)
+* Enable proper file header checking in CI builds. (#2)
+* Add DCO text
+* Add DCO information
+* Update README.md
+* Enable Travis CI on repository. (#1)
+* Update README.md
+* Update README.md
+* Create LICENSE
+* Add vCD 9.1 schemas and bindings
+* Adding .gitignore template
+* Add CONTRIBUTING template
+* Add README template
