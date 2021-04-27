@@ -1,0 +1,138 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    An API for managing Network Pools. A network pool is a group of undifferentiated networks
+    that is available for use within an organization vDC to create vApp networks
+    and certain types of organization vDC networks.
+  version: "1.0"
+  title: Network Pool API
+
+paths:
+
+  networkPools:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPools
+      summary: Get all Network Pools in the system
+      description: |
+        Retrieves all Network Pools
+      operationId: getNetworkPools
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkPools'
+
+  networkPool:
+    parameters:
+      - name: networkPoolId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPool
+      summary: Retrieves a specific Network Pool
+      operationId: getNetworkPool
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkPool'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+  NetworkPools:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of Network Pools.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/NetworkPool'
+
+
+  NetworkPool:
+    x-vcloud-added-in: 33.0
+    description: |
+      A Network Pool object.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The id of the Network Pool in URN format.
+      name:
+        type: string
+        description: The name of the Network Pool. Names for Network Pools must be unique across the system.
+      description:
+        type: string
+      promiscuousMode:
+        type: boolean
+        description: Whether promiscuous mode is enabled on the network pool.
+      backing:
+        $ref: '#/definitions/NetworkPoolBacking'
+        description: The network pool backing information.
+      poolType:
+        $ref: '#/definitions/NetworkPoolType'
+        description: The network pool backing type.
+      required:
+        - name
+        - poolType
+
+  NetworkPoolBacking:
+    x-vcloud-added-in: 33.0
+    descriotion: |
+      Describes the backing information for a network pool.
+    type: object
+    properties:
+      vlanId:
+        type: integer
+        description: The id of the backing vlan if VLAN backed. Default of 0.
+      vCenter:
+        $ref: '#/definitions/EntityReference'
+        description: The vCenter that owns this network pool.
+      transportZoneId:
+        type: string
+        description: The path of the backing transport zone, if geneve backed or vdn scope, if vxlan backed.
+      nsxManager:
+        $ref: '#/definitions/EntityReference'
+        description: The NSX-T manager that owns this network pool.
+
+  NetworkPoolType:
+    description: |
+      Represents the network pool's backing type.
+    type: object
+    enum:
+      - VLAN
+      - VXLAN
+      - GENEVE
+      - PORTGROUP_BACKED
+      - UNIVERSAL_VXLAN
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+

@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -124,6 +125,7 @@
                     </xs:element>
                     <xs:element name="IsAlertEnabled" type="xs:boolean" minOccurs="0">
                         <xs:annotation>
+                            <xs:appinfo><meta:version removed-in="API_VERSION_POST9_1_UPDATE" /></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 This field is unused and is deprecated.
@@ -131,10 +133,12 @@
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                             <xs:documentation source="deprecated">6.0</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="AlertEmailPrefix" type="xs:string" minOccurs="0">
                         <xs:annotation>
+                            <xs:appinfo><meta:version removed-in="API_VERSION_POST9_1_UPDATE" /></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 This field is unused and is deprecated.
@@ -142,10 +146,12 @@
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                             <xs:documentation source="deprecated">6.0</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="AlertEmail" type="xs:string" minOccurs="0">
                         <xs:annotation>
+                            <xs:appinfo><meta:version removed-in="API_VERSION_POST9_1_UPDATE" /></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 This field is unused and is deprecated.
@@ -153,6 +159,7 @@
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                             <xs:documentation source="deprecated">6.0</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="IsExternal" type="xs:boolean" minOccurs="0">
@@ -192,6 +199,7 @@
                     </xs:element>
                     <xs:element name="IsDefaultCached" type="xs:boolean" minOccurs="0">
                         <xs:annotation>
+                            <xs:appinfo><meta:version removed-in="API_VERSION_POST9_1_UPDATE" /></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 This field is unused and is deprecated.
@@ -199,6 +207,7 @@
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                             <xs:documentation source="deprecated">6.0</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="IsGroupRole" type="xs:boolean" minOccurs="0">
@@ -403,6 +412,16 @@
         <xs:complexContent>
             <xs:extension base="EntityType">
                 <xs:sequence>
+                    <xs:element name="RightType" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Assigns a RightType to the right
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Category" type="xs:string" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
@@ -517,3 +536,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

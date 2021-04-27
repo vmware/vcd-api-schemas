@@ -1,8 +1,9 @@
 # ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2011-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
 # ******************************************************************************
+
 swagger: "2.0"
 info:
   description: |
@@ -21,6 +22,7 @@ paths:
       tags:
         - branding
       summary: Gets the system level logo
+      x-vcloud-added-in: 30.0
       description: |
         Get the system level logo as raw image data suitable for use in
         an image tag's src attribute.
@@ -33,6 +35,8 @@ paths:
         - image/jpeg
         - image/svg+xml
       responses:
+        406:
+          description: Not Acceptable
         200:
           description: OK
           schema:
@@ -42,6 +46,7 @@ paths:
       tags:
         - branding
       summary: Sets the system level logo
+      x-vcloud-added-in: 30.0
       description: |
         Set the system logo data.
       operationId: putSystemLogo
@@ -68,10 +73,215 @@ paths:
       tags:
         - branding
       summary: Delete system level logo
+      x-vcloud-added-in: 30.0
       description: |
         Delete the system level logo, forcing the get method to return the
         vCloud Director default logo.
       operationId: deleteSystemLogo
+      responses:
+        204:
+          description: No Content
+
+  icon:
+    get:
+      tags:
+        - branding
+      summary: Gets the system level browser icon
+      x-vcloud-added-in: 32.0
+      description: |
+        Get the system level icon as raw image data suitable for use in
+        an image tag's src attribute.
+
+        If a custom icon is not set then the vCloud Director default icon is
+        sent.
+      operationId: getSystemIcon
+      produces:
+        - image/png
+        - image/x-icon
+      responses:
+        406:
+          description: Not Acceptable
+        200:
+          description: OK
+          schema:
+            type: string
+            format: binary
+    put:
+      tags:
+        - branding
+      summary: Sets the system level icon
+      x-vcloud-added-in: 32.0
+      description: |
+        Set the system icon data.
+      operationId: putSystemIcon
+      consumes:
+        - image/png
+        - image/x-icon
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: string
+            format: binary
+      responses:
+        204:
+          description: No Content
+        415:
+          description: Unsupported Media Type
+    delete:
+      tags:
+        - branding
+      summary: Delete system level icon
+      x-vcloud-added-in: 32.0
+      description: |
+        Delete the system level icon, forcing the get method to return the
+        vCloud Director default icon.
+      operationId: deleteSystemIcon
+      responses:
+        204:
+          description: No Content
+
+  org-logo:
+    parameters:
+      - name: org
+        in: path
+        required: true
+        type: string
+        description: Organization for whom branding is being set
+    get:
+      tags:
+        - branding
+      summary: Gets the org-specific logo
+      x-vcloud-added-in: 32.0
+      description: |
+        Get the org-specific logo as raw image data suitable for use in
+        an image tag's src attribute. If an org-specific logo is not set,
+        get the default system logo.
+
+        If a custom logo is not set then the vCloud Director default logo is
+        sent.
+      operationId: getTenantLogo
+      produces:
+        - image/png
+        - image/jpeg
+        - image/svg+xml
+      responses:
+        406:
+          description: Not Acceptable
+        200:
+          description: OK
+          schema:
+            type: string
+            format: binary
+    put:
+      tags:
+        - branding
+      summary: Sets the org-specific logo
+      x-vcloud-added-in: 32.0
+      description: |
+        Set the org-specific data.
+      operationId: putTenantLogo
+      consumes:
+        - image/png
+        - image/jpeg
+        - image/svg+xml
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: string
+            format: binary
+      responses:
+        204:
+          description: No Content
+        415:
+          description: Unsupported Media Type
+    delete:
+      tags:
+        - branding
+      summary: Delete the org-specific logo
+      x-vcloud-added-in: 32.0
+      description: |
+        Delete the org-specific logo, forcing the get method to return the
+        system default logo.
+      operationId: deleteTenantLogo
+      responses:
+        204:
+          description: No Content
+
+  org-icon:
+    parameters:
+      - name: org
+        in: path
+        required: true
+        type: string
+        description: Organization for whom branding is being set
+    get:
+      tags:
+        - branding
+      summary: Gets the system level browser icon
+      x-vcloud-added-in: 32.0
+      description: |
+        Get the system level icon as raw image data suitable for use in
+        an image tag's src attribute.
+
+        If a custom icon is not set then the vCloud Director default icon is
+        sent.
+      operationId: getTenantIcon
+      produces:
+        - image/png
+        - image/x-icon
+      responses:
+        406:
+          description: Not Acceptable
+        200:
+          description: OK
+          schema:
+            type: string
+            format: binary
+    put:
+      tags:
+        - branding
+      summary: Sets the system level icon
+      x-vcloud-added-in: 32.0
+      description: |
+        Set the system icon data.
+      operationId: putTenantIcon
+      consumes:
+        - image/png
+        - image/x-icon
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: string
+            format: binary
+      responses:
+        204:
+          description: No Content
+        415:
+          description: Unsupported Media Type
+    delete:
+      tags:
+        - branding
+      summary: Delete system level icon
+      x-vcloud-added-in: 32.0
+      description: |
+        Delete the system level icon, forcing the get method to return the
+        vCloud Director default icon.
+      operationId: deleteTenantIcon
       responses:
         204:
           description: No Content
@@ -96,11 +306,162 @@ paths:
             items:
               $ref: "#/definitions/UiTheme"
 
+    post:
+      tags:
+        - branding
+      summary: Create a new custom theme
+      description: |
+        Create a new custom theme, uniquely identified by name.
+
+        This can be used to set the theme in "/branding".
+      operationId: createBrandingTheme
+      consumes:
+        - application/json
+      parameters:
+        - name: newTheme
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UiTheme"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/UiTheme"
+
+  theme-name:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - branding
+      summary: Retrieve a specified theme identified by name
+      description: |
+        Update an existing theme, uniquely identified by name.
+      operationId: getBrandingTheme
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UiTheme"
+        404:
+          description: Not Found
+
+    put:
+      tags:
+        - branding
+      summary: Update an existing custom theme
+      description: |
+        Update an existing custom theme, uniquely identified by name.
+
+        This can be used to set the theme in "/branding".
+      operationId: updateBrandingTheme
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedTheme
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UiTheme"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UiTheme"
+        404:
+          description: Not Found
+
+    delete:
+      tags:
+        - branding
+      summary: Delete an existing custom theme
+      description: |
+        Delete a custom theme
+      operationId: deleteBrandingTheme
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+
+  theme-name-css:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - branding
+      summary: Retrieve the custom CSS for this theme, if any
+      description: |
+        Retrieve the CSS for this theme if it has been set
+      operationId: getBrandingThemeCss
+      produces:
+        - text/css
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+        404:
+          description: No CSS Found For theme
+
+  theme-name-contents:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        type: string
+
+    post:
+      tags:
+        - branding
+      summary: Upload the contents for this theme
+      description: |
+        Update an existing custom theme's contents, uniquely identified by name.
+        Currently, this is limited to a single CSS file.
+      operationId: uploadBrandingThemeContents
+      consumes:
+        - application/json
+      parameters:
+        - name: pluginUploadSpec
+          in: body
+          required: true
+          schema:
+            $ref: './common/upload.yaml#/definitions/UploadSpec'
+      responses:
+        204:
+          description: No Content
+
+    delete:
+      tags:
+        - branding
+      summary: Delete an existing custom theme's contents
+      description: |
+        Delete a custom theme's contents
+      operationId: deleteBrandingThemeContents
+      responses:
+        204:
+          description: No Content
+
   branding:
     get:
       tags:
         - branding
       summary: Gets the system level branding
+      x-vcloud-added-in: 30.0
       description: |
         Get the system level branding information including the portal name,
         portal color, selected theme and custom URLs.
@@ -115,10 +476,11 @@ paths:
     put:
       tags:
         - branding
-      summary: Sets the system level branding
+      summary: Sets default branding
+      x-vcloud-added-in: 30.0
       description: |
-        Sets the system level branding information including the portal name,
-        portal color, selected theme and custom URLs.
+        Sets the branding information including the portal name, portal color,
+        selected theme and custom URLs for a specific org or system default.
       operationId: putSystemBranding
       consumes:
         - application/json
@@ -136,22 +498,91 @@ paths:
           schema:
             $ref: "#/definitions/UiBranding"
 
-definitions:
-  UiBrandingLink:
-    description: |
-      A link which can be customized and used in the application.
-    type: object
-    properties:
-      key:
+  org-branding:
+    parameters:
+      - name: org
+        in: path
+        required: true
         type: string
+        description: Organization for whom branding is being set
+    get:
+      tags:
+        - branding
+      summary: Gets org-specific branding
+      x-vcloud-added-in: 32.0
+      description: |
+        Get org-specific branding information including the portal name,
+        portal color, selected theme and custom URLs. If no org branding
+        has been specified, retrieve the default system branding.
+      operationId: getTenantBranding
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UiBranding"
+    put:
+      tags:
+        - branding
+      summary: Sets org-specific branding
+      x-vcloud-added-in: 32.0
+      description: |
+        Sets the branding information including the portal name, portal color,
+        selected theme and custom URLs for a specific org.
+      operationId: putTenantBranding
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UiBranding"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UiBranding"
+    delete:
+      tags:
+        - branding
+      summary: Remove org-specific branding
+      x-vcloud-added-in: 32.0
+      description: |
+        Removes org-specific branding information if specified
+      operationId: removeTenantBranding
+      responses:
+        204:
+          description: No Content
+
+definitions:
+  UiBrandingMenuItem:
+    description: |
+      An ordered list of menu items which can be customized and used in the application. Can be defined as a
+      link,
+      override (well known links that can be overridden, Default values are About, Help, VMRC),
+      section,
+      separator(section without a name) of the drop down menu.
+    type: object
+    x-vcloud-added-in: 32.0
+    properties:
+      name:
+        type: string
+      menuItemType:
+        type: string
+        enum: [link, section, override, separator]
       url:
         type: string
+    required:
+      - menuItemType
 
   UiTheme:
     description: |
       A theme supported by vCloud Director.
     type: object
-    discriminator: themeType
     properties:
       themeType:
         type: string
@@ -179,4 +610,8 @@ definitions:
       customLinks:
         type: array
         items:
-          $ref: "#/definitions/UiBrandingLink"
+          $ref: "#/definitions/UiBrandingMenuItem"
+    required:
+      - portalName
+      - customLinks
+

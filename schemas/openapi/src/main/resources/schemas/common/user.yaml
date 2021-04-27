@@ -1,0 +1,106 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: User YAML
+  description: User Spec Object in VCD
+  version: "1.0"
+
+
+definitions:
+  User:
+    description: |
+      User Spec object
+    type:
+      object
+    properties:
+      username:
+        type:
+          string
+      description:
+        type:
+          string
+      orgEntityRef:
+        $ref: "#/definitions/EntityReference"
+      fullname:
+        type:
+          string
+      email:
+        type:
+          string
+      phoneNumber:
+        type:
+          string
+      im:
+        type:
+          string
+      external:
+        type:
+          boolean
+      nameInSource:
+        type:
+          string
+      sourceEntityRef:
+        $ref: "#/definitions/EntityReference"
+      enabled:
+        type:
+          boolean
+      locked:
+        type:
+          boolean
+      alertEmailPrefix:
+        type:
+          string
+      alertEmail:
+        type:
+          string
+      roleEntityRef:
+        $ref: "#/definitions/EntityReference"
+      roleInherited:
+        type:
+          boolean
+      delayAfterPowerOnSeconds:
+        type:
+          integer
+      storedVMQuota:
+        type:
+          integer
+      deployedVMQuota:
+        type:
+          integer
+      inSync:
+        type:
+          boolean
+  UserGroup:
+    description: |
+      Group Spec object
+    type:
+      object
+    properties:
+      name:
+        type:
+          string
+      description:
+        type:
+          string
+      orgEntityRef:
+        $ref: "#/definitions/EntityReference"
+      sourceEntityRef:
+        $ref: "#/definitions/EntityReference"
+      roleEntityRef:
+        $ref: "#/definitions/EntityReference"
+      nameInSource:
+        type:
+          string
+      providerType:
+        type:
+          string
+        enum: [UNKNOWN, INTEGRATED, SAML, OAUTH]
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
