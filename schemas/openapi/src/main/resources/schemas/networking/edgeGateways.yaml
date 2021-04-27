@@ -1,0 +1,208 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for managing Edge Gateways belonging to a particular vDC. Edge gateways can be
+    backed by an NSX-T or an NSX-V installation.
+  version: "1.0"
+  title: Edge Gateways API
+
+paths:
+
+  edgeGateways:
+
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeGateways
+      summary: Create a new edge gateway
+      description: |
+        Create a new edge gateway for a vDC
+      operationId: createEdgeGateway
+      consumes:
+        - application/json
+      parameters:
+        - name: edgeGateway
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeGateway'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeGateways
+      summary: Get all the edge gateways
+      description: |
+        Get all edge gateways. Results can be filtered by orgVdc. If "orgVdc" property is not specified
+        in the filter, then user will see all the edge gateways in the organization they have view rights to see.
+      operationId: getAllEdgeGateways
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeGateways'
+
+  edgeGateway:
+
+    parameters:
+    - name: gatewayId
+      in: path
+      required: true
+      type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+      - edgeGateway
+      summary: Retrieves a specific Edge Gateway
+      operationId: getEdgeGateway
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeGateway'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+      - edgeGateway
+      summary: Updates a specific Edge Gateway
+      operationId: updateEdgeGateway
+      consumes:
+      - application/json
+      parameters:
+      - name: gateway
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/EdgeGateway'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+      - edgeGateway
+      summary: Deletes a specific Edge Gateway
+      operationId: deleteEdgeGateway
+      parameters:
+      - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeGateways:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of edge gateways
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: A list of EdgeGateways.
+            items:
+              $ref: '#/definitions/EdgeGateway'
+
+  EdgeGateway:
+    x-vcloud-added-in: 32.0
+    description: |
+      An edge gateway object
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique identifier of the edge gateway.
+      name:
+        type: string
+        description: The name of the edge gateway.
+      description:
+        type: string
+        description: The description of the edge gateway(optional).
+      edgeGatewayUplinks:
+        description: The uplink connections for the edge gateway.
+        type: array
+        items:
+          $ref: '#/definitions/EdgeGatewayUplink'
+      gatewayBacking:
+        $ref: '#/definitions/EdgeGatewayBacking'
+        description: The backing details of the edge gateway; only required if importing an NSX-T router.
+      orgVdc:
+        $ref: '../common/entity.yaml#/definitions/EntityReference'
+        description: The organization vDC which the gateway belongs to.
+      required:
+        - name
+        - edgeGatewayUplinks
+        - orgVdc
+
+  EdgeGatewayUplink:
+    x-vcloud-added-in: 32.0
+    description: The uplink for the edge gateway along with ip suballocations
+    type: object
+    properties:
+      uplinkId:
+        type: string
+        description: The identifier of the uplink this edge gateway is connected to.
+      subnets:
+        $ref: "./commonObject.yaml#/definitions/Subnets"
+        description: |
+          Set of subnets this edge will have access to. Gateway can either be provided or left blank for each subnet, and if left blank will be assigned.
+
+  EdgeGatewayType:
+    x-vcloud-added-in: 32.0
+    description: |
+      The type of the edge gateway.
+    type: object
+    enum:
+      - NSXV_BACKED
+      - NSXT_BACKED
+      - NSXT_IMPORTED
+
+  EdgeGatewayBacking:
+    x-vcloud-added-in: 32.0
+    description: |
+      The backing details of the edge gateway
+    type: object
+    properties:
+      backingId:
+        type: string
+        description: The identifier of the edge gateways backing router.
+      gatewayType:
+        $ref: '#/definitions/EdgeGatewayType'
+        description: The type of the gateway. Describes if this is an NSX-T edge gateway or an NSX-V edge gateway.
+      networkProvider:
+        $ref: '../common/entity.yaml#/definitions/EntityReference'
+        description: The backing network provider, either NSX-T or NSX-V.

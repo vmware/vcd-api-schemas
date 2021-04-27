@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,8 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/extension/v1.5"
     xmlns:tns="http://www.vmware.com/vcloud/extension/v1.5"
@@ -236,3 +238,4 @@
     </xs:complexType>
 
 </xs:schema>
+
