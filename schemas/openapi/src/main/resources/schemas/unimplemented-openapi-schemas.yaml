@@ -1,0 +1,34 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Unimplemented vCloud Director OpenAPI
+  version: "NONE"
+  description: |
+    API here is meant to allow code generation to occur so that API implementation can be started without releasing the API.
+    A typical flow is that if the API is not ready for release after stabilization branching:
+    * Move the API definition from vcloud-openapi-schemas.yaml to this file.
+    * Remove the API handler from the main-rest-api-application-context.xml
+    * Remove all links to the API from other API handlers
+    * Mark the tests as UNIMPLEMENTED/BROKEN so that it can be skipped
+
+produces:
+  - '*/*'
+
+paths:
+
+### Networking ###
+  /edgeGateways/{gatewayId}/dns:
+    $ref: "./networking/edgeGatewayDns.yaml#/paths/dns"
+
+  /networkPools:
+    $ref: "./networking/networkPools.yaml#/paths/networkPools"
+
+  /networkPools/{networkPoolId}:
+    $ref: "./networking/networkPools.yaml#/paths/networkPool"
+
