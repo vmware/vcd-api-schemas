@@ -1,0 +1,213 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Load Balancer Controllers API allows for CRUD operations for Load Balancer Controllers
+  title: Load Balancer Controllers API
+  version: "1.0"
+
+paths:
+
+  loadBalancerControllers:
+    post:
+      x-vcloud-added-in: 35.0
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      tags:
+        - loadBalancerControllers
+      summary: Register a new Load Balancer Controller
+      description: |
+        Register a new Load Balancer Controller to be used with vCloud Director.
+      operationId: registerLoadBalancerController
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerController
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoadBalancerController'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      tags:
+        - loadBalancerControllers
+      summary: Get all registered Load Balancer Controllers in the system.
+      description: |
+        Retrieves all registered Load Balancer Controllers.
+      operationId: getLoadBalancerControllers
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/LoadBalancerControllers'
+
+
+  loadBalancerController:
+    parameters:
+      - name: loadBalancerControllerId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: loadBalancerController
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerController
+      summary: Get Load Balancer Controller
+      description: |
+        Retrieves a specific Load Balancer Controller.
+      operationId: getLoadBalancerController
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/LoadBalancerController"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerController
+      summary: Update specified Load Balancer Controller
+      description: |
+        Update an Load Balancer Controller.
+      operationId: updateLoadBalancerController
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerController
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LoadBalancerController"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerController
+      summary: Unregister the specified Load Balancer Controller.
+      description: |
+        Unregister an Load Balancer Controller.
+      operationId: unregisterLoadBalancerController
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+definitions:
+  LoadBalancerControllers:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of Load Balancer Controllers.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/LoadBalancerController'
+
+  LoadBalancerController:
+    x-vcloud-added-in: 35.0
+    description: |
+      A Load Balancer Controller.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The id of the Load Balancer Controller in URN format.
+        example: urn:vcloud:loadBalancerController:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      name:
+        type: string
+        description: The name of the Load Balancer Controller. Names for Load Balancer Controllers must be unique across the system.
+      description:
+        type: string
+        description: Description for the registered Load Balancer Controller.
+      url:
+        type: string
+        description: The URL of the Load Balancer Controller. URLs for Load Balancer Controllers must be unique across the system.
+        format: uri
+        example: https://loadBalancerController.vmware.com
+      username:
+        type: string
+        description: Username to connect to the Load Balancer Controller.
+      password:
+        type: string
+        description: Cleartext password to connect to the Load Balancer Controller.
+      licenseType:
+        type: string
+        description: |
+          The license type of the Load Balancer Controller.
+          <ul>
+          <li>BASIC - Basic edition of the NSX Advanced Load Balancer.
+          <li>ENTERPRISE - Full featured edition of the NSX Advanced Load Balancer.
+          </ul>
+        default: "BASIC"
+      version:
+        type: string
+        description: The version of the load balancer controller.
+    required:
+      - name
+      - url
+      - username
+      - password
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: loadBalancerController
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      url:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      username:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      password:
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      version:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable

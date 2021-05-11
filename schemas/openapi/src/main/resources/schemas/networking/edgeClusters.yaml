@@ -1,0 +1,200 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for managing Edge Clusters. Edge Clusters can be created to define the storage and compute parameters used to deploy an Edge Gateway.
+  version: "1.0"
+  title: Edge Clusters API
+
+paths:
+
+  edgeClusters:
+
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeClusters
+      summary: Create a new Edge Cluster
+      description: |
+        Create a new Edge Cluster. An Edge Cluster is defined by a Resouce Pool and Storage Profile for deploying Edge Gateways. It can subsequently be assigned to a
+        given vDC Network Profile as a Primary or Secondary Edge Cluster.
+      operationId: createEdgeCluster
+      consumes:
+        - application/json
+      parameters:
+        - name: edgeCluster
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeCluster'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeClusters
+      summary: Get all Edge Clusters in the system
+      description: |
+        Retrieves all Edge Clusters. Results can be filtered by id, name, vCenter (resourcePool.vcId)
+        and externalNetworkId.
+        <ul>
+        <li>externalNetworkId - |
+        The URN of external Network.
+        Filters all edgeClusters that are accessible to externalNetworkId.
+        externalNetworkId filter is supported from version 35.2
+        Example: (externalNetworkId==urn:vcloud:network:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+        </ul>
+      operationId: getEdgeClusters
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeClusters'
+
+  edgeCluster:
+    parameters:
+      - name: edgeClusterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: edgeCluster
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeCluster
+      summary: Retrieves a specific Edge Cluster
+      operationId: getEdgeCluster
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeCluster'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeCluster
+      summary: Updates a specific Edge Cluster
+      operationId: updateEdgeCluster
+      consumes:
+        - application/json
+      parameters:
+        - name: edgeCluster
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeCluster'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeCluster
+      summary: Deletes a specific Edge Cluster
+      operationId: deleteEdgeCluster
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeClusters:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of Edge Clusters.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/EdgeCluster'
+
+  EdgeCluster:
+    x-vcloud-added-in: 32.0
+    description: |
+      An Edge Cluster object.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The id of the Edge Cluster in URN format.
+      name:
+        type: string
+        description: The name of the Edge Cluster. Names for Edge Clusters must be unique across the system.
+      description:
+        type: string
+      resourcePool:
+        $ref: "#/definitions/ResourcePool"
+        description: The Resource Pool in vCenter where the Edge VM will be deployed.
+      storageProfileName:
+        type: string
+        description: Name of the Storage Profile. This will define the set of datastores where the edge vm will be deployed.
+    required:
+      - name
+      - vcId
+      - resourcePoolPath
+      - storageProfileName
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: edgeCluster
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      resourcePool:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      storageProfileName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./networking/externalNetworks.yaml#/definitions/ExternalNetwork"
+          referenced-property: id
+          alias: externalNetworkId
+
+
+  ResourcePool:
+    $ref: "./vc/resourcePool.yaml#/definitions/ResourcePool"
+

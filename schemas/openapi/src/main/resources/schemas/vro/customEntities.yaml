@@ -1,8 +1,9 @@
-# *************************************************************************
+# ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
-# *************************************************************************
+# ******************************************************************************
+
 swagger: "2.0"
 info:
   description: |
@@ -16,6 +17,8 @@ paths:
       tags:
         - customEntities
       summary: Get list of all custom entity types
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: definedEntities
       description: |
         Get list of custom entity types.
       operationId: queryCustomEntityTypes
@@ -31,12 +34,14 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "#/definitions/CustomEntityTypes"
 
     post:
       tags:
         - customEntities
       summary: Creates a new custom entity type
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: definedEntities
       description: |
         Creates a new custom entity type
       operationId: createCustomEntityType
@@ -66,6 +71,8 @@ paths:
       tags:
         - customEntities
       summary: Get specified custom entity type
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: definedEntities
       operationId: getCustomEntityType
       produces:
         - application/json
@@ -80,6 +87,8 @@ paths:
       tags:
         - customEntities
       summary: Update specified custom entity type
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: definedEntities
       operationId: updateCustomEntityType
       consumes:
         - application/json
@@ -100,6 +109,8 @@ paths:
       tags:
         - customEntities
       summary: Delete specified custom entity type.
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: definedEntities
       operationId: deleteCustomEntityType
       parameters:
         - name: "recursive"
@@ -110,6 +121,173 @@ paths:
       responses:
         204:
           description: No Content
+
+  custom-entity-type-tenants:
+    parameters:
+      - name: customEntityTypeId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - customEntities
+      summary: Retrieves list of tenants for whom the custom entity type is explicitly published
+      description: |
+        Retrieves list of item for whom the custom entity type is explicitly published
+      operationId: getCustomEntityTypeTenants
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+    put:
+      tags:
+        - customEntities
+      summary: Resets list of tenants for whom the custom entity type is explicitly published
+      description: |
+        Resets list of tenants for whom the custom entity type is explicitly published
+      operationId: setCustomEntityTypeTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+  custom-entity-type-tenants-publish:
+    parameters:
+      - name: customEntityTypeId
+        in: path
+        required: true
+        type: string
+    post:
+      tags:
+        - customEntities
+      summary: Publishes the custom entity type to the specified tenants
+      description: |
+        Publishes the custom entity type to the specified tenants
+      operationId: postCustomEntityTypePublish
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+  custom-entity-type-tenants-unpublish:
+    parameters:
+      - name: customEntityTypeId
+        in: path
+        required: true
+        type: string
+    post:
+      tags:
+        - customEntities
+      summary: Revokes publication of the custom entity type to the specified tenants
+      description: |
+        Revokes publication of the custom entity type to the specified tenants
+      operationId: postCustomEntityTypeUnpublish
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: unpublishTenantsBody
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+  custom-entity-type-tenants-publish-all:
+    parameters:
+      - name: customEntityTypeId
+        in: path
+        required: true
+        type: string
+    post:
+      tags:
+        - customEntities
+      summary: Publishes the custom entity type to all tenants
+      description: |
+        Publishes the custom entity type to all tenants
+      operationId: postCustomEntityTypePublishAll
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+  custom-entity-type-tenants-unpublish-all:
+    parameters:
+      - name: customEntityTypeId
+        in: path
+        required: true
+        type: string
+    post:
+      tags:
+        - customEntities
+      summary: Unpublishes the custom entity type from all tenants
+      description: |
+        Unpublishes the custom entity type from all tenants
+      operationId: postCustomEntityTypeUnpublishAll
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
 
   custom-entity-type-actions:
     parameters:
@@ -201,20 +379,24 @@ paths:
       summary: Get list of all custom entities
       description: |
         Get list of custom entities
-      operationId: queryCustomEntities
+      operationId: getCustomEntities
       parameters:
         - $ref: "./common/query.yaml#/parameters/queryFilter"
         - $ref: "./common/query.yaml#/parameters/querySortAsc"
         - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "#/definitions/CustomEntities"
+        '404':
+          description: Not Found
+        '401':
+          description: The user is not authorized
+        '403':
+          description: The user does not have 'read' access rights for custom entity
 
   custom-entity:
     parameters:
@@ -275,6 +457,14 @@ definitions:
     required:
       - name
 
+  CustomEntities:
+    type: object
+    properties:
+      entities:
+        type: array
+        items:
+          $ref: '#/definitions/CustomEntity'
+
   CustomEntityType:
     type: object
     properties:
@@ -299,11 +489,35 @@ definitions:
       description:
         type: string
         default: ""
-    required:
-      - vroId
-      - vroDynamicType
-      - name
-      - nss
+      tenantScoped:
+        type: boolean
+        default: true
+      providerScoped:
+         type: boolean
+         default: true
+      publishAll:
+        description: |
+          Read-only value indicating publishAll state
+        type: boolean
+        default: false
+      required:
+        - vroId
+        - vroDynamicType
+        - name
+        - nss
+
+  CustomEntityTypes:
+    description: |
+      A list of custom entity types.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of custom entity types.
+            items:
+              $ref: '#/definitions/CustomEntityType'
 
   CreateCustomEntityTypeAction:
     type: object
@@ -346,3 +560,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/CustomEntityTypeAction'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

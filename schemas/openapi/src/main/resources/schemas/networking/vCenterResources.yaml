@@ -1,0 +1,181 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    List of existing vCenter resources.
+  version: "1.0"
+  title: vCenter resources
+
+paths:
+
+  importableDistributedPortgroups:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - vCenterResources
+      summary: Get all DVPG network backings that are available.
+      description: |
+        Get all DVPG network backings that are available. The "_context" filter key is optional and can be set
+        with the id of the vCenter from which to obtain the DVPG network backings.
+        "orgVdcId==[vdcUrn]" can be set as a filter to show importable DVPGs for an Org vDC.
+      operationId: getImportableDvpgs
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DistributedPortGroups'
+
+  importablePortgroups:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - vCenterResources
+      summary: Get all standard porgroups available as backings.
+      description: |
+        Get all standard portgroups that are available as backings. The "_context" filter key is optional and can be set
+        with the id of the vCenter from which to obtain the standard porgroup backings.
+      operationId: getImportablePortgroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PortGroups'
+
+  dvSwitches:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+      - vCenterResources
+      summary: Retrieves all distributed virtual switches.
+      operationId: getDvSwitches
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DvSwitches'
+
+definitions:
+
+  DistributedPortGroups:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of distributed portgroups.
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: './networking/vCenterResources.yaml#/definitions/DistributedPortGroup'
+
+  DistributedPortGroup:
+    x-vcloud-added-in: 33.0
+    description: |
+      Distributed portgroup.
+    type: object
+    properties:
+      backingRef:
+        $ref: '#/definitions/BackingRef'
+        description: Contains the backing id and name of the distributed portgroup.
+      virtualCenter:
+        $ref: '#/definitions/EntityReference'
+        description: The entity reference for the vCenter that contains this distributed portgroup.
+      vlan:
+        type: string
+        description: The VLAN associated with this distributed portgroup. This can be a single number or a numerical range(1-10).
+      dvSwitch:
+        $ref: '#/definitions/DvSwitch'
+        description: The distributed virtual switch on which this distributed virtual portgroup was created.
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./networking/vdcs.yaml#/definitions/OrgVdc"
+          referenced-property: id
+          alias: orgVdcId
+
+  DvSwitches:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of distributed virtual switches.
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: './networking/vCenterResources.yaml#/definitions/DvSwitch'
+
+  DvSwitch:
+    x-vcloud-added-in: 33.0
+    description: |
+      Distributed virtual switch.
+    type: object
+    properties:
+      backingRef:
+        $ref: '#/definitions/BackingRef'
+        description: Contains the backing id and name of the distributed virtual switch.
+      virtualCenter:
+        $ref: '#/definitions/EntityReference'
+        description: The entity reference for the vCenter that contains this distributed virtual switch.
+
+  PortGroup:
+    x-vcloud-added-in: 33.0
+    description: |
+      Standard portgroup.
+    type: object
+    properties:
+      backingRef:
+        $ref: '#/definitions/BackingRef'
+        description: Contains the backing id and name of the standard portgroup.
+      virtualCenter:
+        $ref: '#/definitions/EntityReference'
+        description: The entity reference for the vCenter that contains this portgroup.
+
+  PortGroups:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of standard portgroups.
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: './networking/vCenterResources.yaml#/definitions/PortGroup'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  BackingRef:
+      $ref: "./networking/commonObject.yaml#/definitions/BackingRef"

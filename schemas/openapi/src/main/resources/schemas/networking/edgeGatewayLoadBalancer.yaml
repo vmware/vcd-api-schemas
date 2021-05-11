@@ -1,0 +1,1507 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API to configure Load Balancer service on an Edge Gateway. Load Balancer service needs to be first enabled on the Edge Gateway.
+    User can then configure Virtual Services and Pools.
+  title: Edge Gateway Load Balancer API
+  version: "1.0"
+
+paths:
+
+  loadBalancer:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      tags:
+        - edgeGatewayLoadBalancer
+      summary: Retrieves Load Balancer configuration on an Edge Gateway.
+      description: |
+        Retrieves the current state of Load Balancer service on Edge Gateway.
+      operationId: getLoadBalancerConfig
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeGatewayLoadBalancerConfig'
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancer
+      summary: Update Load Balancer configuration on an Edge Gateway.
+      description: |
+        Updates the Load Balancer service configuration on Edge Gateway.
+      operationId: updateLoadBalancerConfig
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeGatewayLoadBalancerConfig'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  virtualServices:
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualServices
+      summary: Create a new Virtual Service for a specific Edge Gateway.
+      description: |
+        Create a new Virtual Service for a specific Edge Gateway.
+      operationId: createVirtualService
+      consumes:
+        - application/json
+      parameters:
+        - name: virtualServiceConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerVirtualService'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  virtualServiceSummariesForGateway:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualServices
+      summary: Get all Virtual Service Summaries for an Edge Gateway.
+      description: |
+        Retrieves all Virtual Service Summaries for an Edge Gateway.
+      operationId: getVirtualServiceSummariesForGateway
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerVirtualServiceSummaries'
+
+
+  virtualService:
+    parameters:
+      - name: virtualServiceId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: loadBalancerVirtualService
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualService
+      summary: Get Virtual Service.
+      description: |
+        Retrieves a specific Virtual Service.
+      operationId: getVirtualService
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/EdgeLoadBalancerVirtualService"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualService
+      summary: Update specified Virtual Service.
+      description: |
+        Update a Virtual Service.
+      operationId: updateVirtualService
+      consumes:
+        - application/json
+      parameters:
+        - name: virtualServiceConfig
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EdgeLoadBalancerVirtualService"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerVirtualService
+      summary: Delete the specified Virtual Service.
+      description: |
+        Delete a Virtual Service.
+      operationId: deleteVirtualService
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  poolSummariesForGateway:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerPools
+      summary: Retrieves all Load Balancer Pool Summaries for a given Edge Gateway.
+      description: |
+        Retrieves summaries for all of the Load Balancer Pools that are configured for an Edge Gateway.
+      operationId: getPoolSummariesForGateway
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPoolSummaries'
+
+  pools:
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerPools
+      summary: Creates a Load Balancer Pool.
+      operationId: createLoadBalancerPool
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerPool
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPool'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  pool:
+    parameters:
+      - name: poolId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: loadBalancerPool
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerPool
+      summary: Retrieves a specific Load Balancer Pool.
+      operationId: getLoadBalancerPool
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPool'
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerPool
+      summary: Updates a specific Load Balancer Pool.
+      operationId: updateLoadBalancerPool
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerPool
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeLoadBalancerPool'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerPool
+      summary: Deletes a specific Load Balancer Pool.
+      operationId: deleteLoadBalancerPool
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  analyticReports:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerAnalytics
+      summary: |
+        Retrieves analytics for a specific load balancer.  Metrics are specified in the
+        filter query along with time period and series resolution.  Up to 5 metric series can be
+        specified per report.  All reports will span the same time period.
+
+        Report filters are encapsulated in a fiql filter query parameter.
+        Sample filter:
+          <code>filter=(componentId==urn:vcloud:virtualservice:7d38ad7f-cd93-4501-8c40-6f61650ccda0;
+                metric==l4_server.avg_total_rtt;metric==l7_server.avg_application_response_time;step==500;limit==100)</code>
+        Supported filters are:
+          <ul>
+          <li>componentId.  The URN of the virtual service or pool for which metrics will be gathered.  Only one should be specified.
+          This is required.
+          <li>metric.  One or more metrics of interest.  <code>filter=(metric==l4_server.avg_total_rtt;metric==l7_server.avg_application_response_time)</code> -
+          This is required.  Supported metrics can be found at the analytics/supportedMetrics endpoint.
+          <li>step.  The time resolution of the report, in seconds.
+          This is required.  Minimum supported resolution is 300 seconds (5 minutes).
+          <li>limit.  Optional.  The number of data points to be returned.
+          This is optional.  Defaults to 59 where it can't be calculated.
+          <li>startTime.  Start time of the series.
+          This is optional.  Must be in ISO 8601 format (i.e. 2020-07-24T00:00:00).  If not provided, start time is calculated from the step and end time.
+          <li>endTime.  End period of the series.
+          This is optional.  Must be in ISO 8601 format (i.e. 2020-07-24T00:00:00). Defaults to the time of latest collected data point.
+          </ul>
+        This feature requires additional licensing.
+      operationId: getLoadBalancerAnalyticReports
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EdgeLoadBalancerAnalyticReports"
+
+  supportedMetrics:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewayLoadBalancerAnalytics
+      summary: |
+        Retrieves all the supported metrics for load balancer analytic reports.  These metrics can be
+        used to create runtime reports of load balancer virtual services and pools.
+        Supported filters are:
+        <ul>
+          <li>componentId.  The URN of the load balancer virtual service or pool for which we want supported metrics. Only one should be specified.
+          This is required.
+        </ul>
+        This feature requires additional licensing.
+      operationId: getLoadBalancerSupportedAnalyticMetrics
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EdgeLoadBalancerAnalyticMetrics"
+
+definitions:
+
+  EdgeGatewayLoadBalancerConfig:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes Load Balancer Service configuration on an Edge Gateway.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: A flag indicating whether Load Balancer Service is enabled or not.
+      serviceNetworkDefinition:
+        type: string
+        description: |
+          The network definition in Gateway CIDR format which will be used by Load Balancer service on edge. All the load balancer service engines
+          associated with the Service Engine Group will be attached to this network. The subnet prefix length must be 25.
+          If nothing is set, the default is <code>192.168.255.1/25</code>. Default cidr can be configured. This field cannot be updated.
+      loadBalancerCloudRef:
+        $ref: '#/definitions/EntityReference'
+        description:  Reference to the Load Balancer Cloud. This cloud is used by Edge Gateway's Load Balancer Virtual Services and Pools.
+      licenseType:
+        type: string
+        description: |
+          The license type of the backing Load Balancer Cloud.
+          <ul>
+          <li>BASIC - Basic edition of the NSX Advanced Load Balancer.
+          <li>ENTERPRISE - Full featured edition of the NSX Advanced Load Balancer.
+          </ul>
+    required:
+      - enabled
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      serviceNetworkDefinition:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: CIDR
+      loadBalancerCloudRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+      licenseType:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerVirtualServiceSummaries:
+    x-vcloud-added-in: 35.0
+    description: List of Virtual Service Summaries.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerVirtualServiceSummary'
+
+  EdgeLoadBalancerVirtualServiceCommonProperties:
+    x-vcloud-added-in: 35.0
+    description: Specifies common properties for Virtual Service objects.
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: The identifier of the Virtual Service in URN format
+          name:
+            type: string
+            minLength: 1
+            description: The name of the Virtual Service. Name is unique across all Virtual Services for an Edge Gateway.
+          description:
+            type: string
+            description: The description of the Virtual Service.
+          enabled:
+            type: boolean
+            description: A flag indicating whether Virtual Service is enabled or not.
+          virtualIpAddress:
+            type: string
+            description: |
+              The virtual IP Address (VIP) of the Virtual Service. This IP can be an allocated IP to the Gateway from the External Network or
+              it can be an arbitrary internal IP address used for internal load balancing. It it's an internal IP Address, this IP cannot be part of
+              any existing subnet attached to the Edge Gateway or any vDC Group network if the Edge Gateway is scoped accordingly.
+          loadBalancerPoolRef:
+            $ref: '#/definitions/EntityReference'
+            description:  The Load Balancer Pool associated with this Virtual Service.
+          gatewayRef:
+            $ref: '#/definitions/EntityReference'
+            description:  The Edge Gateway associated with this Virtual Service.
+          serviceEngineGroupRef:
+            $ref: '#/definitions/EntityReference'
+            description:  |
+              The Load Balancer Service Engine Group that is assigned to the Edge Gateway. This Virtual Service will be deployed to this Service Engine Group.
+          certificateRef:
+            $ref: '#/definitions/EntityReference'
+            description: The certificate used for SSL termination for the Virtual Service. This is required if the service port type is "HTTPS" or "L4_TLS".
+          servicePorts:
+            description: |
+              A list of service ports supported by this Virtual Service.  Multiple service ports are allowed only with additional licensing.
+            type: array
+            minItems: 1
+            maxItems: 10
+            items:
+              $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerServicePort'
+          healthStatus:
+            type: string
+            description: |
+              The current health status of the virtual service. Possible values are:
+              <ul>
+              <li> UP - The virtual service is healthy.
+              <li> DOWN - The virtual service is down, inactive, or has failed.
+              <li> DISABLED - The virtual service is disabled.
+              <li> UNAVAILABLE - The virtual service is unavailable.
+              <li> PENDING - The virtual service is being creating or resources are being allocated.
+              <li> UNKNOWN - The virtual service state is unknown.
+              </ul>
+          healthMessage:
+            type: string
+            description: The localized message on the health of the virtual service.
+          detailedHealthMessage:
+            type: string
+            description: The non-localized detailed message on the health of the virtual service.
+        required:
+          - name
+          - enabled
+          - virtualIpAddress
+          - loadBalancerPoolRef
+          - gatewayRef
+          - serviceEngineGroupRef
+          - servicePorts
+
+  EdgeLoadBalancerVirtualServiceSummary:
+    x-vcloud-added-in: 35.0
+    description: A Virtual Service for an Edge Gateway.
+    allOf:
+      - $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerVirtualServiceCommonProperties'
+      - type: object
+        properties:
+          applicationProfileType:
+            type: string
+            description: |
+              The profile type of application that this Virtual Service is configured with.
+              A value of "-" represents an unknown type.
+              <ul>
+              <li>HTTP - Virtual Service supports HTTP protocol.
+              <li>HTTPS - Virtual Service supports HTTPS protocol.
+              <li>L4 - Virtual Service supports Layer 4 (Transport) using UDP/TCP protocol.
+              <li>L4_TLS - Virtual Service supports Layer 4 (Transport) using UDP/TCP protocol with TLS.
+              </ul>
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: loadBalancerVirtualService
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      enabled:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      virtualIpAddress:
+        x-vcloud-constraints:
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV4_IP
+          - constraint: ReadOnly
+      certificateRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      gatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      serviceEngineGroupRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      applicationProfileType:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      servicePorts:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      status:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      healthStatus:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      healthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      detailedHealthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+
+  EdgeLoadBalancerVirtualService:
+    x-vcloud-added-in: 35.0
+    description: A Virtual Service for an Edge Gateway.
+    allOf:
+      - $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerVirtualServiceCommonProperties'
+      - type: object
+        properties:
+          applicationProfile:
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerApplicationProfile'
+            description: Specifies the application profile for the virtual service such as whether it's HTTP, HTTPS, or TCP/UDP.
+        required:
+          - applicationProfile
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: loadBalancerVirtualService
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      virtualIpAddress:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV4_IP
+      certificateRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      loadBalancerPoolRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      gatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      serviceEngineGroupRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      applicationProfile:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      servicePorts:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      status:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      healthStatus:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      healthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      detailedHealthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+
+  EdgeLoadBalancerServicePort:
+    x-vcloud-added-in: 35.0
+    description: |
+      A Virtual Service port configuration.
+    type: object
+    properties:
+      tcpUdpProfile:
+        $ref: '#/definitions/EdgeLoadBalancerTcpUdpProfile'
+        description: |
+          Specifies the TCP/UDP profile for the service ports such as TCP_PROXY or TCP_FAST_PATH.
+          If unset, a profile using the system-defined type of TCP_PROXY is used. This is valid for all Application Profiles.
+          For L4 application profile type, user can set the profile to a different type such as TCP_FAST_PATH.
+          For any other application profile type, the TCP/UDP profile type must be TCP_PROXY.
+      portStart:
+        description: |
+          The starting port number in the port range of the Virtual Service. If a single port is desired, only this field needs to be specified.
+          An example is that HTTP uses port 80.
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 65535
+      portEnd:
+        description: The ending port number in the port range of the Virtual Service.  This is not required if a single port is desired.
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 65535
+      sslEnabled:
+        description: |
+          A flag indicating whether SSL termination is enabled at the port or not.
+          This can only be enabled if HTTPS and L4_TLS Application Profile types are used.
+          At least one service port must have ssl enabled when using HTTPS or L4_TLS Application Profile types.
+          For HTTPS, if SSL is disabled for a specific port, traffic from that port will be redirected to the first SSL port specified.
+          This allows for automatic HTTP to HTTPS redirects.
+          Disabling SSL for HTTPS and L4_TLS is allowed only with additional licensing.
+        type: boolean
+        default: false
+    required:
+      - portStart
+    x-vcloud-property-annotations:
+      tcpUdpProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      portStart:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      portEnd:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      sslEnabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerApplicationProfile:
+    x-vcloud-added-in: 35.0
+    description: |
+      Specifies the application profile for the virtual service such as whether it's HTTP, HTTPS, or TCP/UDP.
+    type: object
+    properties:
+      name:
+        type: string
+        description:  Name of the application profile. Name of the system defined monitors are prefixed with System for example 'System-HTTP'.
+      type:
+        type: string
+        description: |
+          The profile type of application that this Virtual Service is configured with.
+          A value of "-" represents an unknown type.
+          Such profile can still be removed from the Virtual Service on update but is not valid on create.
+          Values are below.
+          <ul>
+          <li>HTTP - Virtual Service supports HTTP protocol.
+          <li>HTTPS - Virtual Service supports HTTPS protocol.
+          <li>L4 - Virtual Service supports Layer 4 (Transport) using UDP/TCP protocol.
+          <li>L4_TLS - Virtual Service supports Layer 4 (Transport) using UDP/TCP protocol with TLS.
+          </ul>
+          L4_TLS is allowed only with additional licensing.
+      systemDefined:
+        type: boolean
+        description:  Whether the Application Profile is system defined.
+    required:
+      - type
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      systemDefined:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerTcpUdpProfile:
+    x-vcloud-added-in: 35.0
+    description: |
+      Specifies the TCP/UDP profile for the service ports such as TCP_PROXY or TCP_FAST_PATH.
+    type: object
+    properties:
+      name:
+        type: string
+        description:  Name of the TCP/UDP profile. Name of the system defined monitors are prefixed with System for example 'System-TCP-Proxy'.
+      type:
+        type: string
+        description: |
+          This property specifies the different ways in which TCP/UDP packets are sent to the destination server.
+          A value of "-" represents an unknown type.
+          Such profile can still be removed from the Virtual Service on update but is not valid on create.
+          <ul>
+          <li>TCP_PROXY - TCP connection is terminated at the Virtual Service and a new TCP connection is made to the destination server.
+          <li>TCP_FAST_PATH - TCP packets are directly forwarded to the destination server.
+          <li>UDP_FAST_PATH - UDP packets are directly forwarded to the destination server.
+          </ul>
+        default: "TCP_PROXY"
+      systemDefined:
+        type: boolean
+        description:  Whether the TCP/UDP profile is system defined.
+    required:
+      - type
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      systemDefined:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerPoolSummaries:
+    x-vcloud-added-in: 35.0
+    description: List of Load Balancer pool summaries.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            description: The list of Load Balancer pool summaries.
+            type: array
+            items:
+              $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerPoolSummary'
+
+  EdgeLoadBalancerPoolCommonProperties:
+    x-vcloud-added-in: 35.0
+    description: Specifies common properties for Load Balancer Pool objects.
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: The unique ID of this Load Balancer Pool. On updates, the ID is required for the pool, while for create a new ID will be generated.
+          description:
+            type: string
+            description: The description of the Load Balancer Pool.
+          enabled:
+            type: boolean
+            description: True if Load Balancer Pool is enabled.
+            default: true
+          passiveMonitoringEnabled:
+            description: Whether passive monitoring for this pool is enabled or not.
+            type: boolean
+            default: true
+          healthStatus:
+            description: |
+              The current health status of the pool. Possible values are:
+              <ul>
+              <li> UP - The pool is operational.
+              <li> RUNNING - The pool is operational, but less than 50% of the pool members are up.
+              <li> DOWN - All members in the pool are down.
+              <li> DISABLED - Either the pool is disabled or all of the members are disabled.
+              <li> UNAVAILABLE - The pool is unavailable. Examples: pool has no members or pool is not assigned to any virtual service.
+              <li> UNKNOWN - The pool state is unknown.
+              </ul>
+            type: string
+          memberCount:
+            description: The total number of members in the pool.
+            type: integer
+          enabledMemberCount:
+            description: The number of enabled members in the pool.
+            type: integer
+          upMemberCount:
+            description: The number of enabled members in the pool that are operational.
+            type: integer
+          healthMessage:
+            type: string
+            description: The localized message on the health of the pool.
+
+  EdgeLoadBalancerPoolSummary:
+    x-vcloud-added-in: 35.0
+    description: Specifies a summary of a Load Balancer pool.
+    allOf:
+      - $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerPoolCommonProperties'
+      - type: object
+        properties:
+          name:
+            type: string
+            description: Name for the Load Balancer Pool. Name is unique across all pools for an Edge Gateway.
+          activeMonitoringEnabled:
+            description: Whether active monitoring for this pool is enabled or not.
+            type: boolean
+            default: false
+          virtualServiceRefs:
+            description: |
+              The list of Load Balancer Virtual Services associated with this Load balancer Pool.
+              Only first 10 Virtual Services will be returned.
+            type: array
+            maxItems: 10
+            items:
+              $ref: '#/definitions/EntityReference'
+          memberSslEnabled:
+            description: |
+              Whether SSL is enabled for communicatation between the Load Balancer Virtual Services and the pool members
+            type: boolean
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: loadBalancerPool
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      description:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      passiveMonitoringEnabled:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      activeMonitoringEnabled:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      virtualServiceRefs:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      healthStatus:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      memberCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabledMemberCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      upMemberCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      memberSslEnabled:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      healthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerPool:
+    x-vcloud-added-in: 35.0
+    description: Specifies the Load Balancer pool configuration.
+    allOf:
+      - $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerPoolCommonProperties'
+      - type: object
+        properties:
+          name:
+            type: string
+            description: Name for the Load Balancer Pool. Name is unique across all pools for an Edge Gateway.
+          defaultPort:
+            description: The destination server port used by the traffic sent to the member.
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 65535
+            default: 80
+          gracefulTimeoutPeriod:
+            description: |
+              Maximum time (in minutes) to gracefully disable a member. Virtual service waits for the specified time
+              before terminating the existing connections to the members that are disabled.
+              <code>Special values: 0 represents 'Immediate', -1 represents 'Infinite'.</code>
+            type: integer
+            format: int32
+            minimum: -1
+            maximum: 7200
+            default: 1
+          algorithm:
+            type: string
+            description: |
+              The algorithm for choosing a member within the pool's list of available members for each new connection.
+              Default value is "LEAST_CONNECTIONS". Supported algorithms are:
+              <ul>
+              <li>LEAST_CONNECTIONS
+              <li>ROUND_ROBIN
+              <li>CONSISTENT_HASH
+              <li>FASTEST_RESPONSE
+              <li>LEAST_LOAD
+              <li>FEWEST_SERVERS
+              <li>RANDOM
+              <li>FEWEST_TASKS
+              <li>CORE_AFFINITY
+              </ul>
+              <em>CONSISTENT_HASH</em> uses Source IP Address hash.
+              Using <em>FASTEST_RESPONSE</em>, <em>LEAST_LOAD</em>, <em>FEWEST_SERVERS</em>, <em>RANDOM</em>, <em>FEWEST_TASKS</em>,
+              <em>CORE_AFFINITY</em> algorithms may require additional licensing.
+            default: "LEAST_CONNECTIONS"
+          healthMonitors:
+            description: |
+              Member server's health can be monitored by using one or more health monitors. Active monitors
+              generate synthetic traffic and mark a server up or down based on the response.
+            type: array
+            items:
+              $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerHealthMonitor'
+          persistenceProfile:
+            description: Selected persistence profile for the Load Balancer Pool.
+            $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerPersistenceProfile'
+          members:
+            description: |
+              The list of destination servers which are used by the Load Balancer Pool to direct
+              load balanced traffic.
+            type: array
+            maxItems: 100
+            items:
+              $ref: './networking/edgeGatewayLoadBalancer.yaml#/definitions/EdgeLoadBalancerPoolMember'
+          virtualServiceRefs:
+            description: The list of Load Balancer Virtual Services associated with this Load balancer Pool.
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+          gatewayRef:
+            $ref: '#/definitions/EntityReference'
+            description:  The Edge Gateway associated with this Load Balancer Pool.
+          caCertificateRefs:
+            description: The root certificates to use when validating certificates presented by the pool members.
+            type: array
+            maxItems: 100
+            items:
+              $ref: '#/definitions/EntityReference'
+          commonNameCheckEnabled:
+            description: |
+              Whether to check the common name of the certificate presented by the pool member. This cannot be enabled
+              if no caCertificateRefs are specified.
+            type: boolean
+            default: false
+          domainNames:
+            description: |
+              A list of domain names which will be used to verify the common names or subject alternative names presented by the pool
+              member certificates. It is performed only when common name check (commonNameCheckEnabled) is enabled. If common name check
+              is enabled, but domain names are not specified then the incoming host header will be used to check the certificate.
+            type: array
+            maxItems: 10
+            items:
+              type: string
+            example: ["*.example.com", "www.vmware.com"]
+        required:
+          - name
+          - gatewayRef
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: loadBalancerPool
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      passiveMonitoringEnabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      defaultPort:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      gracefulTimeoutPeriod:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      algorithm:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      healthMonitors:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      persistenceProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      members:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      virtualServiceRefs:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      gatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      healthStatus:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      memberCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabledMemberCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      upMemberCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      caCertificateRefs:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      commonNameCheckEnabled:
+        x-vcloud-constraints:
+        - constraint: NonSearchable
+        - constraint: NonSortable
+      domainNames:
+        x-vcloud-constraints:
+        - constraint: NonSearchable
+        - constraint: NonSortable
+      healthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerPoolMember:
+    x-vcloud-added-in: 35.0
+    description: Defines a member (a destination server) in a Load Balancer Pool.
+    type: object
+    properties:
+      ipAddress:
+        description: The ip address of the Load Balancer Pool member.
+        type: string
+      port:
+        description: The port number of the Load Balancer Pool member. If unset, the port that the client used to connect will be used.
+        type: integer
+        minimum: 1
+        maximum: 65535
+        format: int32
+      ratio:
+        description: The ratio of selecting eligible servers in the pool.
+        type: integer
+        minimum: 1
+        maximum: 20
+        default: 1
+        format: int32
+      enabled:
+        description: Whether the Load Balancer Pool member is enabled or not.
+        type: boolean
+        default: true
+      healthStatus:
+        description: |
+          The current health status of the pool member. Possible values are:
+          <ul>
+          <li> UP - The member is operational.
+          <li> DOWN - The member is down.
+          <li> DISABLED - The member is disabled
+          <li> UNKNOWN - The state is unknown.
+          </ul>
+        type: string
+      markedDownBy:
+        description: |
+          When the member is DOWN, the value gives the names of the health monitors that marked the member as down.
+          If a monitor cannot be determined, the value will be UNKNOWN.
+        type: array
+        items:
+          type: string
+      detailedHealthMessage:
+        description: |
+          The non-localized detailed message on the health of the pool member.
+        type: string
+    required:
+      - ipAddress
+    x-vcloud-property-annotations:
+      ipAddress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV4_IP
+      port:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ratio:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      healthStatus:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      markedDownBy:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      detailedHealthMessage:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+
+  EdgeLoadBalancerHealthMonitor:
+    x-vcloud-added-in: 35.0
+    description: |
+      Specifies the health monitoring configuration for a Load Balancer Pool.
+      Health monitors are used to monitor health of the Load Balancer Pool's member servers.
+    type: object
+    properties:
+      name:
+        type: string
+        description:  Name of the Health monitor. Name of the system defined monitors are prefixed with System for example 'System-HTTP'.
+      type:
+        type: string
+        description: |
+          Type of the health monitors. A value of "-" represents an unknown type.
+          Such monitor can still be removed from the Load Balancer Pool on update but is not valid on create.
+          Supported values are:
+          <ul>
+          <li>HTTP - HTTP request/response is used to validate health.
+          <li>HTTPS - Used against HTTPS encrypted web servers to validate health.
+          <li>TCP - TCP connection is used to validate health.
+          <li>UDP - A UDP datagram is used to validate health.
+          <li>PING - An ICMP ping is used to validate health.
+          </ul>
+      systemDefined:
+        type: boolean
+        description:  Whether the Health Monitor is system defined.
+    required:
+      - type
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      systemDefined:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerPersistenceProfile:
+    x-vcloud-added-in: 35.0
+    description: |
+      Specifies the Persistence profile for a Load Balancer Pool.
+      Persistence profile will ensure that the same user sticks to the same server for a desired duration of time.
+      If the persistence profile is unmanaged by Cloud Director, updates that leave the values unchanged will continue to use the same unmanaged profile.
+      Any changes made to the persistence profile will cause Cloud Director to switch the pool to a profile managed by Cloud Director.
+    type: object
+    properties:
+      name:
+        type: string
+        description:  |
+          Name of the Persistence profile.
+      type:
+        type: string
+        description: |
+          Type of persistence strategy to use.
+          Supported values are:
+          <ul>
+          <li>CLIENT_IP - The client’s IP is used as the identifier and mapped to the server.
+          <li>HTTP_COOKIE - Load Balancer inserts a cookie into HTTP responses. Cookie name must be provided as value.
+          <li>CUSTOM_HTTP_HEADER - Custom, static mappings of header values to specific servers are used. Header name must be provided as value.
+          <li>APP_COOKIE - Load Balancer reads existing server cookies or URI embedded data such as JSessionID. Cookie name must be provided as value.
+          <li>TLS - Information is embedded in the client’s SSL/TLS ticket ID. This will use default system profile "System-Persistence-TLS".
+          </ul>
+          Using <em>CUSTOM_HTTP_HEADER</em>, <em>APP_COOKIE</em>, <em>TLS</em> persistence types may require additional licensing.
+      value:
+        type: string
+        description:  |
+          Value of attribute based on selected persistence type.
+          This is required for HTTP_COOKIE, CUSTOM_HTTP_HEADER and APP_COOKIE persistence types.
+          HTTP_COOKIE, APP_COOKIE must have cookie name set as the value and CUSTOM_HTTP_HEADER must have header name set as the value.
+    required:
+      - type
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      value:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerAnalyticReports:
+    x-vcloud-added-in: 35.0
+    description: |
+      A set of Load Balancer analytic reports.  Each report in the list represents
+      a timeseries of Edge Gateway Load Balancer runtime data.
+    type: object
+    properties:
+      values:
+        maxItems: 5
+        type: array
+        items:
+          $ref: '#/definitions/EdgeLoadBalancerAnalyticReport'
+
+  EdgeLoadBalancerAnalyticReport:
+    x-vcloud-added-in: 35.0
+    description: |
+      A Load Balancer Analytic Report. It represents a timeseries
+      of Edge Gateway Load Balancer runtime data.
+    type: object
+    properties:
+      gatewayId:
+        type: string
+        description: The gateway URN identier.
+      componentId:
+        type: string
+        description: The virtual service or pool URN identifier.
+      metric:
+        type: string
+        description: The metric for this specific report.  Supported metrics can be determined by using the supported metrics API.
+      units:
+        type: string
+        description: |
+          The units for this specific report.  Units may be one of the following
+          <ul>
+          <li>PER_SECOND
+          <li>METRIC_COUNT
+          <li>BITS_PER_SECOND
+          <li>BYTES_PER_SECOND
+          <li>MILLISECONDS
+          <li>PERCENT
+          </ul>
+          Units are derived from the reported metric.
+      statistics:
+        $ref: '#/definitions/EdgeLoadBalancerMetricSummaryStats'
+        decription: High level statistical roll up of data for this report.
+      data:
+        description: The metric timeseries of data for this report.
+        type: array
+        items:
+          $ref: '#/definitions/EdgeLoadBalancerMetricData'
+    x-vcloud-property-annotations:
+      gatewayId:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      componentId:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      metric:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      units:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      statistics:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      data:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          alias: metric
+      - cross-reference:
+          alias: step
+      - cross-reference:
+          alias: limit
+      - cross-reference:
+          alias: startTime
+      - cross-reference:
+          alias: endTime
+      - cross-reference:
+          alias: componentId
+
+  EdgeLoadBalancerMetricSummaryStats:
+    x-vcloud-added-in: 35.0
+    description: |
+      A statistical summary of the data in the report.
+    type: object
+    properties:
+      mean:
+        type: number
+        description:  Mean value of sample.
+      min:
+        type: number
+        description:  Min value of sample.
+      max:
+        type: number
+        description:  Max value of sample.
+      trend:
+        type: number
+        description:  Sample trend.
+      sampleSize:
+        type: number
+        description:  Sample size.
+      startTime:
+        type: string
+        description:  Start time of data series.  ISO 8601 format (i.e. 2020-07-24T00:00:00).
+      endTime:
+        type: string
+        description:  End time of data series.  ISO 8601 format (i.e. 2020-07-24T00:00:00).
+
+  EdgeLoadBalancerMetricData:
+    x-vcloud-added-in: 35.0
+    description: |
+      A data point in the metric timeseries.
+    type: object
+    properties:
+      timestamp:
+        type: string
+        description: Sampled data time.
+      value:
+        type: string
+        description: Data value for the sampled time.  ISO 8601 format (i.e. 2020-07-24T00:00:00).
+
+  EdgeLoadBalancerAnalyticMetrics:
+    x-vcloud-added-in: 35.0
+    description: The list of supported metrics.  These metrics can be used for building report queries.
+    type: object
+    properties:
+      metrics:
+        type: array
+        items:
+          $ref: '#/definitions/EdgeLoadBalancerAnalyticMetric'
+    x-vcloud-property-annotations:
+      metrics:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeLoadBalancerAnalyticMetric:
+    x-vcloud-added-in: 35.0
+    description: A supported metrics.
+    type: object
+    properties:
+      key:
+        type: string
+        description: The metric key to be used in report queries.
+      description:
+        type: string
+    x-vcloud-property-annotations:
+      key:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          alias: componentId
+
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

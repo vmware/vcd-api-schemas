@@ -1,0 +1,122 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    Entity used to describe unmanaged Virtual Machine in vCenter, such unmanaged VMs are candidates for import into Cloud Director.
+  title: Unmanaged Virtual Machine
+  version: "1.0"
+
+paths:
+  unmanagedVirtualMachines:
+    get:
+      x-cloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Get a list of unmanaged virtual machines from vCenter Server
+      description: |
+        Get a list of unmanaged virtual machines from vCenter Server
+      operationId: getUnmanagedVirtualMachines
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "./vc/unmanagedVirtualMachine.yaml#/definitions/UnmanagedVirtualMachines"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+definitions:
+
+    UnmanagedVirtualMachine:
+      x-vcloud-added-in: 34.0
+      description: |
+        An unmanaged Virtual Machine is a Virtual Machine that is not managed by Cloud Director but is present in vCenter.
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the virtual machine.
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        memory:
+          type: integer
+          format: int64
+          description: The total memory (in MB) of the virtual machine.
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        cpuCount:
+          type: integer
+          format: int32
+          description: The total number of CPUs of the virtual machine.
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        storage:
+          type: integer
+          format: int64
+          description: The total storage (in KB) of the virtual machine.
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        path:
+          type: string
+          description: The absolute path of the virtual machine in the vCenter's datastore.
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        virtualHardwareVersion:
+          type: integer
+          description: The virtual hardware version of the virtual machine.
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        state:
+          type: string
+          description: The following strings are valid states of the virtual machine.
+                <ul>
+                       <li>INVALID</li>
+                       <li>OFF</li>
+                       <li>ON</li>
+                       <li>SUSPENDED</li>
+                       <li>UNKNOWN</li>
+                       <li>STUCK</li>
+                </ul>
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+        moRef:
+          type: string
+          description: The vSphere Managed Object Reference.
+          x-vcloud-constraint:
+            - constraint: NonSortable
+            - constraint: ReadOnly
+
+    UnmanagedVirtualMachines:
+      x-vcloud-added-in: 34.0
+      description: |
+        A list of unmanaged Virtual Machines
+      allOf:
+        - $ref: "./common/query.yaml#/definitions/Page"
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: "./vc/unmanagedVirtualMachine.yaml#/definitions/UnmanagedVirtualMachine"

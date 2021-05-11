@@ -1,0 +1,220 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    This API represents a grouping of two or more Org Vdcs connected via VPN (either the vDC
+    entities or the gateway entities) and chosen associated networks. The networks within the VDC
+    VPN group members will be accessible to the other VDCs or edge gateways by VPN.
+  version: "1.0"
+  title: Org VDC VPN Group API
+
+paths:
+  orgVdcVpnGroups:
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - orgVdcVpnGroup
+      summary: gets all Org VDC VPN Groups
+      description: |
+        Gets all the Org VDC VPN Groups available to the user
+      operationId: getVdcVpnGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/VdcVpnGroups'
+
+    post:
+      x-vcloud-added-in: 36.0
+      tags:
+        - orgVdcVpnGroup
+      summary: creates an Org VDC VPN Group
+      description: |
+        Takes an Org VDC VPN Group object and establishes a VPN connection between each pair of VDCs
+        (and the associated networks) within the object
+      operationId: createVdcVpnGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcVpnGroup
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcVpnGroup'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  orgVdcVpnGroup:
+    parameters:
+      - name: vdcVpnGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcVpnGroup
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - orgVdcVpnGroup
+      summary: gets an Org VDC VPN Group
+      description: |
+        Retrieves a singular Org VDC VPN Group with the given ID
+      operationId: getVdcVpnGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/VdcVpnGroup'
+
+    put:
+      x-vcloud-added-in: 36.0
+      tags:
+        - orgVdcVpnGroup
+      summary: updates an Org VDC VPN Group
+      description: |
+        Updates a singular Org VDC VON Group with the given ID
+      operationId: updateVdcVpnGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcVpnGroup
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcVpnGroup'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    delete:
+      x-vcloud-added-in: 36.0
+      tags:
+        - orgVdcVpnGroup
+      summary: deletes specified Org VDC VPN Grouping
+      description: |
+        Deletes a singular Org VDC VPN Group with the given ID
+      operationId: deleteVdcVpnGroup
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+
+definitions:
+  VdcVpnGroups:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of VDC VPN Groups
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/VdcVpnGroup'
+
+  VdcVpnGroup:
+    x-vcloud-added-in: 36.0
+    description: |
+      A VDC VPN Group object contains a series of VDC VPN Group Members to establish VPN
+      connections amongst them. Each VDC and network listed within the VDC VPN Group will have its
+      networks accessible to the other VDCs in the connection.
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of the Org VDC VPN Group
+      description:
+        type: string
+        description: The description of the Org VDC VPN Group
+      id:
+        type: string
+        description: The URN of the Org VDC VPN Group Object
+      orgId:
+        type: string
+        description: The organization that this VDC VPN group belongs to.
+      members:
+        type: array
+        description: List of VDC VPN Group members to connect with VPN
+        items:
+          $ref: '#/definitions/VdcVpnGroupMember'
+    required:
+      - name
+      - members
+      - orgId
+    x-vcloud-property-annotations:
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: vdcVpnGroup
+      orgId:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: org
+      members:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+
+  VdcVpnGroupMember:
+    x-vcloud-added-in: 36.0
+    description: |
+      A VDC VPN Group Member contains the org VDC or edge gateway to connect and selected org VDC
+      networks to be accessible across the VPN connection.
+    properties:
+      connectedEntity:
+        $ref: '#/definitions/EntityReference'
+        description: Either a VDC or an edge gateway to use as one end of the VPN connection
+      networks:
+        type: array
+        description: The list of org VDC networks entity refs to be shared in the VPN connection
+        items:
+          $ref: '#/definitions/EntityReference'
+    required:
+      - connectedEntity
+      - networks
+    x-vcloud-property-annotations:
+      connectedEntity:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networks:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+

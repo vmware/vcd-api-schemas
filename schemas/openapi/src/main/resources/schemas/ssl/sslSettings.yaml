@@ -1,0 +1,123 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director SSL Settings API
+  version: "1.0"
+  title: vCloud Director SSL Settings API
+
+paths:
+  sslSettings:
+    get:
+      tags:
+        - sslSettings
+      summary: Get the SSL settings
+      x-vcloud-added-in: 34.0
+      description: |
+        Get the current VCD SSL settings
+      operationId: getSslSettings
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SslSettings'
+
+    put:
+      tags:
+        - sslSettings
+      summary: Updates the SSL settings.
+      x-vcloud-added-in: 35.2
+      description: |
+        Updates the current VCD SSL settings
+      operationId: updateSslSettings
+      consumes:
+        - application/json
+      parameters:
+        - name: modifiedSslSettings
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/SslSettings"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+definitions:
+  SslSettings:
+    type: object
+    description: The VCD SSL settings
+    x-vcloud-added-in: 34.0
+    properties:
+      enabledSslProtocols:
+        type: array
+        description: SSL protocols
+        items:
+          type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      enabledSslCiphers:
+        type: array
+        description: SSL ciphers
+        items:
+          type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      keySize:
+        type: integer
+        description: Size of keys generated
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      certificateValidityDays:
+        type: integer
+        description: Number of days generated certificates are valid for
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      certificateSignatureAlgorithm:
+        type: string
+        description: Algorithm used to sign generated certificates
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      fipsMode:
+        type: string
+        default: "OFF"
+        description: |
+          The desired FIPS mode of this server group.
+          <ul>
+            <li>
+              <em>ON</em>: Indicates FIPS mode is desired for this server group.
+            </li>
+            <li>
+              <em>OFF</em>: Indicates FIPS mode is not desired for this server group.
+            </li>
+          </ul>
+        x-vcloud-added-in: 35.2
+      status:
+        type: string
+        default: "CURRENT"
+        description: |
+          The current SSL settings status for this server group.
+          <ul>
+            <li>
+              <em>CURRENT</em>: Indicates that all of the SSL settings for this server group are up to date.
+            </li>
+            <li>
+              <em>UPDATING</em>: Indicates that there is at least one cell in the server group which has not yet
+              applied the SSL settings.
+            </li>
+            <li>
+              <em>AWAITING_RESTART</em>: Indicates that the SSL settings for this server group have been applied on each cell,
+              and that each cell needs to be rebooted for the settings to take place. When each cell has been rebooted this field
+              will change to CURRENT.
+            </li>
+          </ul>
+        x-vcloud-added-in: 35.2
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+

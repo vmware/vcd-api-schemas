@@ -1,0 +1,481 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The SDDC API allows for management of dedicated VC resources within a tenant.
+  title: Sddc API
+  version: "1.0"
+
+paths:
+
+  sddcs:
+    get:
+      tags:
+        - sddcs
+      summary: Get the list of Software-Defined Datacenters accessible to the user.
+      x-vcloud-added-in: 32.0
+      description: |
+        Get the list of Software-Defined Datacenters accessible to the user.
+      operationId: getSddcs
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './cpom/cpomObjects.yaml#/definitions/Sddcs'
+
+    post:
+      tags:
+        - sddcs
+      summary: Create a Software-Defined Datacenter.
+      x-vcloud-added-in: 32.0
+      description: |
+        Create a Software-Defined Datacenter.
+      operationId: createSddc
+      consumes:
+        - application/json
+      parameters:
+        - name: newSddc
+          description: The new SDDC model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Sddc"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  sddc:
+    parameters:
+      - name: id
+        description: SDDC ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: sddc
+
+    get:
+      tags:
+        - sddcs
+      summary: Retrieve a specific Software-Defined Datacenter.
+      x-vcloud-added-in: 32.0
+      description: |
+        Retrieve a specific Software-Defined Datacenter.
+      operationId: getSddc
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Sddc"
+
+    put:
+      tags:
+        - sddcs
+      summary: Update a specific Software-Defined Datacenter.
+      x-vcloud-added-in: 32.0
+      description: |
+        Update a specific Software-Defined Datacenter.
+      operationId: updateSddc
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSddc
+          description: The updated SDDC model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Sddc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Sddc"
+
+    delete:
+      tags:
+        - sddcs
+      summary: |
+        Delete a specific Software-Defined Datacenter. Unless force is specified, SDDC & its
+        proxies must be disabled before they can be deleted.
+      x-vcloud-added-in: 32.0
+      operationId: deleteSddc
+      parameters:
+        - name: "force"
+          in: "query"
+          description: |
+           If true, will delete SDDC regardless of the state of the SDDC or any of its proxies.
+          required: false
+          type: boolean
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  sddc-proxies:
+    parameters:
+      - name: id
+        description: SDDC ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcs
+      summary: Retrieve the proxies for the Software-Defined Datacenter.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxies
+      description: |
+        Retrieve the proxies for the Software-Defined Datacenter.
+      operationId: getProxiesForSddc
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"
+
+  sddc-endpoints:
+    get:
+      tags:
+        - sddcs
+      summary: Retrieve the endpoints for the SDDC.
+      x-vcloud-added-in: 35.0
+      description: |
+        Retrieve the endpoints for the SDDC.
+      operationId: getEndpointsForSddc
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcEndpoints"
+
+    post:
+      tags:
+        - sddcs
+      summary: Creates an SDDC endpoint.
+      x-vcloud-added-in: 35.0
+      description: |
+        Creates an SDDC endpoint.
+      operationId: createSddcEndpoint
+      parameters:
+        - name: endpoint
+          description: The new SDDC endpoint model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcEndpoint"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcEndpoint"
+
+  sddc-endpoint:
+    parameters:
+      - name: id
+        description: SDDC Endpoint ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: sddcEndpoint
+
+    get:
+      tags:
+        - sddcs
+      summary: Retrieves a specific SDDC endpoint.
+      x-vcloud-added-in: 35.0
+      operationId: getSddcEndpoint
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcEndpoint"
+
+    put:
+      tags:
+        - sddcs
+      summary: Update a specific SDDC endpoint.
+      x-vcloud-added-in: 35.0
+      operationId: updateSddcEndpoint
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSddcEndpoint
+          description: The updated SDDC endpoint model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcEndpoint"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcEndpoint"
+
+    delete:
+      tags:
+        - sddcs
+      summary: Delete a specific SDDC endpoint. Will not delete a default endpoint.
+      x-vcloud-added-in: 35.0
+      operationId: deleteSddcEndpoint
+      responses:
+        204:
+          description: No Content
+
+  proxies:
+    parameters:
+      - name: id
+        description: proxy ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: proxy
+
+    get:
+      tags:
+        - proxy
+      summary: Retrieve the proxies for the Software-Defined Datacenter.
+      x-vcloud-added-in: 33.0
+      description: |
+        Retrieve the proxies for the Software-Defined Datacenter.
+      operationId: getProxies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"
+
+  sddc-owner:
+    parameters:
+      - name: id
+        description: SDDC ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcs
+      summary: Retrieve the owner of the Software-Defined Datacenter.
+      x-vcloud-added-in: 32.0
+      description: |
+        Retrieve the owner of the Software-Defined Datacenter.
+      operationId: getSddcOwner
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+    put:
+      tags:
+        - sddcs
+      summary: Update the owner of the Software-Defined Datacenter.
+      x-vcloud-added-in: 32.0
+      description: |
+        Update the owner of the Software-Defined Datacenter.
+      operationId: setSddcOwner
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: newOwner
+          description: The EntityReference to the owner of the SDDC.
+          in: body
+          required: true
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  sddc-tenants:
+    parameters:
+      - name: id
+        description: SDDC ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcs
+      summary: Retrieve the list of tenants a Software-Defined Datacenter is published to.
+      x-vcloud-added-in: 32.0
+      description: |
+        Retrieve the list of tenants a Software-Defined Datacenter is published to.
+      operationId: querySddcTenants
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"
+
+    put:
+      tags:
+        - sddcs
+      summary: Reset the list of tenants a Software-Defined Datacenter is published to.
+      x-vcloud-added-in: 32.0
+      description: |
+        Reset the list of tenants a Software-Defined Datacenter is published to.
+      operationId: setSddcTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          description: The list of tenant EntityReferences that a Software-Defined Datacenter should be published to.
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"
+
+  sddc-tenants-publish:
+    parameters:
+      - name: id
+        description: SDDC ID URN
+        in: path
+        required: true
+        type: string
+    post:
+      tags:
+        - sddcs
+      summary: Publish a Software-Defined Datacenter to the given tenants.
+      x-vcloud-added-in: 32.0
+      description: |
+        Publish a Software-Defined Datacenter to the tenants.
+      operationId: sddcPublishToTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          description: The list of tenant EntityReferences that a Software-Defined Datacenter should be published to.
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "./common/entity.yaml#/definitions/EntityReference"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"
+
+  sddc-tenants-unpublish:
+    parameters:
+      - name: id
+        description: SDDC ID URN
+        in: path
+        required: true
+        type: string
+    post:
+      tags:
+        - sddcs
+      summary: Revoke publication of the Software-Defined Datacenter for the tenants.
+      x-vcloud-added-in: 32.0
+      description: |
+        Revoke publication of the Software-Defined Datacenter for the tenants.
+      operationId: sddcUnpublishFromTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: unpublishTenantsBody
+          description: The list of tenant EntityReferences that a Software-Defined Datacenter should be unpublished from.
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "./common/entity.yaml#/definitions/EntityReference"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"

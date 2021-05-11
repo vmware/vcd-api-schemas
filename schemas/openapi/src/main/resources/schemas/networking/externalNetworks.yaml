@@ -1,0 +1,486 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for management of external networks. An external network provides the
+    interface to the Internet for virtual machines connected to external
+    organization vDC networks.
+  version: "1.0"
+  title: External Networks API
+
+paths:
+
+  externalNetworks:
+    get:
+      x-vcloud-added-in: 32.0
+      x-vcloud-multisite: true
+      tags:
+      - externalNetworks
+      summary: Get all external networks.
+      description: |
+        Get all external networks. Results can be filtered by id, name,
+        backing type (networkBackings.values.backingType) and context (_context).
+        Supported contexts are:
+        Provider vDC ID (_context==providerVdcId) - |
+        Returns all the external networks which are available to a specific Provider vDC.
+        Org vDC ID (_context==orgVdcId) - |
+        Returns all the external networks which are available to a specific Org vDC.
+        vCenter ID And Resource Pool Moref (_context==vCenterId;_context==rpMoref) - |
+        Returns all the external networks accessible to a given vCenter resource pool.
+        Org vDC ID And Edge Deployment Mode (_context==orgVdcId;_context==anEdgeDeploymentMode) - |
+        Returns all the external networks to which an edge gateway can connect. Edge Deployment Mode can be
+        'standaloneEdgeDeployment' or 'haEdgeDeployment'. Deployment mode specifies whether to use both primary
+        edge cluster and secondary edge cluster or just primary edge cluster to determine external network accessibility.
+        Edge clusters are determined via vDC Network Profile for input Org vDC.
+        Org vDC ID And Dedicatable External Networks (_context==orgVdcId;_context==dedicatable) - |
+        Dedicatable only shows external networks that have no connected Edge Gateways.
+      operationId: getAllExternalNetworks
+      parameters:
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalNetworks'
+
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+      - externalNetwork
+      summary: Create an external network
+      operationId: createExternalNetwork
+      consumes:
+      - application/json
+      parameters:
+      - name: externalNetwork
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ExternalNetwork'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  externalNetwork:
+    parameters:
+    - name: externalNetworkId
+      in: path
+      required: true
+      type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+      - externalNetwork
+      summary: Retrieves a specific external network.
+      operationId: getExternalNetwork
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalNetwork'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+      - externalNetwork
+      summary: Updates a specific external network.
+      operationId: updateExternalNetwork
+      consumes:
+      - application/json
+      parameters:
+      - name: externalNetwork
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ExternalNetwork'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+      - externalNetwork
+      summary: Deletes a specific external network.
+      operationId: deleteExternalNetwork
+      parameters:
+      - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  usedIpAddresses:
+    parameters:
+      - name: externalNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - externalNetwork
+      summary: Retrieve the list of IP addresses which are being used from the network.
+      description: |
+        Get all the used IPs for a given external network. This returns all the IP addresses of network
+        which are being used by a vApp VM or by an edge gateway connected to this external network.
+        Results can be filtered by IP address.
+      operationId: getUsedIpAddresses
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UsedIpAddresses'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  availableIpAddresses:
+    parameters:
+      - name: externalNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - externalNetwork
+      summary: Retrieve the list of IP addresses available for use on the network.
+      description: |
+        Get all the available IPs for a given external network.
+      operationId: getAvailableIpAddresses
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AvailableIpPoolSubnets'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  ExternalNetworks:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of External Networks
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/definitions/ExternalNetwork'
+
+  ExternalNetwork:
+    x-vcloud-added-in: 32.0
+    description: |
+      An external network.
+    allOf:
+    - $ref: './networking/commonObject.yaml#/definitions/Network'
+    - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+    - type: object
+      properties:
+        networkBackings:
+          $ref: './networking/externalNetworks.yaml#/definitions/ExternalNetworkBackings'
+          description: |
+            Backings for this external network. Describes if this external network
+            is backed by port groups, vCenter standard switch or an NSX-T Tier-0 router.
+        totalIpCount:
+          type: integer
+          description: The number of IP addresses defined by the static ip pools. If the network contains any IpV6 subnets, the total ip count will be null.
+        usedIpCount:
+          type: integer
+          description: The number of IP address used from the static ip pools.
+        dedicatedOrg:
+          $ref: '#/definitions/EntityReference'
+          description: The Organization that this external network is dedicated to. This is null if this is not a dedicated external network.
+        dedicatedEdgeGateway:
+          $ref: '#/definitions/EntityReference'
+          description: The Edge Gateway that this external network is dedicated to. This is null if this is not a dedicated external network.
+      x-vcloud-property-annotations:
+        networkBackings:
+          x-vcloud-constraints:
+            - constraint: NonSortable
+        totalIpCount:
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+            - constraint: NonSearchable
+            - constraint: NonSortable
+        usedIpCount:
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+            - constraint: NonSearchable
+            - constraint: NonSortable
+        dedicatedOrg:
+          x-vcloud-added-in: 34.0
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+            - constraint: NonSortable
+        dedicatedEdgeGateway:
+          x-vcloud-added-in: 34.0
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+            - constraint: NonSortable
+
+  ExternalNetworkBackingType:
+    x-vcloud-added-in: 32.0
+    x-vcloud-deprecated-in: 34.0
+    description: |
+      The type of the external network backing.
+    type: object
+    enum:
+    - PORTGROUP
+    - DV_PORTGROUP
+    - NSXT_TIER0
+    - UNKNOWN
+
+  ExternalNetworkBackings:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of External Network backings.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalNetworkBacking'
+
+  ExternalNetworkBacking:
+    x-vcloud-added-in: 32.0
+    description: |
+      Information about an external network backing.
+    type: object
+    properties:
+      backingId:
+        type: string
+        description: Unique identifier for the network backing in NSX/vCenter.
+      backingType:
+        $ref: '#/definitions/ExternalNetworkBackingType'
+        description:
+          Type of network backing. This is deprecated in favor of string based enums going forward.
+      backingTypeValue:
+        type: string
+        description: |
+          Backing type for the network.
+          <ul>
+          <li>PORTGROUP</li>
+          <li>DV_PORTGROUP</li>
+          <li>NSXT_TIER0</li>
+          <li>NSXT_VRF_TIER0</li>
+          <li>IMPORTED_T_LOGICAL_SWITCH</li>
+          <li>UNKNOWN</li>
+          </ul>
+      networkProvider:
+        $ref: '#/definitions/EntityReference'
+        description: The Network Provider for the backing, either a vCenter Server or NSX-T Manager.
+      name:
+        type: string
+        description: The name of this external network backing, if it exists.
+      parentTier0Ref:
+        $ref: '#/definitions/ExtObjectReference'
+        description: If this external network is backed by a NSX-T VRF-Lite Tier0, then this field is set to be the parent Tier0 Router.  Otherwise, field is unset.
+    x-vcloud-property-annotations:
+      backingType:
+        x-vcloud-deprecated-in: 34.0
+        x-vcloud-deprecated-alternative: backingTypeValue
+      backingTypeValue:
+        x-vcloud-added-in: 35.0
+      name:
+        x-vcloud-added-in: 33.0
+      parentTier0Ref:
+        x-vcloud-added-in: 35.0
+
+
+  AvailableIpPoolSubnets:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of available IP addresses.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/AvailableIpPoolSubnet'
+
+  AvailableIpPoolSubnet:
+    x-vcloud-added-in: 33.0
+    description: |
+      Describes an available IP address.
+    type: object
+    properties:
+      gateway:
+        type: string
+        description: The gateway for the subnet on which IPs are available.
+      prefixLength:
+        type: integer
+        description: The netmask prefix length of the subnet.
+      enabled:
+        type: boolean
+        description: Indicates whether the network subnet is currently enabled.
+        default: false
+      ipRanges:
+        $ref: '#/definitions/IpRanges'
+        description: Range of IPs which are available for use.
+      totalIpCount:
+        type: integer
+        description: The total number of available IP addresses.
+    x-vcloud-property-annotations:
+      gateway:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      prefixLength:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ipRanges:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      totalIpCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  IpRanges:
+    $ref: "./networking/commonObject.yaml#/definitions/IpRanges"
+
+  UsedIpAddress:
+    x-vcloud-added-in: 33.0
+    description: |
+      Describes a used IP address for a network.
+    type: object
+    properties:
+      entityId:
+        type: string
+        description: Id of the entity using the IP address, such as a VM.
+      entityName:
+        type: string
+        description: Name of the entity using the IP address.
+      vAppName:
+        type: string
+        description: Name of the vApp whose VM is using this IP address.
+      ipAddress:
+        type: string
+        description: The IP address in use.
+      deployed:
+        type: boolean
+        description: Whether the entity using this IP address is currently deployed.
+      allocationType:
+        $ref: '#/definitions/UsedIpAddressAllocationType'
+        description: The possible allocation types for network address like VSM allocated, VM allocated or NAT routed.
+      networkRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The vApp network or Org vDC network to which this entity is connected.
+      orgRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The organization that this entity belongs to.
+    x-vcloud-property-annotations:
+      entityId:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+              - arg: vm
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      entityName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vAppName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      deployed:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      allocationType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  UsedIpAddressAllocationType:
+    x-vcloud-added-in: 33.0
+    description: |
+      The possible allocation types for allocated network IP address.
+      VM_ALLOCATED means that the IP address is used by a VM,
+      EDGE means that the IP address is in use by an NSX edge gateway interface.
+    type: object
+    enum:
+      - VM_ALLOCATED
+      - EDGE
+
+  UsedIpAddresses:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of used IP addresses.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/externalNetworks.yaml#/definitions/UsedIpAddress'
+
+  EntityReference:
+    $ref: './common/entity.yaml#/definitions/EntityReference'
+
+  ExtObjectReference:
+    $ref: './networking/commonObject.yaml#/definitions/ExtObjectReference'

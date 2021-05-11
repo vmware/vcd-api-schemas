@@ -1,0 +1,285 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Service Application API allows regristration of external VMware Service Applications.
+  version: "1.0"
+  title: VMware Service Application API
+
+paths:
+
+  serviceApps:
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+      - serviceApps
+      summary: Get all registered VMware service applications
+      operationId: queryServiceApps
+      parameters:
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ServiceApps"
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+      - serviceApps
+      summary: Create a VMware service app
+      operationId: createServiceApp
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: serviceAppId
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ServiceApp'
+      responses:
+        201:
+          schema:
+            $ref: "#/definitions/ServiceApp"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+
+  serviceApp:
+    parameters:
+    - name: serviceAppId
+      in: path
+      required: true
+      type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+      - serviceApp
+      summary: Retrieves a specific VMware service application
+      operationId: getServiceApp
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceApp'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+      - serviceApp
+      summary: Updates a specific VMware service application.
+      operationId: updateServiceApp
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: serviceApp
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ServiceApp'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ServiceApp'
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+      - serviceApp
+      summary: Deletes a specific VMware service application.
+      operationId: deleteServiceApp
+      responses:
+        204:
+          description: No Content
+
+  sddcs:
+    parameters:
+    - name: serviceAppId
+      in: path
+      required: true
+      type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+      - vmcSddcs
+      summary: Retrieves a list of SDDCs for a specific VMware service application that are available
+      operationId: getVmcSddcs
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VmcSddcs'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+      - vmcSddcs
+      summary: Register a VMware service application SDDC's components
+      operationId: registerVmcSDDC
+      consumes:
+      - application/json
+      parameters:
+      - name: serviceAppSddc
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/VmcSddc'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  ServiceApps:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of VMware service applications
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/definitions/ServiceApp'
+
+  ServiceApp:
+    x-vcloud-added-in: 32.0
+    description: |
+      A VMware service application
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique ID for the service application. This field is read-only.
+      name:
+        type: string
+        description: The name of the service application
+      clientId:
+        type: string
+        description: The client ID
+      clientSecret:
+        type: string
+        description: The client secret
+      orgId:
+        type: string
+        description: The external organization id of the service application
+      serviceScope:
+        $ref: '#/definitions/ServiceAppScope'
+        description: The scope of the service application
+      accessTokenTTL:
+        type: integer
+        description: The read-only time-to-live of the access token in seconds.
+      accessTokenExpiration:
+        type: string
+        format: date-time
+        description: The read-only expiration date of the access token.
+      enabled:
+        type: boolean
+        description: Whether the application is currently enabled.
+        default: true
+    required:
+      - name
+      - clientId
+      - clientSecret
+      - serviceScope
+
+  VmcSddcs:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of VMware Cloud on AWS SDDCs
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/definitions/VmcSddc'
+
+
+  VmcSddc:
+    x-vcloud-added-in: 32.0
+    description: |
+      A VMware Cloud on AWS SDDC
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique ID for the VMC SDDC.
+      name:
+        type: string
+        description: The name of the VMC SDDC. This field is read-only.
+      vcUsername:
+        x-vcloud-added-in: 35.0
+        type: string
+        description: The username for the account to use to register Virtual Center, if not using the VMC default.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vcPassword:
+        x-vcloud-added-in: 35.0
+        type: string
+        description: The password for the account to use to register Virtual Center, if not using the VMC default.
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      proxyConfigUrn:
+        x-vcloud-added-in: 35.0
+        type: string
+        description: The URN for the proxy configuration to use for connecting to Virtual Center.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: proxyConfiguration
+    required:
+      - id
+      - name
+
+  ServiceAppScope:
+    x-vcloud-added-in: 32.0
+    description: |
+      Describes the type of service application.
+      VMC_REFRESH_TOKEN: The application authtenticates to VMC via a refresh token
+      VMC_CLIENT_CREDENTIAL: The application authenticates to VMC using client credentials
+      VMC: Deprecated. Defaults to VMC_REFRESH_TOKEN.
+    type: object
+    enum:
+    - VMC
+    - VMC_REFRESH_TOKEN
+    - VMC_CLIENT_CREDENTIAL

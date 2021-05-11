@@ -1,0 +1,161 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The list of NSX-T resources such as Tier-1 routers that are accessible to an organization vDC.
+    These APIs are disabled/hidden for now.  If they are enabled, they should be merged with
+    nsxTResources.yaml.
+  version: "1.0"
+  title: NSX-T resources
+
+paths:
+
+  importableTier1Routers:
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - nsxTResourcesDisabled
+      summary: Get all importable Tier-1 routers that are accessible to an organization vDC.
+      description: |
+        Get all Tier-1 routers that are accessible to an organization vDC. Routers that are already associated with an Edge Gateway
+        are filtered out. The "_context" filter key must be set with the id of the organization vDC which we want to get the Tier-1 routers for.
+      operationId: getImportableTier1Routers
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Tier1Routers'
+
+  importableSegments:
+    get:
+      x-vcloud-added-in: ALPHA
+      tags:
+        - nsxTResourcesDisabled
+      summary: Get all importable segments
+      description: |
+        Get all importable segments for an OrgVDC or VdcGroup
+      operationId: getImportableSegments
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NsxTImportableSegments'
+
+definitions:
+
+  Tier1Routers:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of NSX-T's Tier-1 routers.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/Tier1Router'
+
+  Tier1Router:
+    x-vcloud-added-in: 32.0
+    description: |
+      An NSX-T's Tier-1 router.
+    allOf:
+      - $ref: './networking/nsxTResources.yaml#/definitions/CommonNsxTRouterFields'
+      - type: object
+        properties:
+          tier0Id:
+            type: string
+            description: |
+              The id of the connected Tier-0 router. Null indicates that this Tier-1 is
+              not connected to any Tier-0 router. If this id is populated and there is
+              no linkedExternalNetwork, this means that the connected Tier-0 router has
+              not been imported into VCD as an external network.
+          linkedExternalNetwork:
+            $ref: '#/definitions/ExternalNetwork'
+            description: |
+              The NSX-T Tier-0 router backed external network connected to this
+              Tier-1 router.
+        x-vcloud-property-annotations:
+          tier0Id:
+            x-vcloud-added-in: 33.0
+            x-vcloud-constraints:
+              - constraint: ReadOnly
+              - constraint: NonSearchable
+              - constraint: NonSortable
+          linkedExternalNetwork:
+            x-vcloud-added-in: 33.0
+            x-vcloud-constraints:
+              - constraint: ReadOnly
+              - constraint: NonSearchable
+              - constraint: NonSortable
+
+  NsxTImportableSegments:
+    x-vcloud-added-in: future
+    description: |
+      List of NSX-T Importable Segments
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/NsxTImportableSegment'
+
+  NsxTImportableSegment:
+    x-vcloud-added-in: future
+    description: |
+      An NSX-T's Importable Segment
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of segment.
+      id:
+        type: string
+        description: The unique id of the segment in NSX-T Manager
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./networking/vdcs.yaml#/definitions/OrgVdc"
+          referenced-property: id
+          alias: orgVdcId
+          description: |
+            A filter to look up Nsx T ImportableSegments that can be imported into this Organization Vdc
+      - cross-reference:
+          referenced-type: "./networking/vdcGroups.yaml#/definitions/VdcGroup"
+          referenced-property: id
+          alias: vdcGroupId
+          description: |
+            A filter to look up Nsx T ImportableSegments that can be imported into this Vdc Group
+
+  ExternalNetwork:
+    $ref: "./networking/externalNetworks.yaml#/definitions/ExternalNetwork"
+
+

@@ -1,0 +1,813 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for routing configuration on an edge gateway. Configurations can include route advertisement and BPG configuration
+  version: "1.0"
+  title: Edge Gateway Routing Configuration API
+
+paths:
+
+  routeAdvertisement:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayRouteAdvertisement
+      summary: Retrieve the list of subnets that will be advertised so that the Edge Gateway can route out to the connected external network.
+      description: |
+        Retrieve the list of subnets that will be advertised so that the Edge Gateway can route out to the connected external network.
+        Org vDC networks that are in any of these subnets can then be routed out to the external networks.
+      operationId: getRouteAdvertisement
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RouteAdvertisement'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayRouteAdvertisement
+      summary: Updates the list of subnets that will be advertised so that the Edge Gateway can route out to the connected external network.
+      operationId: updateRouteAdvertisement
+      consumes:
+        - application/json
+      parameters:
+        - name: routeAdvertisement
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RouteAdvertisement'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  bgp:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgp
+      summary: Retrieves the BGP configuration for a given Edge Gateway.
+      description: |
+        Retrieves the general BGP configuration for an edge gateway.
+      operationId: getBgpConfig
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeBgpConfig'
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgp
+      summary: Updates the BGP configuration on the Edge Gateway.
+      description: |
+        Updates the general BGP configuration on an edge gateway.
+      operationId: updateBgpConfig
+      consumes:
+        - application/json
+      parameters:
+        - name: bgpConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeBgpConfig'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  prefixLists:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayPrefixLists
+      summary: Retrieves all Prefix lists for a given edge gateway.
+      description: |
+        Retrieves all Prefix lists for a given edge gateway.
+        Results can be sorted by only a single parameter. Sorting by combination of parameters (sortAsc=foo&sortDesc=bar) is not allowed.
+      operationId: getPrefixLists
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgePrefixLists'
+
+    post:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayPrefixLists
+      summary: Creates a new Prefix list on the edge gateway.
+      operationId: createPrefixList
+      consumes:
+        - application/json
+      parameters:
+        - name: prefixList
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgePrefixList'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  prefixList:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: listId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayPrefixList
+      summary: Retrieves a specific Prefix list for a given edge gateway.
+      operationId: getPrefixList
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgePrefixList'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayPrefixList
+      summary: Updates a specific Prefix list for a given edge gateway.
+      operationId: updatePrefixList
+      consumes:
+        - application/json
+      parameters:
+        - name: prefixList
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgePrefixList'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayPrefixList
+      summary: Deletes a specific Prefix list for a given edge gateway.
+      operationId: deletePrefixList
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  bgpNeighbors:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgpNeighbors
+      summary: Retrieves all BGP neighbors configured for the edge gateway.
+      operationId: getBgpNeighbors
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeBgpNeighbors'
+
+    post:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgpNeighbors
+      summary: Creates a new BGP neighbor for the edge gateway.
+      operationId: createBgpNeighbor
+      consumes:
+        - application/json
+      parameters:
+        - name: bgpNeighbor
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeBgpNeighbor'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  bgpNeighbor:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: neighborId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgpNeighbor
+      summary: Retrieves a specific BGP neighbor of edge gateway.
+      operationId: getBgpNeighbor
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeBgpNeighbor'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgpNeighbor
+      summary: Updates a specific BGP neighbor of edge gateway.
+      operationId: updateBgpNeighbor
+      consumes:
+        - application/json
+      parameters:
+        - name: bgpNeighbor
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeBgpNeighbor'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgpNeighbor
+      summary: Deletes a specific BGP neighbor of edge gateway.
+      operationId: deleteBgpNeighbor
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  bgpNeighborStatus:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: neighborId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - edgeGatewayBgpNeighbor
+      summary: Retrieves status of a specific BGP neighbor configured on an Edge Gateway.
+      operationId: getBgpNeighborStatus
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkingObjectStatus'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  RouteAdvertisement:
+    x-vcloud-added-in: 34.0
+    description: |
+      List of subnets that will be advertised so that the Edge Gateway can route out to the connected external network.
+    type: object
+    properties:
+      enable:
+        type: boolean
+        default: true
+        description: True means that the subnets will be advertised. The default is true.
+      subnets:
+        type: array
+        description: |
+          List of subnets that will be advertised so that the Edge Gateway can route out to the connected external network.
+          Each value is in CIDR format. Note that the CIDR value will automatically be converted to its network definition based on the prefix length.
+        items:
+          type: string
+        minItems: 0
+        maxItems: 100
+        example:
+          - '100.64.1.0/24'
+          - 'fc7e:f206:db42::/48'
+    x-vcloud-property-annotations:
+      subnets:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: CIDR
+
+  EdgeBgpConfig:
+    x-vcloud-added-in: 34.0
+    description: Specifies the Edge Gateway BGP configuration.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: A flag indicating whether BGP configuration is enabled or not.
+        default: true
+      ecmp:
+        type: boolean
+        description: A flag indicating whether ECMP is enabled or not.
+        default: true
+      localASNumber:
+        type: string
+        description: |
+          BGP AS number to advertise to BGP peers. BGP AS number can be specified in
+          either ASPLAIN or ASDOT formats, like ASPLAIN format :- '65546', ASDOT format :- '1.10'.
+          Read only if using a VRF-Lite backed external network.
+        example: 65546
+      gracefulRestart:
+        description: |
+          BGP Graceful Restart configuration. Not specifying a value results
+          in default bahavior. Read only if using a VRF-Lite backed external network.
+        $ref: '#/definitions/EdgeBgpGracefulRestartConfig'
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - version
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ecmp:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      localASNumber:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      gracefulRestart:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeBgpGracefulRestartConfig:
+    x-vcloud-added-in: 34.0
+    description: |
+      Describes current graceful restart configuration mode and timer for BGP configuration on an edge gateway.
+    type: object
+    properties:
+      mode:
+        $ref: '#/definitions/GracefulRestartModeTypes'
+        description: Currently configured graceful restart mode. Default is HELPER_ONLY.
+      restartTimer:
+        description: |
+          Maximum time taken (in seconds) for a BGP session to be established after a restart.
+          If the session is not re-established within this timer, the receiving speaker will
+          delete all the stale routes from that peer.
+        type: integer
+        minimum: 1
+        maximum: 3600
+        default: 180
+        format: int32
+      staleRouteTimer:
+        description: Maximum time (in seconds) before stale routes are removed when BGP restarts.
+        type: integer
+        minimum: 1
+        maximum: 3600
+        default: 600
+        format: int32
+    x-vcloud-property-annotations:
+      mode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      restartTimer:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      staleRouteTimer:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  GracefulRestartModeTypes:
+    x-vcloud-added-in: 34.0
+    description: |
+      Describes Graceful Restart configuration Modes for BGP configuration on an edge gateway.
+      HELPER_ONLY mode is the ability for a BGP speaker to indicate its ability
+      to preserve forwarding state during BGP restart.
+      GRACEFUL_RESTART mode is the ability of a BGP speaker to advertise its restart
+      to its peers.
+      <ul>
+        <li> DISABLE - Both graceful restart and helper modes are disabled.
+        <li> HELPER_ONLY - Only helper mode is enabled.
+        <li> GRACEFUL_AND_HELPER - Both graceful restart and helper modes are enabled.
+      </ul>
+    type: string
+    enum:
+      - DISABLE
+      - HELPER_ONLY
+      - GRACEFUL_AND_HELPER
+
+  EdgePrefixLists:
+    x-vcloud-added-in: 34.0
+    description: |
+      List of all configured Prefix lists for an edge gateway.
+    type: object
+    properties:
+      values:
+        type: array
+        description: All Prefix lists.
+        items:
+          $ref: '#/definitions/EdgePrefixList'
+
+  EdgePrefixList:
+    x-vcloud-added-in: 34.0
+    description: |
+      A list of prefixes for routing purposes. Prefix list contains one or more ordered entries
+      which are processed sequentially.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of this prefix list. On updates, the id is required for the list, while for create a new id will be generated. This id is not a VCD URN.
+      name:
+        type: string
+        description: Name for the prefix list.
+      description:
+        type: string
+        description: Description for this prefix list.
+      prefixes:
+        type: array
+        description: List of network prefixes.
+        items:
+          $ref: '#/definitions/EdgePrefixListEntry'
+        minItems: 1
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - name
+      - prefixes
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      prefixes:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgePrefixListEntry:
+    x-vcloud-added-in: 34.0
+    description: |
+      A network prefix entry used for routing purposes.
+    type: object
+    properties:
+      network:
+        description: |
+          The network prefix in CIDR format. If the value is not specified,
+          it will be treated as "ANY" which means match all networks.
+          Both IPv4 and IPv6 formats are supported.
+        type: string
+        example: 10.22.0.0/22
+      action:
+        description: |
+          Action for the prefix list. This specifies whether the packet from specified network is advertised
+          or not for routing purposes.
+        type: string
+        enum: [PERMIT, DENY]
+        default: 'PERMIT'
+      greaterThanEqualTo:
+        description: The value which the prefix length must be greater than or equal to. Must be less than or equal to 'lessThanEqualTo'
+        type: integer
+        minimum: 1
+        maximum: 128
+        format: int32
+      lessThanEqualTo:
+        description: The value which the prefix length must be less than or equal to. Must be greater than or equal to 'greaterThanEqualTo'
+        type: integer
+        minimum: 1
+        maximum: 128
+        format: int32
+    x-vcloud-property-annotations:
+      network:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: CIDR
+      action:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      greaterThanEqualTo:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      lessThanEqualTo:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeBgpNeighbors:
+    x-vcloud-added-in: 34.0
+    description: |
+      List of all configured BGP neighbors for an edge gateway.
+    type: object
+    properties:
+      values:
+        type: array
+        description: All BGP neighbors for an edge gateway.
+        items:
+          $ref: '#/definitions/EdgeBgpNeighbor'
+
+  EdgeBgpNeighbor:
+    x-vcloud-added-in: 34.0
+    description: |
+      A BGP neighbor configuration.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of this BGP neighbor. On updates, the id is required for the object, while for create a new id will be generated. This id is not a VCD URN.
+      neighborAddress:
+        type: string
+        description: The IP address of the BGP neighbor. Both IPv4 and IPv6 formats are supported.
+        example: 10.22.1.100
+      remoteASNumber:
+        type: string
+        description: The remote AS number of a BGP neighbor in ASPLAIN format.
+        example: 65546
+      keepAliveTimer:
+        description: Specifies the time interval (in seconds) between keep alive messages sent to peer.
+        type: integer
+        minimum: 1
+        maximum: 65535
+        default: 60
+        format: int32
+      holdDownTimer:
+        description: Specifies the time interval (in seconds) before declaring a peer dead.
+        type: integer
+        minimum: 1
+        maximum: 65535
+        default: 180
+        format: int32
+      gracefulRestartMode:
+        $ref: '#/definitions/GracefulRestartModeTypes'
+        description: Currently configured graceful restart configuration mode. Default is HELPER_ONLY.
+      bfd:
+        $ref: '#/definitions/EdgeBgpBfdConfig'
+        description: |
+          Specifies the BFD configuration for failure detection. Not specifying a value results
+          in default bahavior.
+      allowASIn:
+        type: boolean
+        description: |
+          A flag indicating whether AllowAS-in is enabled or not. This specifies whether BGP neighbors
+          can receive routes with same AS.
+        default: false
+      neighborPassword:
+        type: string
+        description: |
+          Password for BGP neighbor authentication. Empty string ("") clears existing password.
+          Not specifying a value will be treated as "no password".
+        maxLength: 20
+      ipAddressTypeFiltering:
+        description: |
+          Specifies IP address type based filtering in each direction. Setting the value to
+          'DISABLED' will disable address family based filtering.
+        type: string
+        enum: [IPV4, IPV6, DISABLED]
+        default: 'DISABLED'
+      inRoutesFilterRef:
+        description: |
+          Specifies route filtering configuration for the BGP neighbor in IN direction.
+          It is the reference to the prefix list, indicating which routes to filter for IN direction.
+          Not specifying a value will be treated as "no IN route filters".
+        $ref: '#/definitions/ExtObjectReference'
+      outRoutesFilterRef:
+        description: |
+          Specifies route filtering configuration for the BGP neighbor in OUT direction.
+          It is the reference to the prefix list, indicating which routes to filter for OUT direction.
+          Not specifying a value will be treated as "no OUT route filters".
+        $ref: '#/definitions/ExtObjectReference'
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - neighborAddress
+      - remoteASNumber
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      neighborAddress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV4_IP
+              - arg: IPV6_IP
+      remoteASNumber:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      keepAliveTimer:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      holdDownTimer:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      gracefulRestartMode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      bfd:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      allowASIn:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      neighborPassword:
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ipAddressTypeFiltering:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      inRoutesFilterRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      outRoutesFilterRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeBgpBfdConfig:
+    x-vcloud-added-in: 34.0
+    description: |
+      Describes BFD configuration for failure detection.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: A flag indicating whether BFD configuration is enabled or not.
+        default: false
+      bfdInterval:
+        description: Specifies the time interval (in milliseconds) between heartbeat packets.
+        type: integer
+        minimum: 300
+        maximum: 60000
+        default: 1000
+        format: int32
+      declareDeadMultiple:
+        description: Number of times heartbeat packet is missed before BFD declares that the neighbor is down.
+        type: integer
+        minimum: 2
+        maximum: 16
+        default: 3
+        format: int32
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      bfdInterval:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      declareDeadMultiple:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NetworkingObjectStatus:
+    $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'
+
+  ExtObjectReference:
+    $ref: './networking/commonObject.yaml#/definitions/ExtObjectReference'
+

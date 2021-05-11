@@ -1,0 +1,106 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vDC API allows for management of an Organizaton vDC.
+  version: "2.0"
+  title: vDC API
+
+paths:
+  computePolicies:
+    parameters:
+      - name: orgVdcId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - vdc2
+      summary: Retrieves all compute policies of a vDC
+      description: |
+        Retrieves all compute policies of a vDC
+      operationId: getComputePolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicies2"
+
+  vdc-max-compute-policy:
+    parameters:
+      - name: orgVdcId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - vdc2
+      summary: Updates Max Compute Policy of the vDC.
+      description: |
+        Updates Max Compute Policy of the vDC.
+        Returns 400 if policy type is not VdcVmPolicy.
+      operationId: updateVdcMaxComputePolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: newVdcComputePolicy2Params
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/VdcComputePolicy2"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicy2"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - vdc2
+      summary: Retrieves Max Compute Policy of the vDC.
+      description: |
+        Retrieves Max Compute Policy of the vDC.
+      operationId: getVdcMaxComputePolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicy2"
+
+definitions:
+  VdcComputePolicies2:
+    $ref: "./compute-policy/compute-policy.yaml#/definitions/VdcComputePolicies2"
+  VdcComputePolicy2:
+    $ref: "./compute-policy/compute-policy.yaml#/definitions/VdcComputePolicy2"

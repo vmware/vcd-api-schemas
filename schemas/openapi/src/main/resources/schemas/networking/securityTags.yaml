@@ -1,0 +1,287 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API to manage security tags for an entity such as VMs.
+  version: "1.0"
+  title: Tag API
+
+paths:
+
+  tag-values:
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: tag
+        sort-ascending: true
+      tags:
+        - securityTags
+      summary: Retrieves the list of security tags that are in the organization.
+      description: |
+        Retrieves the list of security tags that are in the organization and can be reused to tag an entity.
+        The list of tags include tags assigned to entities within the organization.
+        This API is meant for organization user only (i.e. not system provider).
+      operationId: getTagValues
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SecurityTagValues'
+
+  tagged-entities:
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: entityType
+        sort-ascending: true
+      tags:
+        - securityTags
+      summary: Retrieves the list of entities that have at least one tag assigned to it.
+      description: |
+        Retrieves the list of entities that have at least one tag assigned to it.
+        Besides entityType, additional supported filters are:
+        <ul>
+        <li>tag - The tag to search by
+        </ul>
+        Example: <code>filter=(tag==Web;entityType==vm)</code>
+      operationId: getSecurityTaggedEntities
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SecurityTaggedEntities'
+
+  security-tag:
+    put:
+      x-vcloud-added-in: 36.0
+      tags:
+        - securityTags
+      summary: Updates a specific tag
+      description: |
+        Only the list of tagged entities can be updated. The name cannot be updated.
+        Any other existing entities not in the list will be untagged.
+      operationId: updateSecurityTag
+      consumes:
+        - application/json
+      parameters:
+        - name: securityTag
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityTag'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  vm-tags:
+    parameters:
+      - name: id
+        description: the URN of the VM to manage tags for.
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - securityTags
+      summary: Retrieves the list of tags for a specific VM.
+      description: |
+        Retrieves the list of tags for a specific VM. If user has view right to the VM, user can view its tags.
+      operationId: getVmTags
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntitySecurityTags'
+
+    put:
+      x-vcloud-added-in: 36.0
+#      x-vcloud-event: com/vmware/vcloud/event/tag/entityTags/modify
+      tags:
+        - securityTags
+      summary: Update the list of tags for a specific VM.
+      description: |
+        Update the list of tags for a specific VM. An empty list of tags means to delete all dags for the VM.
+        If user has edit permission on the VM, user can edit its tags.
+      operationId: updateVmTags
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: entityTags
+          in: body
+          description: the list of tags to update.
+          required: true
+          schema:
+            $ref: '#/definitions/EntitySecurityTags'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntitySecurityTags"
+
+definitions:
+
+  SecurityTagValue:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes the most basic tag structure: its value.
+    type: object
+    properties:
+      tag:
+        type: string
+        description: The value of the tag. The value is case-agnostic and will be converted to lower-case.
+        maxLength: 128
+        x-vcloud-case-agnostic: true
+    required:
+      - value
+    x-vcloud-property-annotations:
+      value:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  SecurityTagValues:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of a tags that users can use to assign to entities.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/securityTags.yaml#/definitions/SecurityTagValue'
+
+  SecurityTaggedEntities:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of entities that are tagged.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/securityTags.yaml#/definitions/SecurityTaggedEntity'
+
+  SecurityTaggedEntity:
+    x-vcloud-added-in: 36.0
+    description: |
+      An entity that has a tag.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique identifier of the entity in URN format.
+      name:
+        type: string
+        description: The name of the entity.
+        readOnly: true
+      parentRef:
+        $ref: '#/definitions/EntityReference'
+        description: The parent of the entity such as vApp if the entity is a VM. If not applicable, field is not set.
+      ownerRef:
+        $ref: '#/definitions/EntityReference'
+        description: The owner of the specified entity such as vDC or vDC Group. If not applicable, field is not set.
+      entityType:
+        type: string
+        description: The type of entity. Currently only "vm" is supported.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vm
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      parentRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      ownerRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      entityType:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    x-vcloud-cross-references:
+      - cross-reference:
+          alias: tag
+
+  EntitySecurityTags:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of a tags assigned to a specific entity
+    type: object
+    properties:
+      tags:
+        type: array
+        description: The list of tags. The value is case-agnostic and will be converted to lower-case.
+        items:
+          type: string
+        maxItems: 256
+    x-vcloud-property-annotations:
+      tags:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  SecurityTag:
+    x-vcloud-added-in: 36.0
+    description: |
+      An individual security tag
+    type: object
+    properties:
+      tag:
+        type: string
+        description: The tag to use.
+      entities:
+        type: array
+        description: List of entities to tag in urn format.
+        items:
+          type: string
+    required:
+      - tag
+      - entities
+    x-vcloud-property-annotations:
+      tag:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

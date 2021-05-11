@@ -1,0 +1,160 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director User API.
+  version: "1.0"
+  title: vCloud Director User API
+
+paths:
+  users:
+    get:
+      tags:
+        - User
+      summary: Get a list of users.
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      x-vcloud-default-sort:
+        default-sort-field: username
+        sort-ascending: true
+      description: |
+        Get a list of users.
+      operationId: queryUsers
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './common/user.yaml#/definitions/VcdUsers'
+
+    post:
+      tags:
+        - User
+      summary: Create a new user.
+      x-vcloud-added-in: 35.0
+      operationId: createUser
+      consumes:
+        - application/json
+      parameters:
+        - name: newUser
+          in: body
+          required: true
+          schema:
+            $ref: "./common/user.yaml#/definitions/VcdUser"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "./common/user.yaml#/definitions/VcdUser"
+
+  user:
+    parameters:
+      - name: userUrn
+        in: path
+        description: userUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: user
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - User
+      summary: Get a specified user by id.
+      operationId: getUser
+      description: |
+        Get a specified user by id.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/user.yaml#/definitions/VcdUser"
+
+    delete:
+      tags:
+        - User
+      summary: Delete the specified user.
+      operationId: deleteUser
+      x-vcloud-added-in: 35.0
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    put:
+      tags:
+        - User
+      summary: Modify the details of a user. A non-administrator user may only modify their own password. An administrator can edit any user.
+      operationId: updateUser
+      x-vcloud-added-in: 35.0
+      description: |
+        Modify basic details of the specified user.
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedUser
+          in: body
+          required: true
+          schema:
+            $ref: "./common/user.yaml#/definitions/VcdUser"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/user.yaml#/definitions/VcdUser"
+
+  groups:
+    parameters:
+      - name: userUrn
+        in: path
+        description: userUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: user
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - User
+      summary: Get a list of groups that the user with the given id belongs to.
+      operationId: queryUserGroups
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      description: |
+        Get a list of references of groups that the user with the given id belongs to.
+      produces:
+        - application/json
+      responses:
+         200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"
+

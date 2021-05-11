@@ -1,0 +1,198 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The VMware Cloud Director QMS APIs allow to assign/unassign quota policies to targets such as user, organization etc.
+  title: VMware Cloud Director Quota Policy API
+
+paths:
+  user-quota-policy-assignment:
+    parameters:
+      - name: userUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: user
+    get:
+      tags:
+        - quotaPolicyAssignment
+      summary: Get the assigned quota policy reference for the given user.
+      x-vcloud-added-in: 35.0
+      operationId: getUserAssignedQuotaPolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AssignedQuotaPolicy"
+    put:
+      tags:
+        - quotaPolicyAssignment
+      summary: |
+        Assign or unassign a quota policy to a given target user.
+        An empty payload is used to unassign an existing quota policy from a given user.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotaPolicyToUser
+      consumes:
+        - application/json
+      parameters:
+        - name: quotaPolicyReference
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AssignedQuotaPolicy'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  org-quota-policy-assignment:
+    parameters:
+      - name: orgUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: org
+    get:
+      tags:
+        - quotaPolicyAssignment
+      summary: Get the assigned quota policy reference for the given organization.
+      x-vcloud-added-in: 35.0
+      operationId: getOrgAssignedQuotaPolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AssignedQuotaPolicy"
+    put:
+      tags:
+        - quotaPolicyAssignment
+      summary: |
+        Assign or unassign a quota policy to a given target organization.
+        An empty payload is used to unassign an existing quota policy from a given organization.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotaPolicyToOrg
+      consumes:
+        - application/json
+      parameters:
+        - name: quotaPolicyReference
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AssignedQuotaPolicy'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  group-quota-policy-assignment:
+    parameters:
+      - name: groupUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: group
+    get:
+      tags:
+        - quotaPolicyAssignment
+      summary: Get the assigned quota policy reference for the given group.
+      x-vcloud-added-in: 35.0
+      operationId: getGroupAssignedQuotaPolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AssignedQuotaPolicy"
+    put:
+      tags:
+        - quotaPolicyAssignment
+      summary: |
+        Assign or unassign a quota policy to a given target group.
+        An empty payload is used to unassign an existing quota policy from a given group.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotaPolicyToGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: quotaPolicyReference
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AssignedQuotaPolicy'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  vapp-quota-policy-assignment:
+    parameters:
+      - name: vappUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vapp
+    get:
+      tags:
+        - quotaPolicyAssignment
+      summary: Get the assigned quota policy reference for the given vapp.
+      x-vcloud-added-in: 35.0
+      operationId: getVAppAssignedQuotaPolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AssignedQuotaPolicy"
+    put:
+      tags:
+        - quotaPolicyAssignment
+      summary: |
+        Assign or unassign a quota policy to a given target vapp.
+        An empty payload is used to unassign an existing quota policy from a given vapp.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotaPolicyToVApp
+      consumes:
+        - application/json
+      parameters:
+        - name: quotaPolicyReference
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AssignedQuotaPolicy'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+definitions:
+  AssignedQuotaPolicy:
+    type: object
+    x-vcloud-added-in: 35.0
+    properties:
+      quotaPolicyReference:
+        description: |
+           The quota policy reference assigned.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+        $ref: '#/definitions/EntityReference'
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

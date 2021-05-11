@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -122,39 +123,6 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="IsAlertEnabled" type="xs:boolean" minOccurs="0">
-                        <xs:annotation>
-                            <xs:documentation source="modifiable">always</xs:documentation>
-                            <xs:documentation xml:lang="en">
-                                This field is unused and is deprecated.
-                                (True if alerts are enabled for the user.)
-                            </xs:documentation>
-                            <xs:documentation source="required">false</xs:documentation>
-                            <xs:documentation source="deprecated">6.0</xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
-                    <xs:element name="AlertEmailPrefix" type="xs:string" minOccurs="0">
-                        <xs:annotation>
-                            <xs:documentation source="modifiable">always</xs:documentation>
-                            <xs:documentation xml:lang="en">
-                                This field is unused and is deprecated.
-                                (String to prepend to alert message Subject line.)
-                            </xs:documentation>
-                            <xs:documentation source="required">false</xs:documentation>
-                            <xs:documentation source="deprecated">6.0</xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
-                    <xs:element name="AlertEmail" type="xs:string" minOccurs="0">
-                        <xs:annotation>
-                            <xs:documentation source="modifiable">always</xs:documentation>
-                            <xs:documentation xml:lang="en">
-                                This field is unused and is deprecated.
-                                (True if this user should get alert email.)
-                            </xs:documentation>
-                            <xs:documentation source="required">false</xs:documentation>
-                            <xs:documentation source="deprecated">6.0</xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
                     <xs:element name="IsExternal" type="xs:boolean" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -177,7 +145,7 @@
                             <xs:documentation source="since">5.1</xs:documentation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Identity provider type for this this user. One of:&lt;br&gt;
+                                Identity provider type for this user. One of:&lt;br&gt;
                                 &lt;b&gt;INTEGRATED&lt;/b&gt; (The user is
                                 created locally or imported from LDAP.)&lt;br&gt;
                                 &lt;b&gt;SAML&lt;/b&gt; (The user is imported
@@ -188,17 +156,6 @@
                                 &lt;b&gt;INTEGRATED&lt;/b&gt;.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
-                    <xs:element name="IsDefaultCached" type="xs:boolean" minOccurs="0">
-                        <xs:annotation>
-                            <xs:documentation source="modifiable">always</xs:documentation>
-                            <xs:documentation xml:lang="en">
-                                This field is unused and is deprecated.
-                                (True if this user is cached by default.)
-                            </xs:documentation>
-                            <xs:documentation source="required">false</xs:documentation>
-                            <xs:documentation source="deprecated">6.0</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="IsGroupRole" type="xs:boolean" minOccurs="0">
@@ -218,6 +175,7 @@
                                 Quota of vApps that this user can store. A value of
                                 0 specifies an unlimited quota.
                             </xs:documentation>
+                            <xs:documentation source="deprecated">35.0</xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -229,6 +187,7 @@
                                 Quota of vApps that this user can deploy concurrently.
                                 A value of 0 specifies an unlimited quota.
                             </xs:documentation>
+                            <xs:documentation source="deprecated">35.0</xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -314,12 +273,13 @@
                             <xs:documentation source="since">5.1</xs:documentation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Identity provider type for this this group.
-                                One of:&lt;br&gt;
+                                Identity provider type for this group. One of:&lt;br&gt;
                                 &lt;b&gt;INTEGRATED&lt;/b&gt; (The group is
                                 imported from LDAP.)&lt;br&gt;
                                 &lt;b&gt;SAML&lt;/b&gt; (The group is imported
                                 from a SAML identity provider.)&lt;br&gt;
+                                &lt;b&gt;OAUTH&lt;/b&gt; (The group is imported
+                                from an OAUTH identity provider.)&lt;br&gt;
                                 If missing or empty the default value is
                                 &lt;b&gt;INTEGRATED&lt;/b&gt;.
                             </xs:documentation>
@@ -395,6 +355,7 @@
                 <meta:content-type>application/vnd.vmware.admin.right</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">0.9</xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents a right.
             </xs:documentation>
@@ -403,6 +364,16 @@
         <xs:complexContent>
             <xs:extension base="EntityType">
                 <xs:sequence>
+                    <xs:element name="RightType" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Assigns a RightType to the right
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Category" type="xs:string" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
@@ -442,6 +413,7 @@
     <xs:complexType name="RightReferencesType">
         <xs:annotation>
             <xs:documentation source="since">0.9</xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Container for references to rights.
             </xs:documentation>
@@ -470,6 +442,7 @@
                 <meta:content-type>application/vnd.vmware.admin.role</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">0.9</xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 A named collection of rights.
             </xs:documentation>
@@ -495,6 +468,7 @@
     <xs:complexType name="RoleReferencesType">
         <xs:annotation>
             <xs:documentation source="since">0.9</xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Container for references to roles.
             </xs:documentation>
@@ -517,3 +491,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

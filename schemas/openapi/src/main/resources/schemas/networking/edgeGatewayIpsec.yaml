@@ -1,0 +1,821 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for IPSec configuration of an edge gateway. Users can create IPSec tunnels
+    to connect the edge gateway to a remote endpoint.
+  version: "1.0"
+  title: Edge Gateway IPSec API
+
+paths:
+
+  ipsecVpnTunnels:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnels
+      summary: Retrieves all IPSec tunnels for a given edge gateway.
+      description: |
+        Retrieves all IPSec VPN tunnels that are configured for an edge gateway. Pagination is supported, use response header to get the next page.
+        Results can be sorted by only a single parameter. Sorting by combination of parameters (sortAsc=foo&sortDesc=bar) is not allowed.
+      operationId: getIpSecVpnTunnels
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnels'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnels
+      summary: Creates an IPSec tunnel on the Edge Gateway.
+      operationId: createIpSecVpnTunnel
+      consumes:
+        - application/json
+      parameters:
+        - name: ipsecVpnTunnel
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnel'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  ipsecVpnTunnel:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: tunnelId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnel
+      summary: Retrieves a specific IPSec tunnel for a given edge gateway.
+      operationId: getIpSecVpnTunnel
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnel'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnel
+      summary: Updates a specific IPSec tunnel for a given edge gateway.
+      operationId: updateIpSecVpnTunnel
+      consumes:
+        - application/json
+      parameters:
+        - name: ipsecVpnTunnel
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnel'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnel
+      summary: Deletes a specific IPSec tunnel for a given edge gateway.
+      operationId: deleteIpSecVpnTunnel
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  ipsecVpnTunnelStatus:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: tunnelId
+        in: path
+        required: true
+        type: string
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnel
+      summary: Retrieves status of a given IPSec VPN Tunnel configured on an Edge Gateway.
+      operationId: getIpSecVpnTunnelStatus
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnelStatus'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  ipsecVpnTunnelStatistics:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: tunnelId
+        in: path
+        required: true
+        type: string
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnel
+      summary: Retrieves connection statistics for a given IPSec VPN Tunnel configured on an Edge Gateway.
+      operationId: getIpSecVpnTunnelStatistics
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnelStatistics'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  ipsecVpnTunnelConnectionProperties:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: tunnelId
+        in: path
+        required: true
+        type: string
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnelConnectionProperties
+      summary: Retrieves connection properties for a given IPSec VPN Tunnel configured on an Edge Gateway.
+      operationId: getIpSecVpnTunnelConnectionProperties
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnelConnectionProperties'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnelConnectionProperties
+      summary: Updates the connection properties for a given IPSec VPN Tunnel configured on an Edge Gateway.
+      operationId: updateIpSecVpnTunnelConnectionProperties
+      consumes:
+        - application/json
+      parameters:
+        - name: ipSecVpnTunnelConnectionProperties
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnelConnectionProperties'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  defaultConnectionProperties:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayIpSecVpnTunnel
+      summary: Retrieves the default connection properties that are used for a given IPSec Tunnel in NSX-T when default is set or no security type is specified.
+      operationId: getIpSecVpnTunnelDefaultConnectionProperties
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeIpSecVpnTunnelConnectionProperties'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeIpSecVpnTunnelStatistics:
+    x-vcloud-added-in: 33.0
+    description: Specifies the statistics for the given IPSec VPN Tunnel.
+    type: object
+    properties:
+      localSubnet:
+        type: string
+        description: Local subnet to which a tunnel belongs.
+      peerSubnet:
+        type: string
+        description: Peer subnet to which a tunnel belongs.
+      packetsIn:
+        type: integer
+        format: int64
+        description: Number of packets received.
+      packetsOut:
+        type: integer
+        format: int64
+        description: Number of packets sent.
+      bytesIn:
+        type: integer
+        format: int64
+        description: Number of bytes received.
+      bytesOut:
+        type: integer
+        format: int64
+        description: Number of bytes sent.
+      packetsSentError:
+        type: integer
+        format: int64
+        description: Number of packets sent with errors.
+      packetsReceivedError:
+        type: integer
+        format: int64
+        description: Number of packets reveived with errors.
+      packetsInDropped:
+        type: integer
+        format: int64
+        description: Number of packets dropped while receiving.
+      packetsOutDropped:
+        type: integer
+        format: int64
+        description: Number of packets dropped while sending.
+      encryptionErrors:
+        type: integer
+        format: int64
+        description: Number of encryption errors.
+      decryptionErrors:
+        type: integer
+        format: int64
+        description: Number of decryption errors.
+      overflowErrors:
+        type: integer
+        format: int64
+        description: Number of errors due to overflow.
+      replayErrors:
+        type: integer
+        format: int64
+        description: Number of replay errors.
+      integrityErrors:
+        type: integer
+        format: int64
+        description: Number of integrity check errors.
+      saMismatchInErrors:
+        type: integer
+        format: int64
+        description: Number of SA mismatch errors while receiving.
+      saMismatchOutErrors:
+        type: integer
+        format: int64
+        description: Number of SA mismatch errors while sending.
+      noMatchingPolicyErrors:
+        type: integer
+        format: int64
+        description: Number of packets dropped because of no matching policy is available.
+
+  EdgeIpSecVpnTunnels:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of configured IPSec VPN tunnels.
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The list of IPSec VPN tunnels.
+            items:
+              $ref: '#/definitions/EdgeIpSecVpnTunnel'
+            maxItems: 1000
+
+  EdgeIpSecVpnTunnel:
+    x-vcloud-added-in: 33.0
+    description: Specifies the IPSec VPN tunnel configuration.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of this IPSec VPN tunnel. On updates, the id is required for the tunnel, while for create a new id will be generated.
+      name:
+        type: string
+        description: Name for the tunnel.
+      description:
+        type: string
+      enabled:
+        description: Described whether the tunnel is enabled or not. The default is true.
+        type: boolean
+        default: true
+      localEndpoint:
+        description: |
+          The Local Endpoint which corresponds to the Edge Gateway the tunnel is being configured on. Local Endpoint requires an IP. That IP must be suballocated to the
+          edge gateway.
+        $ref: '#/definitions/LocalEndpoint'
+      remoteEndpoint:
+        description: |
+          The Remote Endpoints correspoinds to the device on the remote site terminating the VPN tunnel.
+        $ref: '#/definitions/RemoteEndpoint'
+      authenticationMode:
+        description: |
+          The authentication mode this IPSec tunnel will use to authenticate with the peer endpoint. The default is a pre-shared key (PSK).
+          <ul>
+            <li>PSK - A known key is shared between each site before the tunnel is established.</li>
+            <li>CERTIFICATE — Incoming connections are required to present an identifying digital certificate, which VCD verifies has been signed by a trusted certificate authority.</li>
+          </ul>
+        type: string
+        default: PSK
+      preSharedKey:
+        description: This is the Pre-shared key used for authentication.
+        type: string
+      certificateRef:
+        description: The server certificate which will be used to secure the tunnel's local endpoint.
+        $ref: '#/definitions/EntityReference'
+      caCertificateRef:
+        description: The CA authority used to verify the remote endpoint’s certificate.
+        $ref: '#/definitions/EntityReference'
+      connectorInitiationMode:
+        description: This is the mode used by the local endpoint to establish an IKE Connection with the remote site. The default is INITIATOR.
+        $ref: '#/definitions/ConnectorInitiationMode'
+      securityType:
+        description: |
+          This is the security type used for the IPSec Tunnel. If nothing is specified, this will be set to 'DEFAULT' in which the default settings in NSX will be used.
+          For custom settings, one should use the connectionProperties endpoint to specify custom settings. The security type will then appropriately reflect itself as
+          'CUSTOM'.
+        type: string
+        default: DEFAULT
+      logging:
+        description: Whether logging for the tunnel is enabled or not. The default is false.
+        type: boolean
+        default: false
+      version:
+        $ref: '#/definitions/ObjectVersion'
+
+    required:
+      - name
+      - localEndpoint
+      - remoteEndpoint
+
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      localEndpoint:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      remoteEndpoint:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      authenticationMode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-added-in: 35.0
+      preSharedKey:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      connectorInitiationMode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      securityType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      logging:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeIpSecVpnTunnelStatus:
+    x-vcloud-added-in: 33.0
+    description: |
+      This includes the IPSec Tunnel status such as whether the tunnel is up or down and the IKE Session status.
+    properties:
+      tunnelStatus:
+        description: Gives the overall IPSec VPN Tunnel Status. If IKE is properly set and the tunnel is up, the tunnel status will be UP.
+        $ref: '#/definitions/TunnelStatus'
+      ikeStatus:
+        description: Status for the actual IKE Session for the given tunnel.
+        $ref: '#/definitions/IkeStatus'
+
+    x-vcloud-property-annotations:
+      tunnelStatus:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ikeStatus:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeIpSecVpnTunnelConnectionProperties:
+    x-vcloud-added-in: 33.0
+    description: |
+      This specifies the given security profile/connection properties of a given IP Sec VPN Tunnel, such as Dead Probe Interval and IKE settings. If a security type
+      is set to 'CUSTOM', then ike, tunnel, and/or dpd configurations can be specified. Otherwise, those fields are read only and are set to the values based on the specific
+      security type.
+    properties:
+      securityType:
+        description: |
+          This is the security type used for the IPSec Tunnel. If nothing is specified, this will be set to 'DEFAULT' in which the default settings in NSX will be used.
+          If 'CUSTOM' is specified, then ike, tunnel, and dpd configurations can be set.
+        type: string
+        default: DEFAULT
+      ikeConfiguration:
+        description: |
+          The IKE Configuration to be used for the tunnel. If nothing is explictly set, the system defaults will be used.
+        $ref: '#/definitions/IkeConfig'
+      tunnelConfiguration:
+        description: |
+            The Tunnel Configuration, which contains parameters such as encryption algorithm to be used. If nothing is explicitly set, the system defaults will be used.
+        $ref: '#/definitions/TunnelConfig'
+      dpdConfiguration:
+        description: |
+            The Dead Peer Detection configuration. If nothing is explictly set, the system defaults will be used.
+        $ref: '#/definitions/DpdConfig'
+
+    x-vcloud-property-annotations:
+      ikeConfiguration:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      tunnelConfiguration:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dpdConfiguration:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      securityType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-added-in: 34.0
+
+  LocalEndpoint:
+    x-vcloud-added-in: 33.0
+    description: |
+      This represents the endpoint/IP Address on the Edge Gateway where the tunnel needs to be terminated.
+    properties:
+      localId:
+        description: The local identifier for the endpoint.
+        type: string
+      localAddress:
+        description: The IPV4 Address for the endpoint. This has to be a suballocated IP on the Edge Gateway. This is required.
+        type: string
+      localNetworks:
+        description: List of local networks. These must be specified in normal Network CIDR format. Specifying no value is interpreted as 0.0.0.0/0.
+        type: array
+        items:
+          type: string
+        minItems: 1
+        maxItems: 128
+    required:
+      - localAddress
+      - localNetworks
+
+  RemoteEndpoint:
+    x-vcloud-added-in: 33.0
+    description: |
+      This represents the remote endpoint i.e. the endpoint which the tunnel from the Edge Gateway will connect to.
+    properties:
+      remoteId:
+        description: |
+          This Remote ID is needed to uniquely identify the peer site. If this tunnel is using PSK authentication, the Remote ID is the public IP Address of
+          the remote device terminating the VPN Tunnel. When NAT is configured on the Remote ID, enter the private IP Address of the Remote Site. If the remote
+          ID is not set, VCD will set the remote id to the remote address. If this tunnel is using certificate authentication, enter the distinguished name of
+          the certificate used to secure the remote endpoint (for example, C=US,ST=Massachusetts,O=VMware,OU=VCD,CN=Edge1). The remote id must be provided in
+          this case.
+        type: string
+      remoteAddress:
+        description: IPV4 Address of the remote endpoint on the remote site. This is the Public IPv4 Address of the remote device terminating the VPN connection.
+        type: string
+      remoteNetworks:
+        description: List of remote networks. These must be specified in normal Network CIDR format. Specifying no value is interpreted as 0.0.0.0/0
+        type: array
+        items:
+          type: string
+        minItems: 0
+        maxItems: 128
+    required:
+      - remoteAddress
+
+  IkeConfig:
+    x-vcloud-added-in: 33.0
+    description: |
+      This configuration captures the IKE and phase one negotiation parameters. This configuration can be set for peering properly with remote peers.
+    type: object
+    properties:
+      ikeVersion:
+        description: IKE Protocol Version to use. The default is IKE_V2.
+        $ref: '#/definitions/IkeVersionType'
+      dhGroups:
+        description: The list of Diffie-Helman groups to be used is PFS is enabled. Default is GROUP14.
+        type: array
+        items:
+          $ref: '#/definitions/DhGroupType'
+        minItems: 1
+      digestAlgorithms:
+        description: The list of Digest algorithms for IKE. This is used during IKE negotiation. Default is SHA2_256.
+        type: array
+        items:
+          $ref: '#/definitions/IkeDigestAlgorithmType'
+      encryptionAlgorithms:
+        description: The list of Encryption algorithms for IKE. This is used during IKE negotiation. Default is AES_128.
+        type: array
+        items:
+          $ref: '#/definitions/IkeEncryptionAlgorithmType'
+        minItems: 1
+      saLifeTime:
+        description: The Security Association life time in seconds. Default is 86400 seconds (1 day).
+        type: integer
+        minimum: 21600
+        maximum: 31536000
+        default: 86400
+    required:
+      - ikeVersion
+      - encryptionAlgorithms
+      - dhGroups
+
+  TunnelConfig:
+    x-vcloud-added-in: 33.0
+    description: |
+      This configuration captures phase two negotiation parameters and tunnel properties.
+    type: object
+    properties:
+      perfectForwardSecrecyEnabled:
+        description: If true, perfect forward secrecy is enabled. The default value is true.
+        type: boolean
+        default: true
+      dfPolicy:
+        description: Policy for handling degragmentation bit. The default is COPY.
+        $ref: '#/definitions/DfPolicyType'
+      dhGroups:
+        description: The list of Diffie-Helman groups to be used is PFS is enabled. Default is GROUP14.
+        type: array
+        items:
+          $ref: '#/definitions/DhGroupType'
+        minItems: 1
+      digestAlgorithms:
+        description: |
+          The list of Digest algorithms to be used for message digest. The default digest algorithm is implictly covered by default encrpyption algorithm AES_GCM_128.
+        type: array
+        items:
+          $ref: '#/definitions/TunnelDigestAlgorithmType'
+      encryptionAlgorithms:
+        description: |
+          The list of Encryption algorithms to use in IPSec tunnel establishment. Default is AES_GCM_128. NO_ENCRYPTION_AUTH_AES_GMAC_* enables authentication on input
+          data without encryption. If one of these options is used, digest algorithm should be empty.
+        type: array
+        items:
+          $ref: '#/definitions/TunnelEncryptionAlgorithmType'
+        minItems: 1
+      saLifeTime:
+        description: The Security Association life time in seconds. Default is 3600 seconds.
+        type: integer
+        minimum: 900
+        maximum: 31536000
+        default: 3600
+    required:
+      - dhGroups
+      - encryptionAlgorithms
+
+  DpdConfig:
+    x-vcloud-added-in: 33.0
+    description: |
+      Specifies the Dead Peer Detection Profile. This configurations determines the number of seconds to wait in time between probes
+      to detect if an IPSec peer is alive or not. The default value for the DPD probe interval is 60 seconds.
+    type: object
+    properties:
+      probeInterval:
+        description: The value of the probe interval in seconds. This defines a periodic interval for DPD probes. The minimum is 3 seconds and the maximum is 60 seconds.
+        type: integer
+        minimum: 3
+        maximum: 60
+    required:
+      - probeInterval
+
+  DhGroupType:
+    x-vcloud-added-in: 33.0
+    description: |
+      The type of Diffie-Helman group. Diffie-Helman groups represent the algorithm used to derive shared keys between the IPSec VPN initiator and responder over
+      an unsecured network.
+    type: object
+    enum:
+      - GROUP2
+      - GROUP5
+      - GROUP14
+      - GROUP15
+      - GROUP16
+      - GROUP19
+      - GROUP20
+      - GROUP21
+
+  IkeDigestAlgorithmType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Digest Algorithms are used to verify message integrity during IKE negotiation.
+    type: object
+    enum:
+      - SHA1
+      - SHA2_256
+      - SHA2_384
+      - SHA2_512
+
+  IkeEncryptionAlgorithmType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Encryption algorithms are used to ensure confidentiality of messages exchanged during IKE negotiations.
+    type: object
+    enum:
+      - AES_128
+      - AES_256
+      - AES_GCM_128
+      - AES_GCM_192
+      - AES_GCM_256
+
+  IkeVersionType:
+    x-vcloud-added-in: 33.0
+    description: The IKE Protocol version type.
+    type: object
+    enum:
+      - IKE_V1
+      - IKE_V2
+      - IKE_FLEX
+
+  TunnelDigestAlgorithmType:
+    x-vcloud-added-in: 33.0
+    description: This is the algorithm used to verify message integruty during tunnel establishment.
+    type: object
+    enum:
+      - SHA1
+      - SHA2_256
+      - SHA2_384
+      - SHA2_512
+
+  TunnelEncryptionAlgorithmType:
+    x-vcloud-added-in: 33.0
+    description: Encryption algorithm to use in IPSec tunnel establishment.
+    type: object
+    enum:
+      - AES_128
+      - AES_256
+      - AES_GCM_128
+      - AES_GCM_192
+      - AES_GCM_256
+      - NO_ENCRYPTION_AUTH_AES_GMAC_128
+      - NO_ENCRYPTION_AUTH_AES_GMAC_192
+      - NO_ENCRYPTION_AUTH_AES_GMAC_256
+      - NO_ENCRYPTION
+
+  DfPolicyType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Defragmentation Policy helps to handle defragmentation bits present in the inner packet. COPY copies the defragmentation bit from the inner IP packet
+      into the outer packet. CLEAR ignores the defragmentation bit present in the inner packet.
+    type: object
+    enum:
+      - COPY
+      - CLEAR
+
+  ConnectorInitiationMode:
+    x-vcloud-added-in: 33.0
+    description: This is used by a local endpoint to establish ike connection with the remote site.
+    type: object
+    enum:
+      - INITIATOR
+      - RESPOND_ONLY
+      - ON_DEMAND
+
+  TunnelStatus:
+    x-vcloud-added-in: 33.0
+    description: |
+      The overall tunnel status which is consolidated using the Tunnel Status and IKE Status. If the tunnel is up, the status is UP. If the tunnel
+      is down, the status is DOWN. The tunnel may also be in a DEGRADED state due to other issues.
+    type: object
+    enum:
+      - UP
+      - DOWN
+      - DEGRADED
+
+  IkeStatus:
+    x-vcloud-added-in: 33.0
+    description: |
+      The status for the IPSec VPN IKE Session/Tunnel. The values are UP, DOWN, and NEGOTIATING. A fail reason is also provided if the Service Status is down.
+    type: object
+    properties:
+      ikeServiceStatus:
+        description: The overall IKE Session service status.
+        type: object
+        $ref: '#/definitions/IkeServiceStatus'
+      failReason:
+        description: The reason for the IKE Session establishment failure. This will only be set if the status is DOWN.
+        type: string
+
+  IkeServiceStatus:
+    x-vcloud-added-in: 33.0
+    description: The service status for the IKE Session.
+    type: object
+    enum:
+      - UP
+      - DOWN
+      - NEGOTIATING
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

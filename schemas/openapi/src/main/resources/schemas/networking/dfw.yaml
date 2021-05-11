@@ -1,0 +1,361 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for Distributed firewall (DFW) configuration on a Flex vDC group. Users can create DFW policies and rules to allow or deny east-west
+    traffic to pass through the firewall. The policies will be applied on the networks associated with the vDC Group where the DFW configuration
+    is being made.
+  title: Distributed Firewall (DFW) API
+
+paths:
+
+  dfwPolicies:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicies
+      summary: Retrieves DFW security policies configuration.
+      description: |
+        Retrieves the current state of DFW along with all the DFW security policies
+        for a given networking and security domain.
+      operationId: getDfwPolicies
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DfwPolicies'
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicies
+      summary: Update DFW security policies configuration.
+      description: |
+        Updates the DFW security policies for a given networking and security domain.
+        A default security policy will be created when DFW is enabled. Removing a security
+        policy will result in removal of the policy and all of its associated firewall rules.
+      operationId: updateDfwPolicies
+      consumes:
+        - application/json
+      parameters:
+        - name: dfwPolicies
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DfwPolicies'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  dfwPolicy:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+      - name: policyId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Retrieves a specific DFW security policy.
+      operationId: getDfwPolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DfwPolicy'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Updates a specific DFW security policy.
+      operationId: updateDfwPolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: dfwPolicy
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DfwPolicy'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: |
+        Deletes a specific DFW security policy. Removing a security
+        policy will result in removal of the policy and all of its associated firewall rules.
+      operationId: deleteDfwPolicy
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  dfwPolicyRules:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+      - name: policyId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Retrieves all firewall rules for a given DFW security policy.
+      description: |
+        Retrieves all firewall rules for a given DFW security policy.
+        The rules are returned in the order of precedence.
+      operationId: getDfwRules
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DfwRules'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Updates firewall rules for a given DFW security policy.
+      description: |
+        Updates all the firewall rules for a given DFW security policy. If a rule with the ruleId
+        is not already present, a new rule will be created. If it already exists, the rule
+        will be updated. Any existing rule that is not specified in the update payload will be deleted.
+        The order of rules in payload will define the actual order in which this rules will be applied.
+      operationId: updateDfwRules
+      consumes:
+        - application/json
+      parameters:
+        - name: dfwRules
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DfwRules'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  dfwPolicyRule:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+      - name: policyId
+        in: path
+        required: true
+        type: string
+      - name: ruleId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Retrieves a specific firewall rule for a given DFW security policy.
+      operationId: getDfwRule
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DfwRule'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Updates a specific firewall rule for a given DFW security policy.
+      operationId: updateDfwRule
+      consumes:
+        - application/json
+      parameters:
+        - name: dfwRule
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DfwRule'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - dfwPolicy
+      summary: Deletes a specific firewall rule for a given DFW security policy.
+      operationId: deleteDfwRule
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  DfwPolicies:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes DFW security policies configuration.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: A flag indicating whether DFW configuration is enabled or not.
+        default: false
+      defaultPolicy:
+        description: |
+          The default DFW security policy for the security domain.
+        $ref: '#/definitions/DfwPolicy'
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      defaultPolicy:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  DfwPolicy:
+    x-vcloud-added-in: 35.0
+    description: Describes a DFW security policy.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of this security policy. On updates, the id is required for the policy, while for create a new id will be generated. This id is not a VCD URN.
+      name:
+        type: string
+        description: Name for the security policy.
+      description:
+        type: string
+        description: Description for the security policy.
+      enabled:
+        type: boolean
+        description: Whether this security policy is enabled.
+        default: true
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - name
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      version:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  DfwRule:
+    x-vcloud-added-in: 35.0
+    description: Describes a DFW rule.
+    allOf:
+      - $ref: "./networking/edgeGatewayFirewall.yaml#/definitions/FirewallRule"
+
+  DfwRules:
+    x-vcloud-added-in: 35.0
+    description: DFW rules.
+    type: object
+    properties:
+      values:
+        description: The ordered list of DFW rules.
+        type: array
+        items:
+          $ref: '#/definitions/DfwRule'
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

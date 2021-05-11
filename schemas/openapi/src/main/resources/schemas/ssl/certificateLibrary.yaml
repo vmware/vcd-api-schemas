@@ -1,0 +1,275 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The VMware Cloud Director Certificate Library API
+  version: "1.0"
+  title: VMware Cloud Director Certificate Library API
+
+paths:
+  certificateLibrary:
+    get:
+      tags:
+        - certificateLibrary
+      summary: Get the certificate libray items
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      description: |
+        Get a list of the certificate library items
+      operationId: queryCertificateLibrary
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CertificateLibraryItems'
+
+    post:
+      tags:
+        - certificateLibrary
+      summary: Add an item to the certificate library
+      x-vcloud-added-in: 35.0
+      description: |
+        Add an item to the certificate library
+      operationId: addCertificateLibraryItem
+      consumes:
+        - application/json
+      parameters:
+        - name: newCertificateLibraryItem
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/CertificateLibraryItem"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/CertificateLibraryItem"
+
+  certificateLibraryItem:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: certificateLibraryItem
+    get:
+      tags:
+        - certificateLibrary
+      summary: Get the specified certificate library item
+      description: |
+        Retrieves the specified certificate library item.
+        Note: This API also supports a former (erroneously spelt) alternate path /cetificateLibrary/{id}
+        as a Deprecated API (deprecated-in and removed after API version 36.0)
+      x-vcloud-added-in: 35.0
+      operationId: getCertificateLibraryItem
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/CertificateLibraryItem"
+
+    put:
+      tags:
+        - certificateLibrary
+      summary: Update the specified certificate library item.
+      description: |
+        Updates the specified certificate library item. Only the alias and description fields may be edited
+        Note: This API also supports a former (erroneously spelt) alternate path /cetificateLibrary/{id}
+        as a Deprecated API (deprecated-in and removed after API version 36.0)
+      x-vcloud-added-in: 35.0
+      operationId: updateCertificateLibraryItem
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: modifiedCertificatLibraryItem
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/CertificateLibraryItem"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/CertificateLibraryItem"
+
+    delete:
+      tags:
+        - certificateLibrary
+      summary: Remove certificate library item.
+      description: |
+        Delete the specified certificate library item. Only items that are not in use can be deleted.
+        Note: This API also supports a former (erroneously spelt) alternate path /cetificateLibrary/{id}
+        as a Deprecated API (deprecated-in and removed after API version 36.0)
+      x-vcloud-added-in: 35.0
+      operationId: deleteCertificateLibraryItem
+      responses:
+        204:
+          description: No Content
+
+  certificateLibraryItemConsumers:
+    parameters:
+      - name: certLibraryItemId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: certificateLibraryItem
+    get:
+      tags:
+        - certificateLibrary
+      summary: Gets a paged list of consumers (as references) of a particular certificate library item
+      description: |
+        Get list of consumers (as references) of a particular certificate library item
+      operationId: queryCertLibraryItemConsumerRefs
+      x-vcloud-added-in: 35.0
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+    post:
+      tags:
+        - certificateLibrary
+      summary: Adds the specified consumer reference to a library item.
+      description: |
+        Adds the specified consumer reference to a library item.
+      operationId: addConsumerRefToCertLibraryItem
+      x-vcloud-added-in: 35.0
+      parameters:
+        - name: consumerReference
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EntityReference"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityReference"
+    put:
+      tags:
+        - certificateLibrary
+      summary: Replaces the existing consumer refs with the used by references supplied.
+      description: |
+        Replaces the existing consumer refs with the consumer references supplied.
+      operationId: replaceCertLibraryItemConsumerRefs
+      x-vcloud-added-in: 35.0
+      parameters:
+        - name: consumerRefs
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EntityReferences"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityReferences"
+
+definitions:
+  CertificateLibraryItems:
+    description: |
+      A list of certificate library items.
+    x-vcloud-added-in: 35.0
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of certificate library items.
+            items:
+              $ref: '#/definitions/CertificateLibraryItem'
+  CertificateLibraryItem:
+    type: object
+    description: A certificate library item.
+    x-vcloud-added-in: 35.0
+    properties:
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: certificateLibraryItem
+      alias:
+        type: string
+        maxLength: 128
+      privateKey:
+        type: string
+        description: PEM encoded private key. Required if providing a certificate chain
+        x-vcloud-restricted: Value is never returned from the API
+        x-vcloud-constraints:
+              - constraint: NonSortable
+      privateKeyPassphrase:
+        type: string
+        description: passphrase for the private key. Required if the private key is encrypted
+        x-vcloud-restricted: Value is never returned from the API
+        x-vcloud-constraints:
+              - constraint: NonSortable
+              - constraint: NonSearchable
+      certificate:
+        type: string
+        description: PEM encoded certificate
+        x-vcloud-constraints:
+              - constraint: Certificate
+              - constraint: NonSortable
+              - constraint: NonSearchable
+      description:
+        type: string
+        description: Description of the certificate library item
+        x-vcloud-constraints:
+              - constraint: NonSortable
+              - constraint: NonSearchable
+    required:
+      - alias
+      - certificate
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"

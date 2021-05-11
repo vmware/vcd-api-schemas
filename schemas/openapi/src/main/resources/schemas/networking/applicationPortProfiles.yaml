@@ -1,0 +1,297 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    An API for managing Application Network Port Profiles. Application Port Profiles can be used when defining NAT and Firewall rules to restrict
+    the traffic to certain ports and protocols. These are available only to an Org vDC that is backed by NSX-T.
+  version: "1.0"
+  title: Application Port Profiles API
+
+paths:
+  applicationPortProfiles:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - applicationPortProfiles
+      summary: Get all Application Port Profiles.
+      description: |
+        Retrieves all Application Port Profiles. This includes user-defined profiles and default system profile.
+        Supported contexts are:
+        Org vDC ID (_context==orgVdcId) - |
+        Returns all the application port profiles which are available to a specific Org vDC.
+        Network provider ID (_context==networkProviderId) - |
+        Returns all the application port profiles which are available under a specific network provider.
+        VDC Group Id <code>(_context==vdcGroupId)</code> - |
+        Returns all the application port profiles which are available to a specific vDC Group.
+      operationId: getApplicationPortProfiles
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ApplicationPortProfiles'
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+        - applicationPortProfiles
+      summary: Create a user-defined application port profile.
+      operationId: createApplicationPortProfile
+      consumes:
+        - application/json
+      parameters:
+        - name: applicationPortProfile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ApplicationPortProfile'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  applicationPortProfile:
+    parameters:
+      - name: applicationPortProfileId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: applicationPortProfile
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - applicationPortProfile
+      summary: Retrieves a specific user-defined Application Port Profile
+      operationId: getApplicationPortProfile
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ApplicationPortProfile'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - applicationPortProfile
+      summary: Updates a specific user-defined Application Port Profile
+      operationId: updateApplicationPortProfile
+      consumes:
+        - application/json
+      parameters:
+        - name: applicationPortProfile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ApplicationPortProfile'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+        - applicationPortProfile
+      summary: Deletes a specific user-defined Application Port Profile
+      operationId: deleteApplicationPortProfile
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+  sync:
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+        - applicationPortProfiles
+      summary: Sync the application port profiles from the network provider to VCD.
+      description: |
+        Sync the application port profiles from the network provider to VCD. The network provider is required to be specified in the filter context.
+        Context example: (_context==networkProviderId).
+      operationId: syncApplicationPortProfiles
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+definitions:
+  ApplicationPortProfiles:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of Application Port Profiles.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/ApplicationPortProfile'
+
+  ApplicationPortProfile:
+    x-vcloud-added-in: 33.0
+    description: |
+      An Application Port Profile object. The application port profile represents a set of ports and protocols that can be used when defining network service rules.
+    type: object
+    allOf:
+      - $ref: "./networking/applicationPortProfiles.yaml#/definitions/NetworkProviderContext"
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - properties:
+          id:
+            type: string
+            description: The id of the Application Port Profile in URN format.
+          name:
+            type: string
+            description: The name of the Application Port Profile.
+          description:
+            type: string
+          scope:
+            $ref: './networking/applicationPortProfiles.yaml#/definitions/ApplicationPortProfileScopeType'
+            description: The scope of the application port profile definition.
+            readOnly: true
+          applicationPorts:
+            description: A list of protocol and ports supported by this application port profile.
+            type: array
+            items:
+              $ref: './networking/applicationPortProfiles.yaml#/definitions/ApplicationPortList'
+          usableForNAT:
+            type: boolean
+            description: |
+              True means that the port profile can be used for NAT configuration.  A port profile can be used for NAT if there is only 1 application port
+              with at most 1 destination port.
+    required:
+      - name
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+                - arg: applicationPortProfile
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      scope:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      usableForNAT:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+
+
+  ApplicationPortList:
+    x-vcloud-added-in: 33.0
+    description: |
+      A set of ports and the protocol supported by a application port profile.
+    type: object
+    properties:
+      name:
+        description: The display name.
+        type: string
+      protocol:
+        description: The protocol this services applies to.
+        $ref: '#/definitions/ApplicationPortsProtocolType'
+      destinationPorts:
+        description: The set of ports on the destination that the profile applies to. Valid values include single ports and a range of ports.
+        type: array
+        items:
+          type: string
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      protocol:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      destinationPorts:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+
+  ApplicationPortProfileScopeType:
+    x-vcloud-added-in: 33.0
+    description: |
+      The definition scope of an Application Port Profile.
+      SYSTEM profiles are available to all tenants. They are default profiles from the backing networking provider.
+      PROVIDER profiles are available to all tenants. They are defined by the provider at a system level.
+      TENANT profiles are available only to the specific tenant organization. They are defined by the tenant or by a provider on behalf of a tenant.
+    type: string
+    enum:
+      - SYSTEM
+      - PROVIDER
+      - TENANT
+
+  ApplicationPortsProtocolType:
+    x-vcloud-added-in: 33.0
+    description: |
+      The supported protocols for an application port profile.
+    type: string
+    enum:
+      - TCP
+      - UDP
+      - ICMPv4
+      - ICMPv6
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  NetworkProviderContext:
+    description:
+      Describes the network provider context of the network object.
+    type: object
+    properties:
+      orgRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The organization that this object belongs to. This property is required during creation and cannot be updated.
+      contextEntityId:
+        type: string
+        description: |
+          The context under which this object is created. The context can the id of the organization vDC, vDC Group, or network provider.
+          This field is required on object creation and is unset on object reads. This same context ID can be used in the context filter field
+          when querying for the list of objects.
+      networkProviderScope:
+        type: string
+        description: |
+          The network provider scope that this object belongs to. This is a read-only property and is determined by the input context entity ID during object creation.
+    x-vcloud-property-annotations:
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      contextEntityId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable

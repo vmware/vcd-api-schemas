@@ -1,0 +1,481 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Common schema objects for Centralized Point of Management
+  description: Common schema objects that are used across CPOM API
+  version: "1.0"
+
+definitions:
+
+  OverallStatus:
+    x-vcloud-added-in: 32.0
+    description: Overall status of the entity
+    type: string
+    enum:
+      - GRAY
+      - RED
+      - YELLOW
+      - GREEN
+
+  Sddcs:
+    x-vcloud-added-in: 32.0
+    description: |
+      A paginated list of software-defined data centers
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/Sddc'
+
+  Sddc:
+    x-vcloud-added-in: 32.0
+    description: |
+      Software-defined data center
+    type: object
+    properties:
+      name:
+        type: string
+        example: SDDC Sample Name
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: sddc
+      description:
+        type: string
+        example: SDDC Sample Description
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        default: ""
+      enabled:
+        type: boolean
+        default: false
+      vcId:
+        type: string
+        description: URN of the associated vCenter. This is not editable once the SDDC has been created.
+        example: urn:vcloud:vimserver:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      version:
+        type: string
+        description: Version of the associated vCenter. This is not editable.
+        example: 6.7.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      overallStatus:
+        $ref: '#/definitions/OverallStatus'
+        description: Overall status of the associated vCenter. This is not editable.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      stats:
+        $ref: '#/definitions/SddcStats'
+        description: Associated read-only statistics.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      defaultProxy:
+        $ref: '#/definitions/SddcProxy'
+        description: |
+          Default proxy for the SDDC. This field is read-only. To set a new default, edit the proxy
+          you wish to make the new default by modifying its defaultProxy flag.
+          Deprecated in Api 34.0.
+      defaultEndpoint:
+        x-vcloud-added-in: 33.0
+        $ref: '#/definitions/SddcEndpoint'
+        description: |
+          Default endpoint for the SDDC. There is an endpoint available for an SDDC even if there are
+          no proxies configured for the SDDC. This indicates that an endpoint is available that doesn't
+          require proxying, either because it is publicly accessible or because it assumes an established
+          VPM connection. The field is read-only.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    required:
+      - name
+      - vcId
+    x-vcloud-property-annotations:
+      defaultProxy:
+        x-vcloud-deprecated-in: 34.0
+        x-vcloud-deprecated-alternative: defaultEndpoint
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  SddcEndpoints:
+    x-vcloud-added-in: 35.0
+    description: |
+      A paginated list of SDDC endpoints
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/SddcEndpoint'
+
+  SddcEndpoint:
+    x-vcloud-added-in: 33.0
+    description: An available network connections exposed by the SDDC
+    type: object
+    properties:
+      name:
+        type: string
+        example: SDDC Endpoint Sample Name
+        description: This is a required property.
+      id:
+        type: string
+      endpoint:
+        type: string
+        format: uri
+        description: A network endpoint that the SDDC exposes for communication.Deprecated in Api 35.0.
+      proxyId:
+        type: string
+        description: |
+            An optional identifier to a Proxy that can be used to establish a connection to the endpoint.
+            Deprecated in Api 35.0 and replaced by proxy.
+      targetUrl:
+        type: string
+        default: ""
+        format: uri
+        example: https://sampleVc.vmware.com/ui
+        description: |
+            The URL target of the SDDC endpoint. This is the URL that the browser tab
+             will be pointed to when the endpoint is launched via the H5 UI of VCD. This is a required property.
+      proxy:
+        description: A reference to an optional Proxy that can be used to establish a connection to the endpoint
+        $ref: '#/definitions/EntityReference'
+      sddc:
+        description: The EntityReference of the parent SDDC entity. This is a required property to create the endpoint and once set cannot be edited.
+        $ref: '#/definitions/EntityReference'
+      isDefault:
+        type: boolean
+        description: |
+            True if this is the default endpoint for the parent SDDC. An endpoint being the default for the
+            SDDC means that this endpoint's target will be launched when the SDDC tile is clicked in the
+            H5 Tenant UI of VCD.
+        default: false
+    x-vcloud-property-annotations:
+      endpoint:
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: targetUrl
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      proxyId:
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: proxy
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: Urn
+            args:
+              - arg: proxy
+      targetUrl:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      name:
+        x-vcloud-added-in: 35.0
+      id:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+          - constraint: Urn
+            args:
+              - arg: sddcEndpoint
+      proxy:
+        x-vcloud-added-in: 35.0
+      sddc:
+        x-vcloud-added-in: 35.0
+      isDefault:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+
+  SddcStats:
+    x-vcloud-added-in: 32.0
+    description: |
+      A read-only list of resource allocations for the associated SDDC
+    type: object
+    properties:
+      totalVMs:
+        type: integer
+        description: Number of VMs within the SDDC.
+      poweredOnVMs:
+        type: integer
+        description: Number of powered on VMs within the SDDC.
+      cpu:
+        $ref: '#/definitions/SddcStat'
+        description: CPUs statistics of the SDDC (values in MHz).
+      memory:
+        $ref: '#/definitions/SddcStat'
+        description: Memory statistics of the SDDC (values in MB).
+      storage:
+        $ref: '#/definitions/SddcStat'
+        description: Storage statistics of the SDDC (values in MB).
+
+  SddcStat:
+    x-vcloud-added-in: 32.0
+    description: |
+      A collection of measurements for the SDDC resource
+    type: object
+    properties:
+      numTotal:
+        type: integer
+        format: int64
+        minimum: 0
+        description: Total resource allocation.
+      numUsed:
+        type: integer
+        format: int64
+        minimum: 0
+        description: Used resource allocation.
+      numReserved:
+        type: integer
+        format: int64
+        minimum: 0
+        description: Reserved resource allocation.
+
+  SddcProxies:
+    x-vcloud-added-in: 32.0
+    x-vcloud-deprecated-in: 34.0
+    x-vcloud-deprecated-alternative: Proxies
+    description: |
+      A paginated list of SDDC proxies
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/SddcProxy'
+
+  SddcProxy:
+    x-vcloud-added-in: 32.0
+    x-vcloud-deprecated-in: 34.0
+    x-vcloud-deprecated-alternative: Proxy
+    description: |
+      SDDC proxy configuration
+    type: object
+    properties:
+      name:
+        type: string
+        pattern: '.*[\S].*'
+        example: SDDC Proxy Sample Name
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: sddcProxy
+      sddcId:
+        type: string
+        description: URN of the parent SDDC. This is not editable once the proxy has been created.
+        example: urn:vcloud:sddc:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: sddc
+      enabled:
+        type: boolean
+        default: true
+        description: |
+            True if the proxy is enabled. Proxy can only be enabled/disabled by privileged users.
+            A disabled proxy cannot be activated and thus, cannot be used.
+            When a proxy is disabled, all active sessions are terminated.
+      tenantVisible:
+        type: boolean
+        description: Whether this proxy has been published to tenants.
+        default: false
+      targetHost:
+        type: string
+        description: |
+            IP address or FQDN of the host being proxied. Lower case formatting will be applied to the value of the property.
+            This is not editable once the proxy has been created.
+        x-vcloud-constraints:
+          - constraint: DomainName
+        example: sampleVc.vmware.com
+      active:
+        type: boolean
+        description: |
+            True if the proxy is currently active for the user session associated with the
+            request made to get the proxy. An inactive proxy cannot be used.
+        default: false
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      token:
+        description: |
+            The generated read-only token that should be used as the password when using this proxy.
+            To generate a new token, activate the proxy. The token is tied to the user session that activated the proxy.
+            If the proxy is inactive, this value will be null.
+        type: string
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      defaultProxy:
+        type: boolean
+        description: |
+            True if this is the default proxy for the parent SDDC. A proxy being the default for the
+            SDDC means that this proxy's UI will be launched when the SDDC tile is clicked in the
+            H5 Tenant UI of VCD. If no default proxy is set, clicking the SDDC tile will be a no-op.
+        default: false
+      parentProxyId:
+        type: string
+        description: |
+            The URN of the parent proxy. If a proxy has a parent, the proxy is activated along with
+            its parent and shares the token with its parent. Each proxy may only have one parent.
+            A parent proxy cannot have a parent of its own.
+        example: urn:vcloud:sddcProxy:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: sddcProxy
+      uiUrl:
+        type: string
+        default: ""
+        format: uri
+        example: https://sampleVc.vmware.com
+        description: |
+            The URL of the proxied component's UI endpoint. This is the URL that the browser tab
+             will be pointed to when the proxy is launched via the H5 UI of VCD.
+    required:
+      - name
+      - sddcId
+      - targetHost
+
+  Proxies:
+    x-vcloud-added-in: 34.0
+    description: |
+      A paginated list of proxies
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/Proxy'
+
+  Proxy:
+    x-vcloud-added-in: 34.0
+    description: |
+      proxy configuration. This configures the vCD proxying capability for one specific server within the vSphere/NSX/ESX estate known to vCD.
+    type: object
+    properties:
+      name:
+        type: string
+        pattern: '.*[\S].*'
+        example: Proxy Sample Name
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: proxy
+      parent:
+        description: The EntityReference of the parent entity (e.g. vCenter Server, SDDC) . This is not editable once the proxy has been created.
+        $ref: '#/definitions/EntityReference'
+      proxyType:
+        type:
+          string
+        enum: [VC, SSO, NSX, ESX, GENERIC]
+      enabled:
+        type: boolean
+        default: true
+        description: |
+            True if the proxy is enabled. Proxy can only be enabled/disabled by privileged users.
+            A disabled proxy cannot be activated and thus, cannot be used.
+            When a proxy is disabled, all active sessions are terminated.
+      tenantVisible:
+        type: boolean
+        description: Whether this proxy has been published to tenants.
+        default: false
+      active:
+        type: boolean
+        description: |
+            True if the proxy is currently active for the user session associated with the
+            request made to get the proxy. An inactive proxy cannot be used.
+        default: false
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      token:
+        description: |
+            The generated read-only token that should be used as the password when using this proxy.
+            To generate a new token, activate the proxy. The token is tied to the user session that activated the proxy.
+            If the proxy is inactive, this value will be null.
+        type: string
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      parentProxy:
+        description: |
+            The EntityReference of the parent proxy. If a proxy has a parent, the proxy is activated along with
+            its parent and shares the token with its parent. Each proxy may only have one parent.
+            A parent proxy cannot have a parent of its own.
+        $ref: '#/definitions/EntityReference'
+      targetHost:
+        type: string
+        description: |
+            IP address or FQDN of the host being proxied. Lower case formatting will be applied to the value of the property.
+            This is not editable once the proxy has been created.
+        x-vcloud-constraints:
+          - constraint: DomainName
+        example: sampleVc.vmware.com
+      uiUrl:
+        type: string
+        default: ""
+        format: uri
+        example: https://sampleVc.vmware.com
+        description: |
+            The URL of the proxied component's UI endpoint. This is the URL that the browser tab
+             will be pointed to when the proxy is launched via the H5 UI of VCD.
+    required:
+      - name
+      - parent
+      - targetHost
+      - proxyType
+
+  ThumbprintAndAlgorithm:
+    x-vcloud-added-in: 34.0
+    description: |
+      Specifies a SSL certificate thumbprint and the algorithm used for calculation.
+    type: object
+    properties:
+      thumbprint:
+        type: string
+        description: The SDDC Proxy SSL certificate thumbprint.
+        example: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+      algorithm:
+        type: string
+        description: Algorithm used for the thumbprint calculation.
+        example: SHA-256
+
+  EntityReference:
+    $ref: './common/entity.yaml#/definitions/EntityReference'

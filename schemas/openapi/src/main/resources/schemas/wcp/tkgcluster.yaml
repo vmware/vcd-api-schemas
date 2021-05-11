@@ -1,0 +1,431 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    This API provides to vCD tenants the means to provision (create and update)
+    Tanzu Kubernetes Grid clusters.
+    This is complementary to the defined-entity APIs:
+       GET /cloudapi/1.0.0/entities/urn:vcloud:entity:vmware.tkgcluster:1.0.0:{id}
+    which allows to retrieve the clusters created by the API presented here.
+    This is why you will not find here a GET operation for the corresponding entity.
+  title: TKG Kubernetes API
+
+paths:
+  tkgClusters:
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - tkgCluster
+      summary: |
+        Creates a new TKG cluster.
+        This operation is asynchronous and returns a task that
+        you can monitor to track the progress of the request.
+      operationId: createTkgCluster
+      consumes:
+        - application/json
+      parameters:
+        - name: tkgCluster
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/TkgCluster"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  tkgCluster:
+    parameters:
+      - name: tkgClusterId
+        in: path
+        required: true
+        type: string
+        description: |
+          A URN corresponding to a TKG defined entity instance previously created by
+          a POST to above OpenAPI tkgClusters endpoint.
+        example: urn:vcloud:entity:vmware.tkgcluster:1.0.0:d3b61159-f4c2-47dc-9ada-090ec1d45703
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - tkgCluster
+      summary: |
+        Update the desired state of the TKG cluster.
+        This operation is asynchronous and returns a task that
+        you can monitor to track the progress of the request.
+      operationId: updateTkgCluster
+      consumes:
+        - application/json
+      parameters:
+        - name: tkgCluster
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/TkgCluster"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+    delete:
+      tags:
+        - tkgCluster
+      x-vcloud-added-in: 35.0
+      description: |
+        Deletes the TKG defined entity instance with the unique identifier (URN)
+        This operation is asynchronous and returns a task that
+        you can monitor to track the progress of the request.
+      operationId: deleteTkgCluster
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+definitions:
+  TkgCluster:
+    x-vcloud-added-in: 35.0
+    description: |
+      A TKG cluster.
+    type: object
+    properties:
+      kind:
+        type: string
+        description: |
+          The kind of TKG cluster described in this manifest.
+          The only supported kind is "TanzuKubernetesCluster".
+        example: TanzuKubernetesCluster
+      metadata:
+        $ref: "#/definitions/TkgClusterMetadata"
+      spec:
+        $ref: "#/definitions/TkgClusterSpec"
+      status:
+        $ref: "#/definitions/TkgClusterStatus"
+    required:
+      - kind
+      - metadata
+      - spec
+
+  TkgClusterMetadata:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Includes cluster metadata.
+    properties:
+      name:
+        type: string
+        description: |
+          Specifies the name of the cluster to create.
+          Required during create, read-only after.
+          It's a user-defined string that accepts alphanumeric characters and dashes,
+        example: my-tkg-cluster-1
+      placementPolicy:
+        type: string
+        description: |
+          Targets where to place this cluster. Note that the placement policy also determines
+          the range of valid values for storage class (see classes and defaultClass below)
+          and virtual hardware settings (see VirtualMachineClass below).
+          Required during create, read-only after.
+        example: gold-policy
+      virtualDataCenterName:
+        type: string
+        description: |
+          Cloud Director organization vDC where to place the cluster.
+          Required during create, read-only after.
+        example: Org-VDC-1
+      resourceVersion:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        description: |
+          A value checked by the Supervisor Cluster to ensure that it matches the latest known state
+          of the cluster.
+    required:
+      - name
+      - placementPolicy
+      - virtualDataCenterName
+
+  TkgClusterSpec:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Includes the specification, expressed in declarative fashion, for the end-state of the cluster,
+      including the node topology and Kubernetes software distribution.
+    properties:
+      distribution:
+        $ref: "#/definitions/TkgClusterSpecDistribution"
+      settings:
+        $ref: "#/definitions/TkgClusterSpecSettings"
+      topology:
+        $ref: "#/definitions/TkgClusterSpecTopology"
+    required:
+      - distribution
+      - topology
+
+  TkgClusterSpecDistribution:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Indicates the distribution for the cluster: the Tanzu Kubernetes cluster software installed
+      on the control plane and worker nodes, including Kubernetes itself.
+    properties:
+      version:
+        type: string
+        description: |
+          Specifies the software version of the Kubernetes distribution to install on cluster nodes
+          using semantic version notation. Can specify the fully qualified version or use version
+          shortcuts, such as "version: v1.16.6", which is resolved to the most recent image matching
+          that patch version, or "version: v1.16", which is resolved to the most recent matching
+          patch version. The resolved version displays as the "fullVersion" on the cluster
+          description after you have created it.
+        example: v1.16.6+vmware.1-tkg.1 or v1.16.6 or v1.16
+    required:
+      - version
+
+  TkgClusterSpecSettings:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Identifies optional runtime configuration information for the cluster, including node network
+      details and persistent storage for pods.
+    properties:
+      network:
+        $ref: "#/definitions/TkgClusterSpecSettingsNetwork"
+      storage:
+        $ref: "#/definitions/TkgClusterSpecSettingsStorage"
+
+  TkgClusterSpecSettingsNetwork:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Specifies network-related settings for the cluster.
+    properties:
+      cni:
+        type: object
+        description: |
+          Identifies the Container Networking Interface (CNI) plug-in for the cluster. The default is Calico.
+        properties:
+          name:
+            type: string
+            description: |
+              Specifies the CNI to use. Currently only "calico" is supported. Any other value is not valid.
+      pods:
+        type: object
+        description: |
+          Specifies network settings for pods.
+        properties:
+          cidrBlocks:
+            type: array
+            description: |
+              Specifies a range of IP addresses to use for Kubernetes pods.
+            items:
+              type: string
+      serviceDomain:
+        type: string
+        description: |
+          Specifies the service domain for the cluster. Default is cluster.local .
+      services:
+        type: object
+        description: |
+          Identifies network settings for Kubernetes services.
+        properties:
+          cidrBlocks:
+            type: array
+            description: |
+              Specifies a range of IP addresses to use for Kubernetes services.
+            items:
+              type: string
+
+  TkgClusterSpecSettingsStorage:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Identifies persistent volume (PV) storage entries for container workloads.
+    properties:
+      classes:
+        type: array
+        description: |
+          Specifies named persistent volume (PV) storage classes for container workloads.
+          Select a storage class associated with the placement-policy (as defined by the
+          element placementPolicy above).
+        example: ["gold", "silver"]
+        items:
+          type: string
+      defaultClass:
+        type: string
+        description: |
+          Specifies a named storage class to be annotated as the default in the cluster.
+          If you do not specify it, there is no default. You do not have to specify one or
+          more classes to specify a defaultClass.
+          Select a storage class associated with the placement-policy (as defined by the
+          element placementPolicy above).
+        example: silver
+
+  TkgClusterSpecTopology:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: Cluster worker and controlPlane nodes topology.
+    properties:
+      controlPlane:
+        $ref: "#/definitions/TkgClusterTopologyControlPlane"
+      workers:
+        $ref: "#/definitions/TkgClusterTopologyWorkers"
+    required:
+      - controlPlane
+      - workers
+
+  TkgClusterTopologyControlPlane:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Specifies the topology of the cluster control plane, including the number of nodes (count),
+      type of VM (class), and the storage resources allocated for each node (storageClass).
+    properties:
+      class:
+        type: string
+        description: |
+          Specifies the name of the VirtualMachineClass that describes the virtual hardware
+          settings to be used each node in the pool. This controls the hardware available to
+          the node (CPU and memory) as well as the requests and limits on those resources.
+          Use a VirtualMachineClass that has been associated with the placement-policy specified above
+          (see placementPolicy element).
+        example: |
+          A system-defined element in the form of a string from an enumerated set,
+          for example: "guaranteed-small" or "best-effort-large"
+      count:
+        type: integer
+        description: |
+          Specifies the number of control plane nodes. The control plane must have an odd number
+          of nodes.
+          It's an integer that is either 1 or 3.
+      storageClass:
+        type: string
+        description: |
+          Identifies the storage class to be used for storage of the disks which store the root
+          file systems of the control plane nodes.
+          Use a storage class that has been associated with the placement-policy specified above
+          (see placementPolicy element).
+        example: node-storage
+    required:
+      - class
+      - count
+      - storageClass
+
+  TkgClusterTopologyWorkers:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: |
+      Specifies the topology of the cluster worker nodes, including the number of nodes (count),
+      type of VM (class), and the storage resources allocated for each node (storageClass).
+    properties:
+      class:
+        type: string
+        description: |
+          Specifies the name of the VirtualMachineClass that describes the virtual hardware
+          settings to be used each node in the pool. This controls the hardware available to
+          the node (CPU and memory) as well as the requests and limits on those resources.
+          Use a VirtualMachineClass that has been associated with the placement-policy specified above
+          (see placementPolicy element).
+        example: |
+          A system-defined element in the form of a string from an enumerated set,
+          such as "guaranteed-small" or "best-effort-large"
+      count:
+        type: integer
+        description: |
+          Specifies the number of worker nodes in the cluster. A cluster with zero worker
+          nodes can be created, allowing for a cluster with only control plane nodes. There is no
+          hard maximum for the number of worker nodes, but a reasonable limit is 150.
+        example: |
+          An integer between 0 and 150, for example: 1 or 2 or 7
+      storageClass:
+        type: string
+        description: |
+          Identifies the storage class to be used for storage of the disks which store the root
+          file systems of the control plane nodes.
+          Use a storage class that has been associated with the placement-policy specified above
+          (see placementPolicy element).
+    required:
+      - class
+      - count
+      - storageClass
+
+  TkgClusterStatus:
+    x-vcloud-added-in: 35.0
+    properties:
+      clusterApiStatus:
+        $ref: "#/definitions/TkgClusterApiStatus"
+      conditions:
+        $ref: "#/definitions/TkgConditions"
+        x-vcloud-added-in: 36.0
+      nodeStatus:
+        $ref: "#/definitions/TkgNodeStatus"
+        x-vcloud-added-in: 36.0
+      phase:
+        type: string
+        description: |
+          Global status of the cluster.
+          Some possible values are: running, creating, deleting
+        example: running
+    description: Status of the cluster.
+    x-vcloud-constraints:
+      - constraint: ReadOnly
+
+  TkgConditions:
+    x-vcloud-added-in: 36.0
+    type: array
+    description: |
+      Conditions describe the readines of this cluster. This array reflects
+      directly the state described at https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-F8589FF0-131B-48A0-8B94-F250A79A21E0.html
+    x-vcloud-constraints:
+      - constraint: ReadOnly
+    items:
+      $ref: "#/definitions/TkgCondition"
+
+  TkgCondition:
+    x-vcloud-added-in: 36.0
+    additionalProperties:
+      type: string
+    x-vcloud-constraints:
+      - constraint: ReadOnly
+
+  TkgNodeStatus:
+    x-vcloud-added-in: 36.0
+    additionalProperties:
+      type: string
+    description: Desribed that current status of nodes of this cluster.
+    x-vcloud-constraints:
+      - constraint: ReadOnly
+
+  TkgClusterApiStatus:
+    x-vcloud-added-in: 35.0
+    type: object
+    properties:
+      apiEndpoints:
+        type: array
+        items:
+          $ref: "#/definitions/TkgClusterApiStatusApiEndpoint"
+      phase:
+        type: string
+        description: Global status of cluster API.
+        example: provisioned
+    description: Status of the cluster API.
+    x-vcloud-constraints:
+      - constraint: ReadOnly
+
+  TkgClusterApiStatusApiEndpoint:
+    x-vcloud-added-in: 35.0
+    properties:
+      host:
+        type: string
+      port:
+        type: integer
+    description: API endpoint.
+    x-vcloud-constraints:
+      - constraint: ReadOnly
+

@@ -1,0 +1,138 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Cloud Director vDC Group candidates API allows for retrieving a list of vDCs that can be part of the vDC groups.
+    vDCs that cannot be added to the same vDC group are filtered out.
+    An example is that a VDC can only be part of a group that has the same backing network broadcast domain.
+  version: "1.0"
+  title: vDC Group candidates API
+
+paths:
+
+  networkingCandidateVdcs:
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      tags:
+        - vdcGroupCandidates
+      summary: Get a list of candidate vDCs that can be added to a single vDC Group in the networking context.
+      description: |
+        Get a list of candidate vDCs. Results can be filtered by the type of vDC group and contexts of vDC ID or network pool ID.
+        Below are the supported contexts:
+        <ul>
+        <li>Local vDC Group<code>(_context==LOCAL;_context==orgVdcId)</code> -
+        Returns all vDCs that have the same network pool assigned to the org vDC.
+        <li>Universal vDC Group backed by NSX-V network provider <code>(_context==UNIVERSAL;_context==orgVdcId;_context==networkPoolUniversalId)</code> -
+        If the orgVdc is specified, returns all vDCs that have the same assigned universal network pool as that of the org vDC.
+        A universal network pool is backed by a broadcast domain that can stretch to multiple VMware Cloud Director sites.
+        If the org vDC is not specified or not found and the universal network pool is specified, return all vDCs whose network pool are backed
+        by that universal network pool. This case supports multisite/associated organization queries where user wants to retrieve remote vDCs
+        on different sites/associated organizations with same backing universal network pool.
+        <li>Existing vDC Group<code>(_context==vdcGroupId;_context==networkPoolUniversalId)</code> -
+        If vDC Group is specified, return all vDCs that have the same assigned network pool as that of the vDC Group and also all vDCs that are currently
+        participating in the vDC Group. The assigned network pool can also be universal if the vDC Group type is UNIVERSAL.
+        If vDC Group is not specified or not found and the universal network pool is specified, return all vDCs whose network pool are backed
+        by that universal network pool. This case supports multisite/associated organization queries where user wants to retrieve remote vDCs
+        on different sites/associated organizations with same backing universal network pool.
+        </ul>
+        Note that multisite calls to get the candidate vDCs for a local vDC Group will only return the vDCs of the local site's associated
+        organizations. Remote site's vDCs are not returned since the org vDC or the vDC group is not found there.
+      operationId: getNetworkingVdcGroupCandidates
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/NetworkingCandidateVdcs"
+
+definitions:
+
+  NetworkingCandidateVdc:
+    x-vcloud-added-in: 35.0
+    description: |
+      A candidate vDC that can be added to a vDC Group.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The id of the candidate vDC.
+      name:
+        type: string
+        description: The name of the candidate vDC.
+      orgRef:
+        $ref: '#/definitions/EntityReference'
+        description: The reference to the organization this vDC is in.
+      siteRef:
+        $ref: '#/definitions/EntityReference'
+        description: The site ID that this vDC belongs to.
+      networkProviderScope:
+        type: string
+        description: The network provider scope of the vDC.
+      faultDomainTag:
+        type: string
+        description: |
+          Represents the fault domain of a given organization vDC. For NSX_V backed organization vDCs, this is the network provider scope.
+          For NSX_T backed organization vDCs, this can vary (for example name of the provider vDC or compute provider scope).
+
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      siteRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      faultDomainTag:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+
+  NetworkingCandidateVdcs:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of candidate vDCs that can be added to a single vDC Group in the networking context.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './vdcGroups/vdcGroupCandidates.yaml#/definitions/NetworkingCandidateVdc'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+

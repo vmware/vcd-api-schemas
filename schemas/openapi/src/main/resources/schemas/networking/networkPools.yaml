@@ -1,0 +1,323 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    An API for managing Network Pools. A network pool is a group of undifferentiated networks
+    that is available for use within an organization vDC to create vApp networks
+    and certain types of organization vDC networks.
+  version: "1.0"
+  title: Network Pool API
+
+paths:
+
+  networkPoolSummaries:
+    get:
+      x-vcloud-added-in: 33.0
+      x-vcloud-multisite: true
+      tags:
+        - networkPools
+      summary: Get summary of all the Network Pools in the system.
+      description: |
+        Retrieves summary of all Network Pools in the system.
+        Results can be filtered by context `(_context)`.
+        Supported contexts are:
+        <ul>
+        <li>Provider vDC ID <code>(_context==providerVdcId)</code> -
+        Returns all the network pools which are available to a specific Provider vDC.
+        <li>Org vDC ID <code>(_context==orgVdcId)</code> -
+        Returns all the network pools which are available to a specific Org vDC.
+        <li>Virtual Center ID <code>(managingOwnerRef.id==vcId)</code> + Resource Pool Moref <code>(_context==moref)</code> -
+        Returns all the network pools which are related to a specific Resoure Pool.
+        </ul>
+      operationId: getNetworkPoolsSummary
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkPoolsSummary'
+
+  networkPools:
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPools
+      summary: Create a new network pool.
+      description: |
+        Create a network pool.
+      operationId: createNetworkPool
+      consumes:
+        - application/json
+      parameters:
+        - name: networkPool
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NetworkPool'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  networkPool:
+    parameters:
+      - name: networkPoolId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPool
+      summary: Retrieves a specific Network Pool.
+      operationId: getNetworkPool
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkPool'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPool
+      summary: Updates a specific network pool.
+      operationId: updateNetworkPool
+      consumes:
+        - application/json
+      parameters:
+        - name: networkPool
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NetworkPool'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPool
+      summary: Deletes a specific network pool.
+      operationId: deleteNetworkPool
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  sync:
+    parameters:
+      - name: networkPoolId
+        in: path
+        required: true
+        type: string
+
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+        - networkPool
+      summary: Synchronize the VXLAN network pool.
+      description: |
+        Synchronize the VXLAN network pool. If the user changes a transport zone in NSX by adding
+        or removing clusters, synchronizing the VXLAN network pool ensures that the defined scope
+        of the network pool is reflected in the scope of its corresponding transport zone.
+      operationId: syncNetworkPool
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  NetworkPoolSummary:
+    x-vcloud-added-in: 33.0
+    description: |
+      Common fields that NetworkPoolSummary and NetworkPool have.
+    allOf:
+    - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+    - type: object
+      properties:
+        id:
+          type: string
+          description: The id of the Network Pool in URN format.
+        name:
+          type: string
+          description: The name of the Network Pool. Names for Network Pools must be unique across the system.
+        description:
+          type: string
+        poolType:
+          $ref: './networking/networkPools.yaml#/definitions/NetworkPoolBackingType'
+          description: The network pool backing type.
+        promiscuousMode:
+          type: boolean
+          description: Whether promiscuous mode is enabled on the network pool. This is only applicable for VLAN network pools.
+        totalBackingsCount:
+          type: integer
+          description: The number of backings available for use.
+          readOnly: true
+        usedBackingsCount:
+          type: integer
+          description: The number of network pool backings in use.
+          readOnly: true
+        managingOwnerRef:
+          $ref: '#/definitions/EntityReference'
+          description: The Id of vCenter server or the NSX-T manager that manages backings for this network pool.
+      x-vcloud-property-annotations:
+        id:
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: networkpool
+            - constraint: NonSortable
+            - constraint: ReadOnly
+        description:
+          x-vcloud-constraints:
+            - constraint: NonSearchable
+            - constraint: NonSortable
+        totalBackingsCount:
+          x-vcloud-constraints:
+            - constraint: NonSearchable
+            - constraint: NonSortable
+            - constraint: ReadOnly
+        usedBackingsCount:
+          x-vcloud-constraints:
+            - constraint: NonSearchable
+            - constraint: NonSortable
+            - constraint: ReadOnly
+        managingOwnerRef:
+          x-vcloud-constraints:
+            - constraint: ReadOnly
+            - constraint: NonSortable
+
+  NetworkPoolsSummary:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of Network Pool Summary Objects.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/networkPools.yaml#/definitions/NetworkPoolSummary'
+
+  NetworkPool:
+    x-vcloud-added-in: 33.0
+    description: |
+      A network pool is a group of undifferentiated networks that is available
+      for use within an organization vDC to create certain type of vDC networks
+      such as Organization vDC and Cross vDC networks.
+    allOf:
+      - $ref: './networking/networkPools.yaml#/definitions/NetworkPoolSummary'
+      - type: object
+        properties:
+          backing:
+            $ref: './networking/networkPools.yaml#/definitions/NetworkPoolBacking'
+            description: The network pool backing information.
+    required:
+      - name
+      - poolType
+      - backing
+
+  NetworkPoolBacking:
+    x-vcloud-added-in: 33.0
+    description: |
+      Describes the backing information for a network pool. A network pool is backed by
+      vSphere network resources such as VLAN Ids, portgroups, Transport Zones, etc.
+    type: object
+    properties:
+      vlanIdRanges:
+        $ref: '#/definitions/VlanIdRanges'
+        description: |
+          The range of backing VLAN Id's. This information is available
+          only for VLAN backed network pools.
+      vdsRefs:
+        type: array
+        items:
+          $ref: "#/definitions/BackingRef"
+        description: |
+          The information about virtual distributed switches. This information is
+          available only for VLAN, VXLAN and Universal VXLAN backed network pools.
+      portGroupRefs:
+        type: array
+        items:
+          $ref: "#/definitions/BackingRef"
+        description: |
+          All the vSphere port groups that will be used by this network pool. This information is
+          available only for Portgroup backed network pools.
+      transportZoneRef:
+        $ref: '#/definitions/BackingRef'
+        description: |
+          The Id of the backing transport zone in NSX.
+      providerRef:
+        $ref: '#/definitions/EntityReference'
+        description: The Id of vCenter server or the NSX-T manager that owns this backing entity.
+
+  NetworkPoolBackingType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Represents the network pool's backing type.
+    type: object
+    enum:
+      - VLAN
+      - VXLAN
+      - GENEVE
+      - PORTGROUP_BACKED
+      - UNIVERSAL_VXLAN
+      - UNKNOWN
+
+  VlanIdRange:
+    x-vcloud-added-in: 33.0
+    description: |
+      An object representing VLAN Id range.
+    type: object
+    properties:
+      startId:
+        type: integer
+        description: Starting VLAN Id in the range.
+      endId:
+        type: integer
+        description: Ending VLAN Id in the range.
+
+  VlanIdRanges:
+    description: |
+      List of IpRange
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/VlanIdRange'
+
+  BackingRef:
+    $ref: "./networking/commonObject.yaml#/definitions/BackingRef"
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+

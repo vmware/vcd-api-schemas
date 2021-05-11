@@ -1,0 +1,214 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Org VDC Storage Policy API allows for management of storage policies configured for organization VDCs.
+  version: "1.0"
+  title: Org VDC Storage Policy API
+
+paths:
+  orgVdcStoragePolicy:
+    parameters:
+      - name: orgVdcStoragePolicyUrn
+        in: path
+        description: orgVdcStoragePolicyUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: orgvdcstoragepolicy
+    get:
+      x-vcloud-added-in: 35.2
+      tags:
+        - orgVdcStoragePolicy
+      summary: Get specified Org VDC storage policy.
+      operationId: getOrgVdcStoragePolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/OrgVdcStoragePolicy"
+
+  orgVdcStoragePolicies:
+    get:
+      x-vcloud-added-in: 35.2
+      tags:
+        - orgVdcStoragePolicy
+      summary: Get a paged list of all organization VDC level storage policies in the system
+      description: |
+        Get a paged list of all organization VDC level storage policies in the system
+      operationId: getOrgVdcStoragePolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OrgVdcStoragePolicies'
+
+  capabilities:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: orgvdcstoragepolicy
+
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - capabilities
+      summary: Retrieves capabilities of a specific organization VDC storage policy.
+      description: |
+        Retrieves the current capabilities configured on a specific organization VDC storage policy.
+        These cannot be edited.
+      operationId: getOrgVdcStoragePolicyCapabilities
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './common/capability.yaml#/definitions/Capabilities'
+
+  orgVdcStoragePolicySupportedEntityTypes:
+    parameters:
+      - name: orgVdcStoragePolicyUrn
+        in: path
+        description: orgVdcStoragePolicyUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: orgvdcstoragepolicy
+
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      tags:
+        - orgVdcStoragePolicy
+      summary: Get a paged list of the supported entity types for the specified Organization VDC storage policy.
+      operationId: getOrgVdcStoragePolicySupportedEntityTypes
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './storagePolicies/pvdcStoragePolicies.yaml#/definitions/StoragePolicySupportedEntityTypes'
+
+definitions:
+  OrgVdcStoragePolicy:
+    x-vcloud-added-in: 35.2
+    description: |
+      An organization VDC storage policy.
+    type: object
+    properties:
+      id:
+        type: string
+        description: "Unique VCD Id for the policy."
+      name:
+        type: string
+        description: "Unique name for the policy."
+        minLength: 1
+        maxLength: 128
+      isEnabled:
+        type: boolean
+        description: "Enabled state of the policy, defaults to true."
+        default: true
+      isDefaultStoragePolicy:
+        description: "Storage policy is marked as default, defaults to false."
+        type: boolean
+        default: false
+      storageLimitMb:
+        type: integer
+        format: int64
+        description: "Storage limit for the policy."
+      orgVdcRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "The Org VDC that this policy belongs to."
+      pvdcStoragePolicyRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "The parent PVDC storage policy for this Organization VDC storage policy."
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: orgvdcstoragepolicy
+      orgVdcRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      pvdcStoragePolicyRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./common/capability.yaml#/definitions/Capability"
+          referenced-property: name
+          alias: capabilityName
+          description: |
+            A filter to look up storage policies that contain certain capabilities.
+      - cross-reference:
+          referenced-type: "./storagePolicies/pvdcStoragePolicies.yaml#/definitions/StoragePolicySupportedEntityType"
+          referenced-property: name
+          alias: entityTypeName
+          description: |
+            A filter to look up storage policies with the supported entity type.
+            Example usage:
+            filter?entityTypeName==com.vmware.vcloud.entity.vapp
+      - cross-reference:
+          referenced-type: "./storagePolicies/pvdcStoragePolicies.yaml#/definitions/StoragePolicySettings"
+          referenced-property: supportsAllValidEntityTypes
+          alias: supportsAllValidEntityTypes
+          description: |
+            A filter to look up storage policies which support all entity types
+            Example usage:
+            filter?supportsAllValidEntityTypes==true
+    required:
+      - name
+      - vdcUrn
+      - providerVdcUrn
+
+  OrgVdcStoragePolicies:
+    x-vcloud-added-in: 35.2
+    description: |
+      A list of organization VDC storage policies.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of OrgVDC storage policies.
+            items:
+              $ref: '#/definitions/OrgVdcStoragePolicy'
+

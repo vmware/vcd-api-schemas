@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -28,7 +28,11 @@
   #L%
   -->
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/versions" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/versions" version="1.0">
+
+<xs:schema xmlns="http://www.vmware.com/vcloud/versions"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:meta="http://www.vmware.com/vcloud/meta"
+           elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/versions" version="1.0">
 
     <xs:element name="SupportedVersions" type="SupportedVersionsType"/>
     <xs:complexType name="SupportedVersionsType">
@@ -47,6 +51,8 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="SchemaRoot" type="xs:anyURI" minOccurs="0" />
+            <xs:element name="AlphaVersion" type="VersionInfoType" minOccurs="0" />
             <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
         </xs:sequence>
         <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -72,8 +78,21 @@
                 <xs:annotation>
                     <xs:documentation source="modifiable">none</xs:documentation>
                     <xs:documentation xml:lang="en">
-                        Login URL for the version.
+                        Login URL for the version,
+                        (Starting API v36.0, this URL is for tenants only. Provider's must use the dedicated provider login)
                     </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ProviderLoginUrl" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation source="since">36.0</xs:documentation>
+                    <xs:documentation source="modifiable">none</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        Provider's Login URL for the version.
+                    </xs:documentation>
+                    <xs:appinfo>
+                        <meta:version added-in="36.0"/>
+                    </xs:appinfo>
                 </xs:annotation>
             </xs:element>
             <xs:element name="MediaTypeMapping" type="MediaTypeMappingType" minOccurs="0" maxOccurs="unbounded">
@@ -83,6 +102,7 @@
                         Media type mapping. This element is not present when
                         the API version is 5.7 or higher.
                     </xs:documentation>
+                    <xs:documentation source="deprecated">33.0</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
@@ -105,6 +125,7 @@
             <xs:documentation xml:lang="en">
                 Mapping of a content media type to a xsd complex type.
             </xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="MediaType" type="xs:string">
@@ -136,3 +157,4 @@
         <xs:anyAttribute namespace="##other" processContents="lax"/>
     </xs:complexType>
 </xs:schema>
+

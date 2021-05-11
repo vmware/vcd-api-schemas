@@ -1,0 +1,496 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Load Balancer Service Engine Groups API allows for CRUD operations for Load Balancer Service Engine Groups.
+    Load Balancer Service Engine Groups define the compute resources available for deploying load balancers.
+  title: Load Balancer Service Engine Groups API
+  version: "1.0"
+
+paths:
+
+  loadBalancerServiceEngineGroups:
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroups
+      summary: Create a new Load Balancer Service Engine Group.
+      description: |
+        Create a new Load Balancer Service Engine Group to be used with VMware Cloud Director.
+      operationId: createServiceEngineGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerServiceEngineGroup
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoadBalancerServiceEngineGroup'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      tags:
+        - loadBalancerServiceEngineGroups
+      summary: Get all Load Balancer Service Engine Groups in the system.
+      description: |
+        Retrieves all Load Balancer Service Engine Groups.
+        Supported contexts are:
+        Gateway ID <code>(_context==gatewayId)</code> - |
+        Returns all Load Balancer Service Engine Groups that are accessible to the gateway.
+        Assignable Gateway ID <code>(_context=gatewayId;_context==assignable)</code> - |
+        Returns all Load Balancer Service Engine Groups that are assignable to the gateway.
+        This filters out any Load Balancer Service Engine groups that are already assigned to the gateway or
+        assigned to another gateway if the reservation type is 'DEDICATED'.
+      operationId: getServiceEngineGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/LoadBalancerServiceEngineGroups'
+
+
+  loadBalancerServiceEngineGroup:
+    parameters:
+      - name: loadBalancerServiceEngineGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: serviceEngineGroup
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroup
+      summary: Get Load Balancer Service Engine Group.
+      description: |
+        Retrieves a specific Load Balancer Service Engine Group.
+      operationId: getServiceEngineGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/LoadBalancerServiceEngineGroup"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroup
+      summary: Update specified Load Balancer Service Engine Group.
+      description: |
+        Update a Load Balancer Service Engine Group.
+      operationId: updateServiceEngineGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: loadBalancerServiceEngineGroup
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LoadBalancerServiceEngineGroup"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroup
+      summary: Delete the specified Load Balancer Service Engine Group.
+      description: |
+        Delete a Load Balancer Service Engine Group.
+      operationId: deleteServiceEngineGroup
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  loadBalancerServiceEngineGroupSync:
+    parameters:
+      - name: loadBalancerServiceEngineGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: serviceEngineGroup
+
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroup
+      summary: Sync Load Balancer Service Engine Group.
+      description: |
+        Syncs a specified Load Balancer Service Engine Group. Requests the HA mode and the maximum number of supported
+        Virtual Services for this Service Engine Group from the Load Balancer, and updates vCD's local record of these
+        properties.
+      operationId: syncServiceEngineGroup
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  assignments:
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroupAssignments
+      summary: Create a new Load Balancer Service Engine Group Assignment.
+      description: |
+        Create a new Load Balancer Service Engine Group Assignment. The assignment links a Load Balancer Service Engine Group
+        with an Edge Gateway to provide load balancing resources to the Edge Gateway.
+      operationId: createServiceEngineGroupAssignment
+      consumes:
+        - application/json
+      parameters:
+        - name: assignment
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoadBalancerServiceEngineGroupAssignment'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroupAssignments
+      summary: Get the assignments for a Load Balancer Service Engine Group.
+      description: |
+        Retrieves the service engine group assignments for the Load Balancer Service Engine Group.
+      operationId: getServiceEngineGroupAssignments
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/LoadBalancerServiceEngineGroupAssignments"
+
+  assignment:
+    parameters:
+      - name: assignmentId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: serviceEngineGroupAssignment
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroupAssignment
+      summary: Get a Load Balancer Service Engine Group Assignment.
+      description: |
+        Retrieves a specific Load Balancer Service Engine Group Assignment.
+      operationId: getServiceEngineGroupAssignment
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/LoadBalancerServiceEngineGroupAssignment"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroupAssignment
+      summary: Update a Load Balancer Service Engine Group Assignment.
+      description: |
+        Update a Load Balancer Service Engine Group Assignment.
+        Updates are not allowed if the associated Load Balancer Service Engine Group has reservation type 'DEDICATED'.
+      operationId: updateServiceEngineGroupAssignment
+      consumes:
+        - application/json
+      parameters:
+        - name: assignment
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LoadBalancerServiceEngineGroupAssignment"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - loadBalancerServiceEngineGroupAssignment
+      summary: Delete the specified Load Balancer Service Engine Group Assignment.
+      description: |
+        Delete a Load Balancer Service Engine Group Assignment. The Edge Gateway will no longer be able to use
+        the Load Balancer Service Engine Group for load balancing resources.
+      operationId: deleteServiceEngineGroupAssignment
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+
+definitions:
+  LoadBalancerServiceEngineGroups:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of Load Balancer Service Engine Groups.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/LoadBalancerServiceEngineGroup'
+
+  LoadBalancerServiceEngineGroup:
+    x-vcloud-added-in: 35.0
+    description: |
+      A Load Balancer Service Engine Group.
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: The identifier of the Load Balancer Service Engine Groups in URN format
+            example: urn:vcloud:serviceEngineGroup:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          name:
+            type: string
+            description: |
+              The name of the Load Balancer Service Engine Group.
+          description:
+            type: string
+            description: Description of the Load Balancer Service Engine Group.
+          serviceEngineGroupBacking:
+            $ref: './networking/loadBalancerServiceEngineGroups.yaml#/definitions/LoadBalancerServiceEngineGroupBacking'
+            description: |
+              The backing that uniquely identifies a Load Balancer Service Engine Group configured within a Load Balancer Cloud.
+          haMode:
+            type: string
+            description: |
+              The service engine group's High Availability Mode.
+              <ul>
+              <li>ELASTIC_N_PLUS_M_BUFFER - Service Engines will scale out to N active nodes with M nodes as buffer.
+              <li>ELASTIC_ACTIVE_ACTIVE - Active-Active with scale out.
+              <li>LEGACY_ACTIVE_STANDBY - Traditional single Active-Standby configuration
+              </ul>
+          reservationType:
+            type: string
+            description: |
+              The reservation model for virutal services on the Load Balancer Service Engine Group.
+              <ul>
+              <li>DEDICATED - Dedicated to a single Edge Gateway and can only be assigned to a single Edge Gateway.
+              <li>SHARED - Shared between multiple Edge Gateways. Can be assigned to multiple Edge Gateways.
+              </ul>
+            default: 'SHARED'
+          maxVirtualServices:
+            type: integer
+            description: |
+              The maximum number of virtual services supported on the Load Balancer Service Engine Group.
+          numDeployedVirtualServices:
+            type: integer
+            description: |
+              The number of virtual services currently deployed on the Load Balancer Service Engine Group.
+          reservedVirtualServices:
+            type: integer
+            description: |
+              The number of virtual services already reserved on the Load Balancer Service Engine Group. This value is the sum of the guaranteed
+              virtual services given to Edge Gateways assigned to the Load Balancer Service Engine Group.
+          overAllocated:
+            type: boolean
+            description: |
+              Indicates whether the maximum number of virtual services supported on the Load Balancer Service Engine Group has been surpassed
+              by the current number of reserved virtual services.
+        required:
+          - name
+          - serviceEngineGroupBacking
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: serviceEngineGroup
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      serviceEngineGroupBacking:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      haMode:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      maxVirtualServices:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      numDeployedVirtualServices:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      reservedVirtualServices:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      overAllocated:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      status:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  LoadBalancerServiceEngineGroupBacking:
+    x-vcloud-added-in: 35.0
+    description: |
+      A Load Balancer Service Engine Group Backing.
+    type: object
+    properties:
+      backingId:
+        type: string
+        description:  The unique backing identifier of the Load Balancer Service Engine Group.
+        example: serviceenginegroup-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      loadBalancerCloudRef:
+        $ref: '#/definitions/EntityReference'
+        description:  The associated Load Balancer Cloud.
+    required:
+      - backingId
+      - loadBalancerCloudRef
+    x-vcloud-property-annotations:
+      backingId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      loadBalancerCloudRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  LoadBalancerServiceEngineGroupAssignments:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of Load Balancer Service Engine Group Assignments.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/LoadBalancerServiceEngineGroupAssignment'
+
+  LoadBalancerServiceEngineGroupAssignment:
+    x-vcloud-added-in: 35.0
+    description:
+      An assignment of a Load Balancer Service Engine Group to an Edge Gateway
+    type: object
+    properties:
+      id:
+        type: string
+        description: The identifier of the Load Balancer Service Engine Groups in URN format.
+        example: urn:vcloud:serviceEngineGroupAssignment:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      maxVirtualServices:
+        description: |
+          The maximum number of virtual services the Edge Gateway is allowed to use.
+          This is required if the Load Balancer Service Engine Group has reservation type 'SHARED'.
+          This must be unset if the Load Balancer Service Engine Group has reservation type 'DEDICATED'.
+        type: integer
+        format: int32
+        minimum: 0
+      minVirtualServices:
+        description: |
+          The number of guaranteed virtual services available to the Edge Gateway.
+          This is required if the Load Balancer Service Engine Group has reservation type 'SHARED'.
+          This must be unset if the Load Balancer Service Engine Group has reservation type 'DEDICATED'.
+        type: integer
+        format: int32
+        minimum: 0
+      numDeployedVirtualServices:
+        description: |
+          The current number of deployed virutal services.
+        type: integer
+      serviceEngineGroupRef:
+        description: The associated Load Balancer Service Engine Group.
+        $ref: '#/definitions/EntityReference'
+      gatewayRef:
+        description: The associated Edge Gateway.
+        $ref: '#/definitions/EntityReference'
+      gatewayOwnerRef:
+        description: The owner of the associated Edge Gateway. This can be a vDC or vDC Group.
+        $ref: '#/definitions/EntityReference'
+      gatewayOrgRef:
+        description: The organization of the associated Edge Gateway.
+        $ref: '#/definitions/EntityReference'
+    required:
+      - serviceEngineGroupRef
+      - gatewayRef
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: serviceEngineGroupAssignment
+      maxVirtualServices:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      minVirtualServices:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      numDeployedVirtualServices:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: ReadOnly
+      serviceEngineGroupRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      gatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      gatewayOwnerRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      gatewayOrgRef:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

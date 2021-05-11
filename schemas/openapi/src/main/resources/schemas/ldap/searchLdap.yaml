@@ -1,0 +1,62 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: LDAP Search Actions
+  version: "1.0"
+  title: Search LDAP YAML
+
+paths:
+  searchUsers:
+    get:
+      tags:
+        - LDAP
+      summary: Search LDAP Users
+      description: |
+        Searches LDAP for given user(s)
+      operationId: searchLdapUsers
+      produces:
+        - application/json
+      parameters:
+        - name: q
+          in: query
+          description: String to search for via LDAP
+          required: false
+          type:
+            string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "./ldap/ldap.yaml#/definitions/User"
+
+  searchGroups:
+    get:
+      tags:
+        - LDAP
+      summary: Search LDAP Groups
+      description: |
+        Searches LDAP for given group(s)
+      operationId: searchLdapGroups
+      produces:
+        - application/json
+      parameters:
+        - name: q
+          in: query
+          description: String to search for via LDAP
+          required: false
+          type:
+            string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "./ldap/ldap.yaml#/definitions/UserGroup"

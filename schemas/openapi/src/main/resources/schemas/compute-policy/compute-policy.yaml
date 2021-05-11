@@ -1,0 +1,630 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director compute policy API allows to create and view compute policies in vDC and pVdc.
+  version: "1.0"
+  title: vCloud Director compute policy API
+
+paths:
+  vdc-compute-policies:
+    get:
+      x-vcloud-multisite: true
+      tags:
+        - vdcComputePolicies
+      summary: Get list of organization vDC compute policies.
+      description: |
+        Get list of organization vDC compute policy.
+        Results can be filtered by id, pvdcId, isSizingOnly and _context.
+        Supported contexts are:
+        Org vDC Urn ID (_context==orgVdcUrn) - |
+        Returns all the vDC compute policies which are available to a specific Org vDC.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: queryVdcComputePolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicies"
+
+    post:
+      tags:
+        - vdcComputePolicies
+      summary: Creates a new organization vDC compute policy
+      description: |
+        Creates a new vDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: createVdcComputePolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: newVdcComputePolicyParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+
+  vdc-compute-policy:
+    parameters:
+      - name: vdcComputePolicyId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - vdcComputePolicies
+      summary: Get specified organization vDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: getVdcComputePolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - vdcComputePolicies
+      summary: Update specified organization vDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: updateVdcComputePolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: updateVdcComputePolicyParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+    delete:
+      tags:
+        - vdcComputePolicies
+      summary: Delete specified organization vDC compute policy.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: deleteVdcComputePolicy
+      responses:
+        204:
+          description: No Content
+
+  vdc-compute-policy-vm-refs:
+    parameters:
+      - name: vdcComputePolicyId
+        in: path
+        required: true
+        type: string
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+    get:
+      tags:
+        - vdcComputePolicies
+      summary: Get all VMs associated with this vDC compute policy
+      operationId: getVdcComputePolicyVms
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+        404:
+          description: Not Found
+
+  vdc-refs:
+    parameters:
+      - name: vdcComputePolicyId
+        in: path
+        required: true
+        type: string
+
+    post:
+      tags:
+        - vdcComputePolicies
+      summary: Assign this organization vDC compute policy to list of vDCs.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: addVdcComputePolicyToVdcs
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcRefs
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EntityReference"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+    get:
+      tags:
+        - vdcComputePolicies
+      summary: Get organization vDCs associated with this vDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: getVdcComputePolicyVdcs
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+        404:
+          description: Not Found
+
+  pvdc-compute-policies:
+    get:
+      tags:
+        - pvdcComputePolicies
+      summary: Get list of provider vDC compute policies.
+      description: |
+        Get list of provider vDC compute policies. Only filtering by pvdc compute policy name is supported.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: queryPvdcComputePolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PvdcComputePolicies"
+    post:
+      tags:
+        - pvdcComputePolicies
+      summary: Creates a new provider vDC compute policy
+      description: |
+        Creates a new pVDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: createPvdcComputePolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: pvdcComputePolicy
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PvdcComputePolicy"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/PvdcComputePolicy"
+
+  pvdc-compute-policy:
+    parameters:
+      - name: pvdcComputePolicyId
+        in: path
+        description: ID of provider VDC Compute Policy
+        required: true
+        type: string
+    get:
+      tags:
+        - pvdcComputePolicies
+      summary: Get specified provider vDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: getPvdcComputePolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PvdcComputePolicy"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - pvdcComputePolicies
+      summary: Update specified provider vDC compute policy
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: updatePvdcComputePolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: pvdcComputePolicyId
+          in: path
+          description: ID of provider VDC Compute Policy
+          required: true
+          type: string
+        - name: pvdcComputePolicy
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PvdcComputePolicy"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PvdcComputePolicy"
+    delete:
+      tags:
+        - pvdcComputePolicies
+      summary: Delete specified provider vDC compute policy.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: deletePvdcComputePolicy
+      responses:
+        204:
+          description: No Content
+
+  pvdc-compute-policy-vm-refs:
+    parameters:
+      - name: pvdcComputePolicyId
+        in: path
+        description: ID of provider VDC Compute Policy
+        required: true
+        type: string
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+    get:
+      tags:
+        - pvdcComputePolicies
+      summary: Get all VMs associated with this pVDC compute policy
+      operationId: getPvdcComputePolicyVms
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+        404:
+          description: Not Found
+
+definitions:
+
+  VdcComputePolicy:
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          UUID for vDC compute policy. This is immutable.
+      description:
+        type: string
+        minLength: 1
+        maxLength: 256
+        default: "A vDC compute policy."
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      name:
+        type: string
+        minLength: 1
+        maxLength: 128
+        required: true
+        description: |
+          Display name.
+      cpuSpeed:
+        type: integer
+        x-vcloud-added-in: 32.0
+        format: int64
+        description: |
+          The CPU speed in MHz of this VM. This is optional. When provided,
+          VMs with this policy cannot have more than CPU speed defined by this field.
+      memory:
+        type: integer
+        x-vcloud-added-in: 32.0
+        format: int64
+        description: |
+          The maximum memory in MB allowed for a VM. This is optional. When provided, VMs with
+          this policy cannot have configured memory more than defined by this field.
+      cpuCount:
+        type: integer
+        x-vcloud-added-in: 32.0
+        format: int32
+        description: |
+           The maximum number of CPUs allowed for a VM. This is optional. When provided,
+           VMs with this policy cannot have more than number of CPUs defined by this field.
+      coresPerSocket:
+        type: integer
+        x-vcloud-added-in: 32.0
+        format: int32
+        description: |
+           The cores per socket to be configured for the VM where this policy is applied.
+      memoryReservationGuarantee:
+        type: number
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+            Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        format: double
+        minimum: 0
+        exclusiveMinimum: false
+        maximum: 1
+        exclusiveMaximum: false
+        description: |
+            The factor of the configured memory reserved for the VM on which this policy is applied.
+      cpuReservationGuarantee:
+        type: number
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+            Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        format: double
+        minimum: 0
+        exclusiveMinimum: false
+        maximum: 1
+        exlusiveMaximum: false
+        description: |
+            The factor of the configured CPU reserved for the VM on which this policy is applied.
+      cpuLimit:
+        type: integer
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+             Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        format: int64
+        description: |
+             The limit of CPU in MHz for the VM on which this policy is applied. -1 means unlimited. This
+             is optional. If not provided, limit would be equal to the vCPUSpeed multiplied by numCPU.
+      memoryLimit:
+        type: integer
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+            Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        format: int64
+        description: |
+             The limit of memory in MB for the VM on which this policy is applied. -1 means unlimited. This
+             is optional. If not provided, limit would be equal to the configured memory of the VM.
+      cpuShares:
+        type: integer
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+            Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        format: int32
+        description: |
+             The number of CPU shares for the VM on which this policy is applied. This is optional. If
+             not provided, Normal shares would be applied to the VM.
+      memoryShares:
+        type: integer
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+            Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        format: int32
+        description: |
+              The number of memory shares for the VM on which this policy is applied. This is optional. If
+              not provided, Normal shares would be applied to the VM.
+      extraConfigs:
+        type: object
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+            Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+        description: |
+              Map of extra configs to be set on the VM with this policy.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+        additionalProperties:
+          type: string
+      pvdcComputePolicyRef:
+        description: |
+              Deprecated in Api 32.0, this property will be removed in future release.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+        $ref: '#/definitions/EntityReference'
+      pvdcComputePolicy:
+        x-vcloud-added-in: 32.0
+        description: |
+              This field cannot be updated and is a read-only field in the client after creation.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+        $ref: '#/definitions/EntityReference'
+      compatibleVdcTypes:
+          type: array
+          x-vcloud-added-in: 32.0
+          x-vcloud-restricted: |
+              Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+          description: A list of read-only compatible vDC types for this policy.
+          items:
+            type: string
+      isSizingOnly:
+          type: boolean
+          readOnly: true
+          x-vcloud-added-in: 33.0
+          description: |
+             This field cannot be updated and is a read-only field in the client after creation. It defines whether
+             the policy is SIZING_ONLY or if it also contains affinity information.
+      pvdcId:
+          type: string
+          x-vcloud-restricted: |
+             Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+          x-vcloud-added-in: 33.0
+          description: |
+             URN for Provider VDC.
+          x-vcloud-constraints:
+            - constraint: NonSortable
+            - constraint: Urn
+              args:
+                - arg: providervdc
+      namedVmGroups:
+          type: array
+          x-vcloud-restricted: |
+             Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+          items:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+          x-vcloud-added-in: 33.0
+          description: |
+            List of list of vmGroups grouped together in a meaningful manner.
+            A group of vmGroups would consist of one functionally equal vmGroup picked from each cluster of the pvdc.
+      logicalVmGroupReferences:
+          type: array
+          x-vcloud-restricted: |
+             Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+          description: |
+            List of logical vm group references. This value is set at creation time and cannot be edited later.
+          x-vcloud-added-in: 33.0
+          items:
+            $ref: '#/definitions/EntityReference'
+      isAutoGenerated:
+          type: boolean
+          x-vcloud-constraints:
+              - constraint: ReadOnly
+          x-vcloud-added-in: 33.0
+          description: |
+             This field cannot be updated and is a read-only field in the client. It defines if the policy
+             is auto-generated.
+    required:
+      - name
+
+    x-vcloud-property-annotations:
+      pvdcComputePolicyRef:
+        x-vcloud-added-in: 31.0
+        x-vcloud-deprecated-in: 32.0
+        x-vcloud-deprecated-alternative: pvdcComputePolicy
+        x-vcloud-removed-in: 32.0
+        x-vcloud-restricted: |
+          Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+
+      pvdcComputePolicy:
+        x-vcloud-added-in: 32.0
+        x-vcloud-restricted: |
+          Restricted field, requires 'View Alternate Admin version of Compute Policies for an Organization VDC' right to access this field.
+
+  VdcComputePolicies:
+    description: |
+      A list of VDC compute policies.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of VDC compute policies.
+            items:
+              $ref: '#/definitions/VdcComputePolicy'
+
+  PvdcComputePolicy:
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          UUID for pVDC compute policy. This is immutable.
+      name:
+        type: string
+        minLength: 1
+        maxLength: 128
+        description: |
+          Display name.
+      description:
+        type: string
+        default: ""
+        minLength: 1
+        maxLength: 256
+      pvdcId:
+        type: string
+        description: |
+          URN for Provider VDC. If not provided, then this policy
+          is considered Global.
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: providervdc
+      namedVmGroupReferences:
+          type: array
+          x-vcloud-added-in: 31.0
+          x-vcloud-deprecated-in: 33.0
+          x-vcloud-deprecated-alternative: namedVmGroups
+          x-vcloud-removed-in: 33.0
+          description: |
+            This field cannot be updated and is a read-only field in the client after creation.
+            Deprecated in Api 33.0, this property will be removed in future release.
+          items:
+            $ref: '#/definitions/EntityReference'
+      namedVmGroups:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+          x-vcloud-added-in: 33.0
+          description: |
+            List of list of vmGroups grouped together in a meaningful manner.
+            A group of vmGroups would consist of one functionally equal vmGroup picked from each cluster of the pvdc.
+      logicalVmGroupReferences:
+          type: array
+          description: |
+            This field cannot be updated and is a read-only field after creation.
+          x-vcloud-added-in: 32.0
+          items:
+            $ref: '#/definitions/EntityReference'
+    required:
+      - name
+
+  PvdcComputePolicies:
+    description: |
+      A list of provider VDC compute policies.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of provider VDC compute policies.
+            items:
+              $ref: '#/definitions/PvdcComputePolicy'
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

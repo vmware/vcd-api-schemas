@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta"
@@ -65,10 +66,23 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="TenantUiEndpoint" type="xs:anyURI" minOccurs="1" maxOccurs="1">
+                    <xs:element name="BaseUiEndpoint" type="xs:anyURI" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="MULTI_SITE" /></xs:appinfo>
                             <xs:documentation source="since">MULTI_SITE</xs:documentation>
+                            <xs:documentation source="deprecated">JWT_LOGIN_SUPPORT</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The base URI of the UI end-point for the site.
+                            </xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="TenantUiEndpoint" type="xs:anyURI" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="MULTI_SITE" /></xs:appinfo>
+                            <xs:documentation source="since">MULTI_SITE</xs:documentation>
+                            <xs:documentation source="deprecated">JWT_LOGIN_SUPPORT</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The URI of the Tenant UI end-point for the site.
                             </xs:documentation>
@@ -107,7 +121,7 @@
         <xs:complexContent>
             <xs:extension base="MultisiteType">
                 <xs:sequence>
-                    <xs:element name="MultiSiteUrl" type="xs:anyURI" minOccurs="1" maxOccurs="1">
+                    <xs:element name="MultiSiteUrl" type="xs:anyURI" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="MULTI_SITE" /></xs:appinfo>
                             <xs:documentation source="since">MULTI_SITE</xs:documentation>
@@ -115,7 +129,7 @@
                                 The URL that represents the entire multisite setup.
                             </xs:documentation>
                             <xs:documentation source="modifiable">always</xs:documentation>
-                            <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="SiteAssociations" type="SiteAssociationsType" minOccurs="0" maxOccurs="1">
@@ -212,6 +226,7 @@
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="MULTI_SITE" /></xs:appinfo>
                             <xs:documentation source="since">MULTI_SITE</xs:documentation>
+                            <xs:documentation source="deprecated">35.0</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 PEM-encoded public key for the remote site.
                             </xs:documentation>
@@ -272,6 +287,15 @@
                         <xs:appinfo><meta:version added-in="IMPROVED_SITE_NAME" /></xs:appinfo>
                         <xs:documentation xml:lang="en">
                              Name of the site this status represents.
+                        </xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="dbCollation" type="xs:string">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="SITE_DB_COLLATION" /></xs:appinfo>
+                        <xs:documentation xml:lang="en">
+                             Site database collation configuration
                         </xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                     </xs:annotation>
@@ -519,6 +543,16 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="ApiVersion" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="INCLUDE_API_VERSION_IN_AUTH_LOCATION" /></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Highest API version supported by this location.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -708,3 +742,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

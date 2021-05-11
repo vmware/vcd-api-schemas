@@ -1,0 +1,386 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for Firewall configuration of an edge gateway. Users can create rules to allow or deny north-south
+    traffic to pass through the firewall. This can only be used on an Edge Gateway backed by an NSX-T Tier-1 Gateway.
+  version: "1.0"
+  title: Edge Gateway Firewall API
+
+paths:
+
+  rules:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayFirewallRules
+      summary: Retrieves all firewall rules for a given edge gateway.
+      description: |
+        Retrieves all user-defined and default firewall rules for a given edge gateway.
+        The rules are returned in the order of precedence.
+      operationId: getFirewallRules
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeFirewallRules'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayFirewallRules
+      summary: Updates firewall rules for a given edge gateway.
+      description: |
+        Updates all the firewall rules for a given edge gateway. If a rule with the ruleId
+        is not already present, a new rule will be created. If it already exists, the rule
+        will be updated. Any existing rule that is not specified in the update payload will be deleted.
+        The order of rules in payload will define the actual order in which this rules will be applied.
+      operationId: updateFirewallRules
+      consumes:
+        - application/json
+      parameters:
+        - name: firewallRules
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeFirewallRules'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayFirewallRules
+      summary: Deletes all the firewall rules for a given edge gateway.
+      operationId: deleteFirewallRules
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  rule:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: ruleId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayFirewallRule
+      summary: Retrieves a specific firewall rule for a given edge gateway.
+      operationId: getFirewallRule
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeFirewallRule'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayFirewallRule
+      summary: Updates a specific firewall rule for a given edge gateway.
+      operationId: updateFirewallRule
+      consumes:
+        - application/json
+      parameters:
+        - name: firewallRule
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeFirewallRule'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayFirewallRule
+      summary: Deletes a specific firewall rule for a given edge gateway.
+      operationId: deleteFirewallRule
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeFirewallRules:
+    x-vcloud-added-in: 33.0
+    description: |
+      Firewall rules for an edge gateway. This contains an ordered list of system,
+      user defined and default firewall rules. All the rules are returned in the order of type and precedence.
+    allOf:
+    - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+    - type: object
+      properties:
+        systemRules:
+          type: array
+          description: |
+            The ordered list of system defined edge firewall rules. System rules are
+            applied before user defined rules in the order in which they are returned.
+          items:
+            $ref: '#/definitions/EdgeFirewallRule'
+        userDefinedRules:
+          type: array
+          description: |
+            The ordered list of user defined edge firewall rules.
+            Users are allowed to add/modify/delete rules only to this list.
+          items:
+            $ref: '#/definitions/EdgeFirewallRule'
+          maxItems: 1000
+        defaultRules:
+          type: array
+          description: |
+            The ordered list of default edge firewall rules. Default rules are
+            applied after the user defined rules in the order in which they are returned.
+          items:
+            $ref: '#/definitions/EdgeFirewallRule'
+
+    x-vcloud-property-annotations:
+      systemRules:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      userDefinedRules:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      defaultRules:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  FirewallRule:
+    x-vcloud-added-in: 34.0
+    description: Describes a Firewall rule.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of this firewall rule. If a rule with the ruleId
+          is not already present, a new rule will be created. If it already
+          exists, the rule will be updated.
+      name:
+        type: string
+        description: Name for the rule.
+      description:
+        type: string
+      sourceFirewallGroups:
+        description: |
+          List of source groups for firewall rule. It specifies the sources of network traffic for the firewall rule.
+          Null value or an empty list will be treated as "ANY" which means traffic from any source.
+          For Distributed Firewall rules, an entry with an id of urn:vcloud:firewallGroup:internal can be used to specify all internal vDC Group network traffic.
+        type: array
+        items:
+          $ref: '#/definitions/EntityReference'
+        maxItems: 128
+      destinationFirewallGroups:
+        description: |
+          List of source groups for firewall rule. It specifies the destinations of network traffic for the firewall rule.
+          Null value or an empty list will be treated as "ANY" which means traffic to any destination.
+          For Distributed Firewall rules, an entry with an id of urn:vcloud:firewallGroup:internal can be used to specify all internal vDC Group network traffic.
+        type: array
+        items:
+          $ref: '#/definitions/EntityReference'
+        maxItems: 128
+      applicationPortProfiles:
+        description: |
+          The list of application ports where this firewall rule is applicable.
+          Null value or an empty list will be treated as "ANY" which means rule applies to all ports.
+        type: array
+        items:
+          $ref: '#/definitions/EntityReference'
+        maxItems: 128
+      ipProtocol:
+        description: |
+          Type of IP packet that should be matched while enforcing the rule.
+          Default value is IPV4_IPV6.
+        $ref: '#/definitions/FirewallRuleIpProtocol'
+        default: IPV4_IPV6
+      action:
+        description: |
+          The action to be applied to all the traffic that meets the firewall rule criteria.
+          It determines if the rule permits or blocks traffic. This property is now deprecated and replaced with actionValue.
+          Property is required if actionValue is not set.
+        $ref: '#/definitions/FirewallRuleAction'
+      actionValue:
+        x-vcloud-added-in: 35.2
+        type: string
+        description: |
+          The action to be applied to all the traffic that meets the firewall rule criteria.
+          It determines if the rule permits or blocks traffic. Property is required if action is not set.
+          Below are valid values.
+          <ul>
+            <li> <code> ALLOW </code> permits traffic to go through the firewall.
+            <li> <code> DROP </code> blocks the traffic at the firewall. No response is sent back to the source.
+            <li> <code> REJECT </code> blocks the traffic at the firewall. A response is sent back to the source.
+          </ul>
+      direction:
+        description: |
+          Specifies the direction of the network traffic.
+          Default value is IN_OUT.
+        $ref: '#/definitions/FirewallRuleDirection'
+        default: IN_OUT
+      logging:
+        type: boolean
+        description: Whether packet logging is enabled for firewall rule.
+        default: false
+      networkContextProfiles:
+        description: |
+          The list of layer 7 network context profiles where this firewall rule is applicable.
+          Null value or an empty list will be treated as "ANY" which means rule applies to all applications and domains.
+        type: array
+        items:
+          $ref: '#/definitions/EntityReference'
+      enabled:
+        type: boolean
+        description: Whether the firewall rule is enabled.
+        default: true
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - name
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      sourceFirewallGroups:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      destinationFirewallGroups:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      services:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ipProtocol:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      action:
+        x-vcloud-deprecated-in: 35.2
+        x-vcloud-deprecated-alternative: actionValue
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      actionValue:
+        x-vcloud-added-in: 35.2
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      direction:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      logging:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkContextProfiles:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-added-in: 35.0
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeFirewallRule:
+    x-vcloud-added-in: 33.0
+    description: Describes a Firewall rule for an edge gateway backed by NSX-T.
+    allOf:
+      - $ref: "./networking/edgeGatewayFirewall.yaml#/definitions/FirewallRule"
+
+  FirewallRuleAction:
+    description: |
+      Defines the firewall rule action to be applied.
+    type: object
+    enum:
+      - ALLOW
+      - DROP
+
+  FirewallRuleDirection:
+    description: |
+      Defines direction of traffic for firewall rule.
+    type: object
+    enum:
+      - IN
+      - OUT
+      - IN_OUT
+
+  FirewallRuleIpProtocol:
+    description: |
+      Specifies the IP protocol for the network packet that should be matched while enforcing the rule.
+      IPV4_IPV6 means both IPV4 and IPV6 packet type.
+    type: object
+    enum:
+      - IPV4
+      - IPV6
+      - IPV4_IPV6
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

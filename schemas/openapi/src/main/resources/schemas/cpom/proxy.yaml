@@ -1,0 +1,584 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The SDDC Proxy API allows for management of proxies owned by software-defined data centers.
+  title: SDDC Proxy API
+  version: "1.0"
+
+paths:
+  anonymousPacFile:
+    parameters:
+      - name: id
+        description: identifier for the pac file configured for your organization
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - proxy
+      summary: Gets the tenant-specific .pac file listing proxies accessible to the tenant.
+      description: |
+        Gets the tenant-specific .pac file listing proxies accessible to the tenant.
+      operationId: getProxiesPacFileForTenant
+      produces:
+        - application/x-ns-proxy-autoconfig
+      responses:
+        200:
+          description: a PAC file
+          content:
+            application/x-ns-proxy-autoconfig
+          schema:
+            type: string
+            format: binary
+            description: The tenant-specific .pac file listing proxies accessible to the tenant.
+            example: function FindProxyForURL(url, host) {
+                       var proxiedHosts = [];
+                       proxiedHosts.push("sampleVc.vmware.com");
+                       if (proxiedHosts.includes(host)) {
+                           return "HTTPS sampleVCDHost:8443";
+                       } else {
+                           return "DIRECT";
+                       }
+                   }
+        204:
+          description: no proxies configured
+
+  pacFile:
+    get:
+      tags:
+        - sddcProxy
+      summary: Gets the .pac file for the user's accessible proxies.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: anonymousPacFile
+      description: |
+        Gets the .pac file for the user's accessible proxies.
+      operationId: getSddcProxiesPacFile
+      produces:
+        - application/x-ns-proxy-autoconfig
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The .pac file for the user's accessible proxies.
+            example: function FindProxyForURL(url, host) {
+                        var proxiedHosts = [];
+                        proxiedHosts.push("sampleVc.vmware.com");
+                        if (proxiedHosts.includes(host)) {
+                            return "HTTPS sampleVCDHost:8443";
+                        } else {
+                            return "DIRECT";
+                        }
+                    }
+        204:
+          description: no proxies configured
+
+  sddcProxies:
+    get:
+      tags:
+        - sddcProxy
+      summary: Gets a paged list of SDDC proxies for a tenant.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxies
+      description: |
+        Gets a paged list of SDDC proxies for a tenant.
+      operationId: getSddcProxies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxies"
+    post:
+      tags:
+        - sddcProxy
+      summary: Creates an SDDC proxy.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxies
+      description: |
+        Creates an SDDC proxy.
+      operationId: createSddcProxy
+      parameters:
+        - name: proxy
+          description: The new SDDC proxy model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+      consumes:
+        - application/json
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  sddcProxy:
+    parameters:
+      - name: id
+        description: SDDC Proxy ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: sddcProxy
+
+    get:
+      tags:
+        - sddcProxy
+      summary: Retrieves a specific SDDC proxy.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy
+      operationId: getSddcProxy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+
+    put:
+      tags:
+        - sddcProxy
+      summary: Update a specific SDDC proxy.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy
+      operationId: updateSddcProxy
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSddcProxy
+          description: The updated SDDC proxy model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+
+    delete:
+      tags:
+        - sddcProxy
+      summary: Delete a specific SDDC proxy. Will not delete an enabled proxy unless force is specified.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy
+      operationId: deleteSddcProxy
+      parameters:
+        - name: "force"
+          in: "query"
+          description: "If true, will delete proxy regardless of proxy state."
+          required: false
+          type: boolean
+      responses:
+        204:
+          description: No Content
+
+  sddc-proxy-cert:
+    parameters:
+      - name: id
+        description: SDDC Proxy ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcProxy
+      summary: Retrieve a SDDC proxy SSL certificate chain in PEM format.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy-cert
+      operationId: getSddcProxyCertificate
+      produces:
+        - application/x-x509-ca-cert
+        - application/x-pem-file
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The certificate chain in PEM format.
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+
+    put:
+      tags:
+        - sddcProxy
+      summary: Update a SDDC proxy certificate chain in PEM format.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy-cert
+      operationId: updateSddcProxyCertificate
+      consumes:
+        - application/x-x509-ca-cert
+        - application/x-pem-file
+      produces:
+        - application/x-x509-ca-cert
+        - application/x-pem-file
+      parameters:
+        - name: proxyTrustAnchor
+          description: The updated SDDC proxy certificate chain in PEM format.
+          in: body
+          required: true
+          x-vcloud-constraints:
+            - constraint: Certificate
+          schema:
+            type: string
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The certificate chain in PEM format.
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+
+  sddc-proxy-crl:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcProxy
+      x-vcloud-added-in: 33.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy-crl
+      summary: Retrieve a SDDC proxy certificate revocation list in PEM format.
+      operationId: getSddcProxyCRL
+      produces:
+        - application/x-pkcs7-crl
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+
+    put:
+      tags:
+        - sddcProxy
+      x-vcloud-added-in: 33.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy-crl
+      summary: Update a SDDC proxy certificate revocation list in PEM format.
+      operationId: updateSddcProxyCRL
+      consumes:
+        - application/x-pkcs7-crl
+      produces:
+        - application/x-pkcs7-crl
+      parameters:
+        - name: proxyCRL
+          in: body
+          required: true
+          x-vcloud-constraints:
+              - constraint: CRL
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+
+  sddc-proxy-thumbprint:
+    parameters:
+      - name: id
+        description: SDDC Proxy ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcProxy
+      summary: Retrieve a SDDC Proxy SSL certificate thumbprint. The thumbprint is the SHA-1 hash of the DER encoding of the certificate.
+      x-vcloud-added-in: 32.0
+      x-vcloud-deprecated-in: 34.0
+      x-vcloud-deprecated-alternative: proxy-thumbprint
+      operationId: getSddcProxyCertificateThumbprint
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The SDDC Proxy SSL certificate thumbprint.
+            example: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+
+  proxies:
+    get:
+      tags:
+        - proxy
+      summary: Gets a paged list of proxies for a tenant.
+      x-vcloud-added-in: 34.0
+      description: |
+        Gets a paged list of proxies for a tenant.
+      operationId: getProxies
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Proxies"
+    post:
+      tags:
+        - proxy
+      summary: Creates a proxy.
+      x-vcloud-added-in: 34.0
+      description: |
+        Creates a proxy.
+      operationId: createProxy
+      parameters:
+        - name: proxy
+          description: The new proxy model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Proxy"
+      consumes:
+        - application/json
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  proxy:
+    parameters:
+      - name: id
+        description: Proxy ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: proxy
+
+    get:
+      tags:
+        - proxy
+      summary: Retrieves a specific proxy.
+      x-vcloud-added-in: 34.0
+      operationId: getProxy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Proxy"
+
+    put:
+      tags:
+        - proxy
+      summary: Update a specific proxy.
+      x-vcloud-added-in: 34.0
+      operationId: updateProxy
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedProxy
+          description: The updated proxy model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Proxy"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/Proxy"
+
+    delete:
+      tags:
+        - proxy
+      summary: Delete a specific proxy. Will not delete an enabled proxy unless force is specified.
+      x-vcloud-added-in: 34.0
+      operationId: deleteProxy
+      parameters:
+        - name: "force"
+          in: "query"
+          description: "If true, will delete proxy regardless of proxy state."
+          required: false
+          type: boolean
+      responses:
+        204:
+          description: No Content
+
+  proxy-cert:
+    parameters:
+      - name: id
+        description: Proxy ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - proxy
+      summary: Retrieve a proxy SSL certificate chain in PEM format.
+      x-vcloud-added-in: 34.0
+      operationId: getProxyCertificate
+      produces:
+        - application/x-x509-ca-cert
+        - application/x-pem-file
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The certificate chain in PEM format.
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+
+    put:
+      tags:
+        - proxy
+      summary: Update a proxy certificate chain in PEM format.
+      x-vcloud-added-in: 34.0
+      operationId: updateProxyCertificate
+      consumes:
+        - application/x-x509-ca-cert
+        - application/x-pem-file
+      produces:
+        - application/x-x509-ca-cert
+        - application/x-pem-file
+      parameters:
+        - name: proxyTrustAnchor
+          description: The updated proxy certificate chain in PEM format.
+          in: body
+          required: true
+          x-vcloud-constraints:
+            - constraint: Certificate
+          schema:
+            type: string
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The certificate chain in PEM format.
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+
+  proxy-crl:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: proxy
+
+    get:
+      tags:
+        - proxy
+      x-vcloud-added-in: 34.0
+      summary: Retrieve a proxy certificate revocation list in PEM format.
+      operationId: getProxyCRL
+      produces:
+        - application/x-pkcs7-crl
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+
+    put:
+      tags:
+        - proxy
+      x-vcloud-added-in: 34.0
+      summary: Update a proxy certificate revocation list in PEM format.
+      operationId: updateProxyCRL
+      consumes:
+        - application/x-pkcs7-crl
+      produces:
+        - application/x-pkcs7-crl
+      parameters:
+        - name: proxyCRL
+          in: body
+          required: true
+          x-vcloud-constraints:
+            - constraint: CRL
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+
+  proxy-thumbprint:
+    parameters:
+      - name: id
+        description: Proxy ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: proxy
+
+    get:
+      tags:
+        - proxy
+      summary: Retrieve a Proxy SSL certificate thumbprint and algorithm used for calculation.
+      x-vcloud-added-in: 34.0
+      operationId: getProxyCertificateThumbprint
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/ThumbprintAndAlgorithm"

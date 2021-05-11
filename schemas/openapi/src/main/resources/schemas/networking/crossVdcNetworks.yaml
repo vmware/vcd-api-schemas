@@ -1,0 +1,227 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Cross vDC networks API allows for management of networks that span many vDCs within a vDC group.
+  version: "1.0"
+  title: Cross vDC networks API
+
+paths:
+
+  crossVdcNetworks:
+    get:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetworks
+      summary: Get all Cross vDC networks in the system.
+      description: |
+        Get all Cross vDC networks in the system.
+      operationId: getAllCrossVdcNetworks
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CrossVdcNetworks'
+
+    post:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetworks
+      summary: Creates a Cross vDC network.
+      operationId: createCrossVdcNetwork
+      consumes:
+        - application/json
+      parameters:
+        - name: crossVdcNetwork
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CrossVdcNetwork'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  crossVdcNetworksForVdcGroup:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+    get:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetworks
+      summary: Get all Cross vDC networks of a vDC group.
+      operationId: getAllCrossVdcNetworksForVdcGroup
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CrossVdcNetworks'
+
+  crossVdcNetwork:
+    parameters:
+      - name: crossVdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetwork
+      summary: Retrieves a specific Cross vDC network.
+      operationId: getCrossVdcNetwork
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CrossVdcNetwork'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetwork
+      summary: Updates a specific Cross vDC network.
+      operationId: updateCrossVdcNetwork
+      consumes:
+        - application/json
+      parameters:
+        - name: crossVdcNetwork
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CrossVdcNetwork'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetwork
+      summary: Deletes a specific Cross vDC network
+      operationId: deleteCrossVdcNetwork
+      parameters:
+        - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  sync:
+    parameters:
+      - name: crossVdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    post:
+      x-vcloud-added-in: 31.0
+      tags:
+        - crossVdcNetwork
+      summary: Sync/repair a specific Cross vDC network.
+      description: |
+        Sync/repair the specific cross vdc network
+      operationId: syncCrossVdcNetwork
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  CrossVdcNetworks:
+    x-vcloud-added-in: 31.0
+    description: |
+      List of cross vDC networks
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/CrossVdcNetwork'
+
+  CrossVdcNetwork:
+    x-vcloud-added-in: 31.0
+    description: |
+      A CrossVdcNetwork object
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/Network'
+      - type: object
+        properties:
+          vdcGroupRef:
+            $ref: '#/definitions/EntityReference'
+            description: The vDC group that this network belongs to.
+          routerRef:
+            $ref: '#/definitions/EntityReference'
+            description: The router that this network is attached to.
+          status:
+            $ref: '#/definitions/VdcGroupEntityStatus'
+            description: The status of the network.
+          errorMessage:
+            type: string
+            description: If the network has an error status, a more detailed error message is set here.
+    x-vcloud-property-annotations:
+      vdcGroupRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      routerRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      errorMessage:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  VdcGroupEntityStatus:
+    $ref: "./vdcGroups/vdcGroups.yaml#/definitions/VdcGroupEntityStatus"
+

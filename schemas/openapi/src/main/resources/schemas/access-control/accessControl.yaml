@@ -1,0 +1,141 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Access Control API for managing access-control entries
+    on vCD entities. An access-control entry grants a user a level of
+    access to a vCD entity. Levels of access are 'READ', "READ_WRITE' and
+    'FULL_CONTROL'.
+  version: "1.0"
+  title: vCloud Director Access Control API
+
+paths:
+  membership-access-controls:
+    get:
+      tags:
+        - membershipAccessControlGrant_Dummy
+      summary: Get all membership based access control grants
+      operationId: getMembershipAccessControlGrant
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/MembershipAccessControlGrant'
+        404:
+          description: Not Found
+
+  right-access-controls:
+    get:
+      tags:
+        - rightAccessControlGrant_Dummy
+      summary: Get all Right based access control grants
+      operationId: getRightAccessControlGrant
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RightAccessControlGrant'
+        404:
+          description: Not Found
+
+definitions:
+
+  AccessControlGrant:
+    type: object
+    x-vcloud-added-in: 35.0
+    discriminator: grantType
+    properties:
+      id:
+        type: string
+        description: |
+          VcloudId URN identifier for ACL grant
+        readOnly: true
+      tenant:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: |
+          The tenant this grant applies in. This is managed by the system and depends on the organization the requester operates in at the time of creation and the
+          actual principal type.
+      grantType:
+        type: string
+        description: |
+          Indicates whether this access control grant is based on
+          user memberships or entitlements
+      objectId:
+        type: string
+        maxLength: 128
+        description: |
+          The object that this access control grant applies to
+        readOnly: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      accessLevelId:
+        type: string
+        maxLength: 128
+        description: |
+          The ID of the level of access which the subject will be granted.
+        example: urn:vcloud:accessLevel:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-property-annotations:
+      tenant:
+        x-vcloud-added-in: 35.2
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    required:
+      - grantType
+      - accessLevelId
+
+  MembershipAccessControlGrant:
+    x-vcloud-added-in: 35.0
+    allOf:
+      - $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+      - type: object
+        properties:
+          memberId:
+            type: string
+            description: |
+              VCloudId URN identifier for the membership
+          required:
+            - memberId
+
+  RightAccessControlGrant:
+    x-vcloud-added-in: 35.0
+    allOf:
+      - $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+      - type: object
+        properties:
+          rightId:
+            type: string
+            description: |
+                VcloudId URN identifier for the right
+          required:
+            - rightId
+
+  AccessControlGrants:
+    x-vcloud-added-in: 35.0
+    description: |
+      A pageable list of access-control grants.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of access-control entries.
+            items:
+              $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"
+

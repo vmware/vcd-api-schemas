@@ -1,0 +1,188 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Storage Container API allows for viewing of Datastores and Datastore Clusters
+  version: "1.0"
+  title: Storage Container API
+
+paths:
+  storageContainer:
+    parameters:
+      - name: storageContainerUrn
+        in: path
+        description: storageContainerUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: storagecontainer
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - storageContainer
+      summary: Get specified Datastore or Datastore Cluster.
+      operationId: getStorageContainer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/StorageContainer"
+
+  storageContainers:
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - storageContainer
+      summary: Get a paged list of all standalone Datastores and Datastore Clusters in the system
+      description: |
+        Get a paged list of all standalone Datastores and Datastore Clusters in the system
+      operationId: getStorageContainers
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StorageContainers'
+
+  datastores:
+    parameters:
+      - name: storageContainerUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: storagecontainer
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - storageContainer
+      summary: Retrieves all Datastores associated with the specified Datastore Cluster.
+      description: |
+        Retrieves all Datastores associated with the specified Datastore Cluster.
+      operationId: getDatastoreClusterDatastores
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StorageContainers'
+
+definitions:
+  StorageContainer:
+    x-vcloud-added-in: 36.0
+    description: |
+      A Storage Container, which can be a Datastore or a Datastore Cluster.
+    type: object
+    properties:
+      id:
+        type: string
+        description: "Unique VCD Id for the Storage Container."
+      name:
+        type: string
+        description: "Name for the Storage Container."
+      datastoreType:
+        type: string
+        description: "Datastore Type of the Storage Container."
+      isDeleted:
+        description: "Deleted state of the Storage Container."
+        type: boolean
+      moref:
+        type: string
+        description: "Unique Id in Virtual Center of the Storage Container."
+      vcRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "The VC that this Storage Container belongs to."
+      totalStorageMb:
+        type: integer
+        format: int64
+        description: "Total storage in MB for this Storage Container."
+      freeStorageMb:
+        type: integer
+        format: int64
+        description: "Total free storage in MB for this Storage Container."
+      usedStorageMb:
+        type: integer
+        format: int64
+        description: "Total used storage in MB for this Storage Container."
+      provisionedStorageMb:
+        type: integer
+        format: int64
+        description: "Total provisioned storage in MB for this Storage Container."
+      iopsCapacity:
+        type: integer
+        format: int64
+        description: "Total IOPS capacity for this Storage Container."
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: storagecontainer
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      datastoreType:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      isDeleted:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      moref:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      vcRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      iopsCapacity:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      totalStorageMb:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      freeStorageMb:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      usedStorageMb:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      provisionedStorageMb:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+
+  StorageContainers:
+    x-vcloud-added-in: 36.0
+    description: |
+      A list of Storage Containers.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of Storage Containers.
+            items:
+              $ref: '#/definitions/StorageContainer'

@@ -1,8 +1,9 @@
-# *************************************************************************
+# ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
-# *************************************************************************
+# ******************************************************************************
+
 swagger: "2.0"
 info:
   description: |
@@ -16,6 +17,7 @@ info:
 paths:
   extensions-ui:
     get:
+      x-vcloud-added-in: 30.0
       tags:
         - uiPlugins
       summary: Get a list of all UI Extensions
@@ -32,6 +34,7 @@ paths:
               $ref: '#/definitions/UiPluginMetadataResponse'
 
     post:
+      x-vcloud-added-in: 30.0
       tags:
         - uiPlugins
       summary: Adds plugin metadata for a new UI Extension
@@ -66,6 +69,7 @@ paths:
       summary: Retrieves extension specific plugin metadata
       description: |
         Retrieve the plugin metadata for this extension
+      x-vcloud-added-in: 30.0
       operationId: getUiPlugin
       produces:
         - application/json
@@ -81,6 +85,7 @@ paths:
       description: |
         Update the plugin metadata for this extension clobbering existing information
         and returns the updated plugin metadata
+      x-vcloud-added-in: 30.0
       operationId: putUiPlugin
       consumes:
         - application/json
@@ -102,6 +107,7 @@ paths:
         - uiPlugin
       operationId: deleteUiPlugin
       summary: Delete system level logo
+      x-vcloud-added-in: 30.0
       description: |
         Delete the system level logo, forcing the get method to return the
         vCloud Director default logo.
@@ -120,6 +126,7 @@ paths:
       tags:
         - uiPluginResource
       summary: Upload the plugin for this extension
+      x-vcloud-added-in: 30.0
       description: |
         Initiates an upload for the plugin for this extension using the Transfer service
         A unique transfer service URL is returned where the plugin may be uploaded.
@@ -131,7 +138,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/PluginUploadSpec'
+            $ref: './common/upload.yaml#/definitions/UploadSpec'
       responses:
         204:
           description: No Content
@@ -140,6 +147,7 @@ paths:
       tags:
         - uiPluginResource
       summary: Delete the plugin for this extension
+      x-vcloud-added-in: 30.0
       description: |
         Deletes the actual plugin for this extension
       operationId: deleteUiPluginResource
@@ -153,11 +161,17 @@ paths:
         in: path
         required: true
         type: string
-
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
     get:
       tags:
         - uiPluginTenants
       summary: Retrieves list of tenants for whom the plugin is explicitly published
+      x-vcloud-added-in: 30.0
+      x-vcloud-multisite: true
       description: |
         Retrieves list of tenants for whom the plugin is explicitly published
       operationId: getUiPluginTenants
@@ -167,9 +181,7 @@ paths:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/EntityReference'
+            $ref: '#/definitions/EntityReferences'
 
   extensions-ui-id-plugin-tenants-publish:
     parameters:
@@ -181,6 +193,7 @@ paths:
       tags:
         - uiPluginTenants
       summary: Publishes the UI plugin to the specified tenants
+      x-vcloud-added-in: 30.0
       description: |
         Publishes the UI plugin to the specified tenants
       operationId: postUiPluginPublish
@@ -201,9 +214,7 @@ paths:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/EntityReference'
+            $ref: '#/definitions/EntityReferences'
 
   extensions-ui-id-plugin-tenants-unpublish:
     parameters:
@@ -215,6 +226,7 @@ paths:
       tags:
         - uiPluginTenants
       summary: Revokes publication of the UI plugin to the specified tenants
+      x-vcloud-added-in: 30.0
       description: |
         Revokes publication of the UI plugin to the specified tenants
       operationId: postUiPluginUnpublish
@@ -235,9 +247,7 @@ paths:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/EntityReference'
+            $ref: '#/definitions/EntityReferences'
 
   extensions-ui-id-plugin-tenants-publish-all:
     parameters:
@@ -250,19 +260,17 @@ paths:
       tags:
         - uiPluginTenants
       summary: Publishes the UI plugin to all tenants
+      x-vcloud-added-in: 30.0
       description: |
         Publishes the UI plugin to all tenants
       operationId: postUiPluginPublishAll
       produces:
         - application/json
-
       responses:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/EntityReference'
+            $ref: '#/definitions/EntityReferences'
 
   extensions-ui-id-plugin-tenants-unpublish-all:
     parameters:
@@ -275,19 +283,55 @@ paths:
       tags:
         - uiPluginTenants
       summary: Unpublishes the UI plugin from all tenants
+      x-vcloud-added-in: 30.0
       description: |
         Unpublishes the UI plugin from all tenants
       operationId: postUiPluginUnpublishAll
-      produces:
-        - application/json
-
       responses:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/EntityReference'
+            $ref: '#/definitions/EntityReferences'
+
+  extensions-ui-extension-point-summary:
+    get:
+      tags:
+        - uiPlugin
+      summary: Retrieves a map of extension Points and an ordered list of items registered with that extension point
+      x-vcloud-added-in: 32.0
+      description:
+        Retrieves a map of extension Points and an ordered list of items registered with that extension point
+      operationId: getExtensionPointSummary
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: '#/definitions/ExtensionPointSummary'
+    put:
+      tags:
+        - uiPlugin
+      summary: Customizes the order and enables/disables extension Points
+      x-vcloud-added-in: 32.0
+      description: |
+        Customizes the order and enables/disables extension Points
+      operationId: putExtensionPointSummary
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: extensionPointSummaryBody
+          in: body
+          required: true
+          schema:
+              $ref: '#/definitions/ExtensionPointSummary'
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: '#/definitions/ExtensionPointSummary'
 
 definitions:
   UiPluginMetadata:
@@ -320,44 +364,48 @@ definitions:
     - license
     - link
 
+  ExtensionPoint:
+    description:
+      Extension Point of a UI Plugin
+    x-vcloud-added-in: 32.0
+    type: object
+    properties:
+      extensionPointId:
+        type: string
+      pluginId:
+        type: string
+      name:
+        type: string
+      enabled:
+        type: boolean
+    required:
+    - pluginId
+    - extensionPointId
+    - enabled
+
   UiPluginMetadataResponse:
     type: object
-
     allOf:
       - $ref: '#/definitions/UiPluginMetadata'
-      - type: object
-        properties:
-          id:
-            type: string
-          plugin_status:
-            type: string
-            enum:
-              - unavailable
-              - ready
-          resourcePath:
-            type: string
+      - $ref: './common/upload.yaml#/definitions/UploadMetadataResponse'
 
-  PluginUploadSpec:
-    type: object
-    description: |
-      Information about plugin binary
+  ExtensionPointSummary:
+    description:
+      A map of extension Points and an ordered list of items registered with that extension point
+    x-vcloud-added-in: 32.0
     properties:
-      fileName:
-        type: string
-      size:
-        type: integer
-        format: int64
-      checksum:
-        type: string
-      checksumAlgo:
-        type: string
-        default: sha1
-        enum:
-        - sha1
-        - sha256
-    required:
-      - fileName
-      - size
+      extensionPointRegistrations:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ExtensionPoint'
 
   EntityReference:
     $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"

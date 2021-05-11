@@ -1,0 +1,355 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    An API for managing Network Context Profiles. Network Context profiles enable creating groups of values where a value specifies
+    a layer 7 App Id, or Domain Names. After a network context profile has been defined, it can be used in one or more
+    firewall rules to restrict the traffic to/from certain layer 7 applications and domains. These are available only to an Org vDC that is backed by NSX-T.
+  title: Network Context Profiles API
+
+paths:
+
+  networkContextProfiles:
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      tags:
+        - networkContextProfiles
+      summary: Get all network context profiles.
+      description: |
+        Retrieves all network context profiles defined in the system.
+        Supported contexts are:
+        <ul>
+        <li> Org vDC ID <code>(_context==orgVdcId)</code> -
+        Returns all the network context profiles which are available to a specific Org vDC.
+        <li>Network provider ID (_context==networkProviderId) - |
+        Returns all the network context profiles which are available for a specific network provider.
+        <li>VDC Group Id <code>(_context==vdcGroupId)</code> - |
+        Returns all the network context profiles which are available to a specific vDC Group.
+        </ul>
+      operationId: getNetworkContextProfiles
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkContextProfiles'
+
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - networkContextProfiles
+      summary: Create a user-defined network context profile.
+      operationId: createNetworkContextProfile
+      consumes:
+        - application/json
+      parameters:
+        - name: networkContextProfile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NetworkContextProfile'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  sync:
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - networkContextProfiles
+      summary: Sync the network context profiles from the network provider to VCD.
+      description: |
+        Sync the network context profiles from the network provider to VCD. The network provider is required to be specified in the filter context.
+        Context example: (_context==networkProviderId).
+      operationId: syncNetworkContextProfiles
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  networkContextProfile:
+    parameters:
+      - name: profileId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: networkContextProfile
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - networkContextProfile
+      summary: Get a specific network context profile.
+      description: |
+        Retrieves a single network context profile.
+      operationId: getNetworkContextProfile
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkContextProfile'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - networkContextProfile
+      summary: Updates a specific user-defined network context profile, changing the associated firewall and modifying the traffic this profile restricts.
+      operationId: updateNetworkContextProfile
+      consumes:
+        - application/json
+      parameters:
+        - name: networkContextProfile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NetworkContextProfile'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 35.0
+      tags:
+        - networkContextProfile
+      summary: Deletes a specific network context profile, removing the associated firewall rule and permitting the traffic this profile restricts.
+      operationId: deleteNetworkContextProfile
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  attributes:
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      tags:
+        - networkContextProfileAttributes
+      summary: List all supported network context profile attributes and sub-attributes for the given NSX-T manager.
+      description: |
+        Retrieves all available network context profile attributes and sub-attributes for the given NSX-T manager, based on the filter parameter given in FIQL format (e.g. filter="_context==urn:vcloud:nsxtmanager:<some_id>").
+        Optionally filter by attribute type by adding a FIQL name parameter to the above filter context (e.g. filter="_context==<urn>;name=APP_ID")
+      operationId: getNetworkContextProfileAttributes
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NetworkContextProfileAttributes'
+
+definitions:
+
+  NetworkContextProfile:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes a networking context profile. Context profiles are groups of similar type of
+      values where each value specifies some layer 7 App Id, or Domain Name.
+    type: object
+    allOf:
+      - $ref: "./networking/applicationPortProfiles.yaml#/definitions/NetworkProviderContext"
+      - properties:
+          id:
+            type: string
+            description: The unique id of this network context profile in URN format.
+          name:
+            type: string
+            description: Name for the network context profile.
+          description:
+            type: string
+            description: Description for the network context profile.
+          scope:
+            $ref: './networking/networkContextProfiles.yaml#/definitions/NetworkContextProfileScopeType'
+            description: The scope of the network context profile.
+          attributes:
+            description: Array of network context profile attributes.
+            type: array
+            items:
+              $ref: './networking/networkContextProfiles.yaml#/definitions/NetworkContextProfileAttribute'
+            minItems: 1
+    required:
+      - name
+      - scope
+      - attributes
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: networkContextProfile
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      attributes:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NetworkContextProfiles:
+    x-vcloud-added-in: 35.0
+    description: List of Network context profiles.
+    type: object
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/NetworkContextProfile'
+
+  NetworkContextProfileAttributes:
+    x-vcloud-added-in: 35.0
+    description: |
+      A wrapper object for an array of network context profile attributes.
+    type: object
+    properties:
+      attributes:
+        description: Array of network context profile attributes.
+        type: array
+        items:
+          $ref: '#/definitions/NetworkContextProfileAttribute'
+        minItems: 1
+    required:
+      - attributes
+    x-vcloud-property-annotations:
+      attributes:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NetworkContextProfileAttribute:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes an attribute of a networking context profile. An attribute
+      is defined as a type and its associated values for some layer 7 App Id or Domain names.
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [APP_ID, DOMAIN_NAME]
+        description: |
+          This describes the type of attribute value.
+          <ul>
+            <li> APP_ID - Values represents layer 7 App Ids. For example: ACTIVDIR
+            <li> DOMAIN_NAME - Values represents Domain names (FQDN). For example: *.live.com
+          </ul>
+      values:
+        type: array
+        description: Values for attribute.
+        items:
+          type: string
+        minItems: 1
+        example:
+          - 'ACTIVDIR'
+          - 'AMQP'
+          - '*onenote.officeapps.live.com'
+      subAttributes:
+        type: array
+        description: |
+          List of sub attributes for an attribute. These are specified with the attributes
+          such as SSL or CIFS, which can have different cipher suites or TLS versions
+          as values.
+        items:
+          $ref: '#/definitions/NetworkContextProfileSubAttribute'
+    required:
+      - type
+      - values
+    x-vcloud-property-annotations:
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      values:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      subAttributes:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NetworkContextProfileSubAttribute:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes a sub attribute of a networking context profile attribute.
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [TLS_CIPHER_SUITE, TLS_VERSION, CIFS_SMB_VERSION]
+        description: This describes the type of sub attribute's values.
+      values:
+        type: array
+        description: Values for sub attribute.
+        items:
+          type: string
+        minItems: 1
+        example:
+          - 'SSL_V3'
+          - 'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384'
+    required:
+      - type
+      - values
+    x-vcloud-property-annotations:
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      values:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NetworkContextProfileScopeType:
+    x-vcloud-added-in: 35.0
+    description: |
+      The scope of a network context profile.
+      <ul>
+      <li><code>SYSTEM</code> profiles are available to all tenants. They are default profiles from the backing networking provider.
+      <li><code>PROVIDER</code> profiles are available to all tenants. They are defined by the provider at a system level.
+      <li><code>TENANT</code> profiles are available only to the specific tenant organization. They are defined by the tenant or by a provider on behalf of a tenant.
+      </ul>
+    type: string
+    enum:
+      - SYSTEM
+      - PROVIDER
+      - TENANT

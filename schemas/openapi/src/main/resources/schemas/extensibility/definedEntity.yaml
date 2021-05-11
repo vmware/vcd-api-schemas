@@ -1,0 +1,541 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Defined Entities
+  description: Defined Entities management
+  version: "1.0"
+
+paths:
+  defined-entities:
+    get:
+      tags:
+        - definedEntity
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      summary: Gets all defined entities the user has access to.
+      description: |
+        Gets all defined entities the user has access to. A "_context" filter with defined
+        interface ids can be provided if you want to filter the entities based on an interface.
+      operationId: getDefinedEntities
+      produces:
+        - application/json
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: "#/definitions/DefinedEntities"
+
+  defined-entity:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        example: urn:vcloud:entity:vmware.vspheresddc:1.0.0:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - definedEntity
+      summary: Gets the defined entity with the unique identifier (URN)
+      description: Gets the defined entity with the unique identifier (URN)
+      operationId: getDefinedEntity
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DefinedEntity"
+    delete:
+      tags:
+        - definedEntity
+      x-vcloud-added-in: 35.0
+      summary: Deletes the defined entity with the unique identifier (URN)
+      description: Deletes the defined entity with the unique identifier (URN)
+      operationId: deleteDefinedEntity
+      parameters:
+        - name: invokeHooks
+          in: query
+          x-vcloud-added-in: 36.0
+          summary: Specify whether the update hooks of the Entity Type should be invoked
+          description: |
+            Only users with Admin FullControl access to the Entity Type can pass this parameter.
+            The default value is 'true'.
+          required: false
+          schema:
+            type: string
+      responses:
+        202:
+          description: Task tracking the execution in the location header
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        204:
+          description: No Content
+    put:
+      tags:
+        - definedEntity
+      x-vcloud-added-in: 35.0
+      summary: Updates the defined entity with the unique identifier (URN)
+      description: Update the defined entity with the unique identifier (URN)
+      operationId: updateDefinedEntity
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: entity
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DefinedEntity"
+        - name: invokeHooks
+          in: query
+          x-vcloud-added-in: 36.0
+          summary: Specify whether the update hooks of the Entity Type should be invoked
+          description: |
+            Only users with Admin FullControl access to the Entity Type can pass this parameter.
+            The default value is 'true'.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: "#/definitions/DefinedEntity"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+  defined-entity-resolve:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        example: urn:vcloud:entity:vmware.vspheresddc:1.0.0:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - definedEntity
+      summary: Validates the defined entity against the entity type schema.
+      description: |
+        Validates the defined entity against the entity type schema. If the validation is
+        successful, the entity will transition to a "RESOLVED" state. Otherwise, it will
+        transition to an "ERROR" state.
+      operationId: resolveDefinedEntity
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityState"
+  defined-entities-by-type:
+    parameters:
+      - name: vendor
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        example: vmware
+        x-vcloud-constraints:
+          - constraint: DefinedEntityString
+      - name: nss
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        example: vspheresddc
+        x-vcloud-constraints:
+          - constraint: DefinedEntityString
+# TODO: Add validation for version in VACE-2495
+      - name: version
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        example: 1.0.0
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      tags:
+        - definedEntity
+      summary: Gets the collection of defined entities for the vCD-defined type with the specified vendor, nss and version.
+      description: |
+        Gets the collection of defined entities for the vCD-defined type with the specified vendor, nss and version.
+        The version can act as a wildcard. If only '1' is specified as the version,
+        all entity types with a major version of '1' will be matched (e.g. 1.0.0, 1.1.2).
+        If '1.0' is specified, all entity types with a major version of '1' and a minor version
+        of '0' will be included (e.g. 1.0.0, 1.0.1). If the full semver is specified, then no
+        search will be performed.
+      operationId: getDefinedEntitiesByEntityType
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DefinedEntities"
+  defined-entities-by-interface:
+    parameters:
+      - name: vendor
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        example: vmware
+        x-vcloud-constraints:
+          - constraint: DefinedEntityString
+      - name: nss
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        example: vspheresddc
+        x-vcloud-constraints:
+          - constraint: DefinedEntityString
+      - name: version
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        example: 1.0.0
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+    get:
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      tags:
+        - definedEntity
+      summary: Gets the collection of defined entities for the vCD-defined interface with the specified vendor, nss and version
+      description: |
+        Gets the collection of defined entities for the vCD-defined interface with the specified vendor, nss and version.
+        The version can act as a wildcard. If only '1' is specified as the version,
+        all entity types with a major version of '1' will be matched (e.g. 1.0.0, 1.1.2).
+        If '1.0' is specified, all entity types with a major version of '1' and a minor version
+        of '0' will be included (e.g. 1.0.0, 1.0.1). If the full semver is specified, then no
+        search will be performed.
+      operationId: getDefinedEntitiesByInterface
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DefinedEntities"
+
+  defined-entity-behaviors:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        example: urn:vcloud:entity:vmware.vspheresddc:1.0.0:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      - name: behaviorId
+        in: path
+        required: true
+        type: string
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - definedInterfaceBehaviors
+      summary: Invokes a behavior on a defined entity
+      description: |
+        Invokes a behavior on a defined entity. The contract of the behavior is specified in the behavior description.
+        If an Activity behavior is invoked with an 'operationId' in the invocation metadata, then another invocation of the behavior
+        with the same 'operationId' will be ignored within the next 1 hour.
+      operationId: invokeDefinedEntityBehavior
+      consumes:
+        - application/json
+      parameters:
+        - name: invocation
+          in: body
+          required: false
+          schema:
+            $ref: "./extensibility/behavior.yaml#/definitions/BehaviorInvocation"
+            example: |
+              { "arguments": { "node": "bos1-vcd-sp-static-198-241.eng.vmware.com", ... } }
+      responses:
+        202:
+          description: Task tracking the execution in the location header
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  defined-entity-accessControls:
+    post:
+      tags:
+        - accessControls
+      summary: Creates an access-control grant
+      x-vcloud-added-in: 35.0
+      description: |
+        Creates an access-control grant, giving the user the level of access for the vCD entity.
+      operationId: createEntityAccessControlGrant
+      consumes:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+        - name: accessControlGrant
+          in: body
+          required: true
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+    get:
+      tags:
+        - accessControls
+      summary: Get the access-control list for the specified vCD entity.
+      x-vcloud-added-in: 35.0
+      description: |
+        Get the access-control list for the specified vCD entity.
+      operationId: queryEntityAccessControlGrants
+      produces:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+          readOnly: true      
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrants'
+
+  defined-entity-accessControl:
+    get:
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+        - name: accessControlId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+      tags:
+        - accessControls
+      summary: Get the specified access-control grant.
+      x-vcloud-added-in: 35.0
+      description: |
+        Get the specified access-control grant.
+      operationId: getEntityAccessControlGrant
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+    put:
+      tags:
+        - accessControls
+      summary: Updates the specified access-control grant.
+      x-vcloud-added-in: 35.0
+      description: |
+        Updates the specified access-control grant.
+      operationId: updateEntityAccessControlGrant
+      consumes:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+        - name: accessControlId
+          in: path
+          required: true
+          type: string
+        - name: accessControlGrant
+          in: body
+          required: true
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./access-control/accessControl.yaml#/definitions/AccessControlGrant"
+    delete:
+      tags:
+        - accessControls
+      summary: Removes the specified access-control grant from the vCD entities access-control list.
+      x-vcloud-added-in: 35.0
+      description: |
+        Removes the specified access-control grant from the vCD entities access-control list.
+      operationId: removeEntityAccessControlGrant
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+        - name: accessControlId
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+
+definitions:
+  DefinedEntity:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes what a defined entity should look like.
+    type: object
+    properties:
+      id:
+        type: string
+        example: urn:vcloud:entity:vmware.vspheresddc:1.0.0:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        description: |
+          The id of the defined entity in URN format.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      entityType:
+        type: string
+        example: urn:vcloud:type:vmware.vspheresddc:1.0.0
+        description: |
+          The URN ID of the defined entity type that the entity is an instance of. This is a read-only field.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      name:
+        type: string
+        description: |
+          The name of the defined entity.
+        example: vspheresddc1
+      externalId:
+        type: string
+        example: 123
+        description: |
+          An external entity's id that this entity may have a relation to.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      entity:
+        type: object
+        description: |
+          A JSON value representation. The JSON will be validated against the schema of the entityType that the entity is an instance of.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+        additionalProperties:
+          type: object
+      state:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        description: |
+          Every entity is created in the "PRE_CREATED" state. Once an entity is ready to be
+          validated against its schema, it will transition in another state - RESOLVED, if the
+          entity is valid according to the schema, or RESOLUTION_ERROR otherwise. If an entity in
+          an "RESOLUTION_ERROR" state is updated, it will transition to the inital "PRE_CREATED"
+          state without performing any validation. If its in the "RESOLVED" state, then it will
+          be validated against the entity type schema and throw an exception if its invalid.
+        enum: [PRE_CREATED, RESOLVED, RESOLUTION_ERROR]
+      owner:
+        $ref: '#/definitions/EntityReference'
+        description: The owner of the defined entity.
+      org:
+        $ref: '#/definitions/EntityReference'
+        description: The organization of the defined entity.
+    required:
+      - name
+      - entity
+    x-vcloud-property-annotations:
+      owner:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      org:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+
+  EntityState:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes what the current state of the entity is.
+    type: object
+    properties:
+      id:
+        type: string
+        example: urn:vcloud:entity:vmware.vspheresddc:1.0.0:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        description: |
+          The id of the defined entity in URN format.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      entity:
+        type: object
+        description: |
+          A JSON entity. This entity will be validated against the provided entityType.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+        additionalProperties:
+          type: object
+      state:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        description: |
+          The current state of the entity
+        enum: [RESOLVED, RESOLUTION_ERROR]
+      message:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        description: |
+          The error message(s), if the entity could not be resolved.
+
+  DefinedEntities:
+    x-vcloud-added-in: 35.0
+    description: |
+      A list of defined entities.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of defined entities.
+            items:
+              $ref: '#/definitions/DefinedEntity'
+
+  EntityReference:
+    $ref: './common/entity.yaml#/definitions/EntityReference'
+

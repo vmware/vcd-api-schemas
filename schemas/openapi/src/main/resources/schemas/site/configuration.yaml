@@ -1,0 +1,83 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+
+swagger: "2.0"
+info:
+  description: |
+    Can be used to view and mutate configuration property/value pairs.
+  version: "1.0"
+  title: Cloud Director Configuration API
+
+paths:
+
+  configurations:
+    parameters:
+      - name: name
+        in: path
+        description: URN containing the name of the configuration property.
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - Configurations
+      summary: Get the current setting for the specified configuration property.
+      operationId: getConfig
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Config"
+
+    put:
+      x-vcloud-added-in: 36.0
+      x-vcloud-event: com/vmware/vcloud/event/configuration/property/modify
+      tags:
+        - Configurations
+      summary: Sets a configuration property to the provided value.
+      operationId: setConfig
+      consumes:
+        - application/json
+      parameters:
+        - name: newConfigValue
+          description: The configuration with the desired value.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Config"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Config"
+
+definitions:
+
+  Config:
+    x-vcloud-added-in: 36.0
+    description: |
+      A site-wide configuration value.
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the configuration property.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      typedValue:
+        $ref: "../common/typed-value.yaml#/definitions/TypedValue"
+        description: The value of the configuration property (at present all configuration values are treated as the "string" type).
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+    required:
+      - name

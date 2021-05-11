@@ -1,0 +1,138 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    Allows testing of a connection, including SSL handshake and hostname verification.
+  version: "1.0"
+  title: vCloud Director Connection Test API
+
+paths:
+  test:
+    post:
+      tags:
+        - testConnection
+      summary: Test a connection
+      x-vcloud-added-in: 34.0
+      description: |
+        Tests a connection, including SSL handshake and hostname verification.
+      operationId: test
+      consumes:
+        - application/json
+      parameters:
+        - name: connection
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Connection"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/TestResult"
+
+definitions:
+  Connection:
+    description: |
+      Connection to test.
+    type: object
+    x-vcloud-added-in: 34.0
+    properties:
+      host:
+        description: The host (or IP address) to connect to.
+        type: string
+        maxLength: 256
+      port:
+        description: The port to use when connecting.
+        type: integer
+      secure:
+        description: If the connection should use https.
+        type: boolean
+        default: true
+      timeout:
+        type: integer
+        description: Maximum time (in seconds) any step in the test should wait for a response.
+        default: 10
+        format: int32
+      proxyConnection:
+        $ref: '#/definitions/ProxyConnection'
+    required:
+      - host
+      - port
+
+  ProxyConnection:
+    description: |
+      Proxy connection to use for test. If none is specified, then no proxy is used to test the connection.
+    type: object
+    x-vcloud-added-in: 34.0
+    properties:
+      proxyHost:
+        description: The host (or IP address) of the proxy.
+        type: string
+        maxLength: 256
+      proxyPort:
+        description: The port to use when connecting to the proxy.
+        type: integer
+      proxyUsername:
+        description: Username to authenticate to the proxy.
+        type: string
+        maxLength: 256
+      proxyPassword:
+        description: Password to authenticate to the proxy.
+        type: string
+        maxLength: 256
+      proxySecure:
+        description: If the connection to the proxy should use https.
+        default: true
+        type: boolean
+    required:
+      - proxyHost
+      - proxyPort
+
+  TestResult:
+    description: |
+      Results of a connection test.
+    type: object
+    x-vcloud-added-in: 34.0
+    properties:
+      targetProbe:
+        $ref: '#/definitions/ProbeResult'
+      proxyProbe:
+        $ref: '#/definitions/ProbeResult'
+
+  ProbeResult:
+    description: |
+      Results of a connection test to a specific endpoint.
+    type: object
+    x-vcloud-added-in: 34.0
+    properties:
+      result:
+        description: Localized message describing the connection result stating success or an error message with a brief summary.
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      resolvedIp:
+        description: The IP address the host was resolved to.
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      canConnect:
+        description: If vCD can establish a connection on the specified port.
+        type: boolean
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      sslHandshake:
+        description: If an SSL Handshake succeeded (secure requests only).
+        type: boolean
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      certificateChain:
+        description: The SSL certificate chain presented by the server if a secure connection was made.
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly

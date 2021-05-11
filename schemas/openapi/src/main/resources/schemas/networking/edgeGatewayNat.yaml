@@ -1,0 +1,336 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for NAT configuration of an Org VDC edge gateway. NAT rules can be setup on the Edge Gateway to map
+    public facing external IP Addresses to/from private internal IP Addresses. This can only be used on an Edge Gateway backed by an NSX-T Tier-1 Gateway.
+  version: "1.0"
+  title: Edge Gateway NAT API
+
+paths:
+
+  natRules:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayNatRules
+      summary: |
+        Retrieves all NAT Rules on the edge gateway.
+      description: |
+        Retrieves all NAT Rules on the edge gateway.  Pagination is supported to get the next page in the header response.
+        Results can be sorted by only a single parameter. Sorting by combination of parameters (sortAsc=foo&sortDesc=bar) is not allowed.
+      operationId: getNatRules
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeNatRules'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayNatRules
+      summary: Creates a NAT Rule on the Edge Gateway.
+      operationId: createNatRule
+      consumes:
+        - application/json
+      parameters:
+        - name: edgeNatRule
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeNatRule'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  natRule:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+      - name: ruleId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayNatRule
+      summary: Retrieves a specific NAT Rule configuration of the edge gateway based on the rule id passed in.
+      operationId: getNatRule
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeNatRule'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayNatRule
+      summary: Update a specific NAT Rule configuration of the edge gateway based on the rule id passed in.
+      operationId: updateNatRule
+      consumes:
+        - application/json
+      parameters:
+        - name: edgeNatRule
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeNatRule'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGatewayNatRule
+      summary: Deletes a specific NAT Rule configuration of the edge gateway based on the rule id passed in.
+      operationId: deleteNatRule
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeNatRules:
+    x-vcloud-added-in: 33.0
+    description: List of configured NAT Rules.
+    allOf:
+    - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+    - type: object
+      properties:
+        values:
+          type: array
+          description: The list of NAT Rules.
+          items:
+            $ref: './networking/edgeGatewayNat.yaml#/definitions/EdgeNatRule'
+
+  EdgeNatRule:
+    x-vcloud-added-in: 33.0
+    description: The configuration for a given NAT Rule.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of the NAT Rule. This must be supplied when updating a given NAT Rule. On creation, an unique id is generated for the NAT Rule.
+      name:
+        type: string
+        description: User friendly name for the NAT Rule. Name must be provided.
+      description:
+        type: string
+      enabled:
+        type: boolean
+        description: A flag indicating whether the individual nat rule is enabled or not. The default is true.
+        default: true
+      ruleType:
+        $ref: '#/definitions/NatRuleType'
+        description: |
+            Represents the type of NAT Rule. SNAT translates an internal IP to an external IP and is used for outbound traffic.
+            DNAT translates the external IP to an internal IP and is used for inbound traffic.
+      applicationPortProfile:
+        $ref: '#/definitions/EntityReference'
+        description: |
+          Represents the application ports on which the NAT Rule will be applied. An application port profile id in the form of URN format must be provided.
+          If not provided then the port will be considered as "ANY".
+          For a DNAT Rule, the source port on the application port profile represents the port from which the traffic is originating from.
+          For a DNAT rule, the destination port on the application port profile represents the internal port on the workloads where the traffic is terminating.
+          For a SNAT rule, the source port on the application port profile represents the internal port on the workloads where the traffic is originating from.
+          For a SNAT rule, the destination port application port profile represents the port where the traffic is terminating.
+      externalAddresses:
+        type: string
+        description: |
+          The external addresses for the NAT Rule. This must be supplied as a single IP or Network CIDR. For a DNAT rule, this is the external facing IP Address for incoming traffic.
+          For an SNAT rule, this is the external facing IP Address for outgoing traffic. These ips are typically allocated/suballocated IP Addresses on
+          the Edge Gateway.
+      internalAddresses:
+        type: string
+        description: |
+          The internal addresses for the NAT Rule. This must be supplied as a single IP or Network CIDR. For a DNAT rule, this is the internal IP Address for incoming traffic.
+          For an SNAT rule, this is the internal IP Address for outgoing traffic. These ips are typically the Private IPs that are allocated to workloads.
+      internalPort:
+         type: string
+         description: |
+           Port number or port range for incoming network traffic. If Any Traffic is selected for the Service, the default internal port is "ANY".
+           Note that this field has been deprecated. Please use dnatExternalPort to set port forwarding for DNAT rules.
+           This typically should not be set for SNAT rules as the rule would not be able to support IP Translation with multiple ports.
+      dnatExternalPort:
+        type: string
+        description: |
+          This represents the external port number or port range when doing DNAT port forwarding from external to internal.
+          The default dnatExternalPort is "ANY" meaning traffic on any port for the given IPs selected will be translated.
+      logging:
+         type: boolean
+         description: A flag indicating whether logging for the individual nat rule is enabled or not. The default is false.
+         default: false
+      systemRule:
+        type: boolean
+        description: A flag indicating whether this NAT rule is managed by the system. This is not user editable
+        default: false
+      snatDestinationAddresses:
+        type: string
+        description: |
+          The destination addresses to match in the SNAT Rule. This must be supplied as a single IP or Network CIDR.
+          Providing no value for this field results in match with ANY destination network. These IPs are typically
+          the Private IPs that are allocated to destination workloads.
+      firewallMatch:
+        type: string
+        description: |
+          Determines how the firewall matches the address during NATing if firewall stage is not skipped.  Below are valid values.
+          <ul>
+            <li> <code> MATCH_INTERNAL_ADDRESS </code> indicates the firewall will be applied to internal address of a NAT rule. For SNAT, the internal address is
+                 the original source address before NAT is done. For DNAT, the internal address is the translated destination address after NAT is done.
+            <li> <code> MATCH_EXTERNAL_ADDRESS </code> indicates the firewall will be applied to external address of a NAT rule. For SNAT, the external address is
+                 the translated source address after NAT is done. For DNAT, the external address is the original destination address before NAT is done.
+            <li> <code> BYPASS </code> firewall stage will be skipped.
+          </ul>
+          The default is MATCH_INTERNAL_ADDRESS.
+        default: MATCH_INTERNAL_ADDRESS
+      priority:
+        description: If an address has multiple NAT rules, the rule with the highest priority is applied. A lower value means a higher precedence for this rule.
+        type: integer
+        format: int32
+        default: 0
+        minimum: 0
+        maximum: 2147481599
+      version:
+        $ref: '#/definitions/ObjectVersion'
+    required:
+      - name
+      - ruleType
+      - internalAddresses
+      - externalAddresses
+
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ruleType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      applicationPortProfile:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      externalAddresses:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      internalAddresses:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      internalPort:
+        x-vcloud-added-in: 33.0
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-removed-in: 35.0
+        x-vcloud-deprecated-alternative: Please use dnatExternalPort to configure port forwarding for DNAT. For SNAT, specifying an external port is not supported.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dnatExternalPort:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      logging:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      systemRule:
+        x-vcloud-constraints:
+        - constraint: ReadOnly
+        - constraint: NonSearchable
+        - constraint: NonSortable
+      snatDestinationAddresses:
+        x-vcloud-added-in: 34.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      firewallMatch:
+        x-vcloud-added-in: 35.2
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      priority:
+        x-vcloud-added-in: 35.2
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NatRuleType:
+    description: |
+      The Nat Rule Type for a given NAT rule.
+    type: object
+    enum:
+      - DNAT
+      - SNAT
+      - NO_DNAT
+      - NO_SNAT
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+

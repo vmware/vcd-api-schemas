@@ -1,0 +1,97 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Unimplemented vCloud Director OpenAPI
+  description: |
+    API here is meant to allow code generation to occur so that API implementation can be started without releasing the API.
+
+    A typical flow is that if the API is not ready for release after stabilization branching:
+    * Move the API definition from vcloud-openapi-schemas.yaml to this file.
+    * Set the 'x-vcloud-added-in' fields for all applicable endpoints to 'future'.
+    * Mark the tests as UNIMPLEMENTED/BROKEN so that it can be skipped
+
+    Alternately, if one wishes to disable an entire path:
+    * Move the API definition from vcloud-openapi-schemas.yaml to this file.
+    * Remove the API handler from the main-rest-api-application-context.xml
+    * Remove all links to the API from other API handlers
+    * Mark the tests as UNIMPLEMENTED/BROKEN so that it can be skipped
+
+  version: "future"
+
+produces:
+  - '*/*'
+
+paths:
+
+### Add unimplmented path below.  An example: ###
+#  /1.0.0/edgeGateways/{gatewayId}/dns:
+#    $ref: "./networking/edgeGatewayDns.yaml#/paths/dns"
+
+# Please keep path below in order to support empty path list (i.e. when we have no API to hide)
+  /some/fake/path:
+
+#### Networking endpoints ####
+
+  /1.0.0/firewallGroups/candidates/groups:
+    $ref: "./networking/firewallGroupCandidates.yaml#/paths/groups"
+
+  /1.0.0/firewallGroups/candidates/vms:
+    $ref: "./networking/firewallGroupCandidates.yaml#/paths/vms"
+
+  /1.0.0/firewallGroups/candidates/networks:
+    $ref: "./networking/firewallGroupCandidates.yaml#/paths/networks"
+
+  /1.0.0/nsxTResources/importableTier1Routers:
+    $ref: "./networking/nsxTResourcesDisabled.yaml#/paths/importableTier1Routers"
+
+  /1.0.0/nsxTResources/importableSegments:
+    $ref: "./networking/nsxTResourcesDisabled.yaml#/paths/importableSegments"
+
+##### Access Control Grants #########
+
+  /1.0.0/accessControls/membershipAccessControlDummy:
+    $ref: "./access-control/accessControl.yaml#/paths/membership-access-controls"
+
+  /1.0.0/accessControls/rightAccessControlDummy:
+    $ref: "./access-control/accessControl.yaml#/paths/right-access-controls"
+
+##### Compute policies #########
+
+  /2.0.0/vdcComputePolicies/{vdcComputePolicyId}/supportedKubernetesVersions:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/supported-kubernetes-versions"
+
+  /2.0.0/pvdcComputePolicies/vm:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/pvdc-vm-policies"
+
+  /2.0.0/pvdcComputePolicies/kubernetes:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/pvdc-tkg-policies"
+
+  /2.0.0/vdcComputePolicies/vm:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/vdc-vm-policies"
+
+  /2.0.0/vdcComputePolicies/kubernetes:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/vdc-tkg-policies"
+
+  /2.0.0/vdcComputePolicies/metrics:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/vdc-policy-metrics"
+
+  /2.0.0/pvdcComputePolicies/metrics:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/pvdc-policy-metrics"
+
+  /2.0.0/pvdcComputePolicies/{pvdcComputePolicyId}/metrics:
+    $ref: "./compute-policy/compute-policy-2.0.0.yaml#/paths/pvdc-compute-policy-metrics"
+
+
+#### K8s TKG Overlay ####
+  /1.0.0/tkgClusters:
+    $ref: "./wcp/tkgcluster.yaml#/paths/tkgClusters"
+
+  /1.0.0/tkgClusters/{tkgClusterId}:
+    $ref: "./wcp/tkgcluster.yaml#/paths/tkgCluster"
+

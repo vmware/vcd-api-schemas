@@ -1,0 +1,122 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: User YAML
+  description: User Spec Object in VCD.
+  version: "1.0"
+
+
+definitions:
+  VcdUser:
+    x-vcloud-added-in: 35.0
+    description: |
+      User Spec object.
+    type:
+      object
+    properties:
+      username:
+        type:
+          string
+        description: "Immutable user name of the user."
+      fullName:
+        type:
+          string
+        default: ""
+        description: "Full name (display name) of the user."
+      description:
+        type:
+          string
+        default: ""
+        description: "Description of the user."
+      id:
+        type:
+          string
+        description: "Unique id for the user."
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: user
+      roleEntityRefs:
+        type: array
+        items:
+          $ref: "./entity.yaml#/definitions/EntityReference"
+        description: "The role(s) of the user. If isGroupRole is true, this user inherits their role(s) from group membership(s)"
+      orgEntityRef:
+        $ref: "./entity.yaml#/definitions/EntityReference"
+        description: "Organization that the user belongs to."
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      password:
+        type:
+          string
+        description: "Password for the user. Must be null for external users."
+        x-vcloud-password: true
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+      deployedVmQuota:
+        type: integer
+        description: "The deployed VM quota for this user. Defaults to 0 which means unlimited. This property is deprecated in 35.0. Use user quotas API."
+        format: int32
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: Use user quotas API
+      storedVmQuota:
+        type: integer
+        description: "The stored VM quota for this user. Defaults to 0 which means unlimited. This property is deprecated in 35.0. Use user quotas API."
+        format: int32
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: Use user quotas API
+      email:
+        type:
+          string
+        format: email
+        description: "A user's email address. Based on org email preferences, notifications can be sent to the user via email."
+        x-vcloud-constraints:
+          - constraint: Email
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+      nameInSource:
+        type:
+          string
+        description: "Name of the user in its source."
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      enabled:
+        type:  boolean
+        description: "Enabled state of the user. Defaults to true."
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+      isGroupRole:
+        type: boolean
+        description: "Determines if this user's role is inherited from a group. Defaults to false."
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      providerType:
+        type: string
+        x-vcloud-restricted: Restricted field, requires right "View Group / User" to access this field.
+        description: "Provider type of the user. It is immutable and must be one of: LOCAL, LDAP, SAML, OAUTH."
+    required:
+      - username
+      - roleEntityRefs
+
+  VcdUsers:
+    x-vcloud-added-in: 35.0
+    description: |
+      A list of Users of an organization.
+    allOf:
+      - $ref: "query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of users.
+            items:
+              $ref: '#/definitions/VcdUser'

@@ -1,0 +1,464 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API to browse tags and scopes in VCD and to manage system scopes and its predefined tags.
+  version: "1.0"
+  title: Tag API
+
+paths:
+
+  tags:
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: value
+        sort-ascending: true
+      tags:
+        - tag
+      summary: Retrieves the list of tags.
+      description: |
+        Retrieves the list of tags that can be used to tag an entity.  The tag/scope pair is considered a unique item in the list.
+        The list of tags include tags assigned to entities within the organization and also tags associated with system scopes
+        that may not be assigned to any entity yet.
+        Filter example:
+        <ul>
+        <li>scope==vcd-security - get all tags with the specified scope
+        <li>isSystemScope==false - get all tags not associated with any system scope
+        </ul>
+      operationId: getTags
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Tags'
+
+  scopes:
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: value
+        sort-ascending: true
+      tags:
+        - tag
+      summary: Retrieves the list of unique scopes associated with tags.
+      description: |
+        Retrieves the list of unique scopes associated with tags.
+        A tag can have multiple scopes, which are different contexts in which a tag is used.
+        An example is that a tag of "web" can be used in different scopes: security, compute.
+        Depending on the system scope filter, either system scopes are returned or
+        only non-system scopes within the organization are returned.
+        Non-system scopes are free-form scopes user created when tagging an entity.
+        Filter example:
+        <ul>
+        <li>isSystemScope==true - get all system scopes
+        <li>isSystemScope==false - get all non-system scopes
+        </ul>
+      operationId: getScopes
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Scopes'
+
+  system-scope-summaries:
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: value
+        sort-ascending: true
+      tags:
+        - systemScopes
+      summary: Retrieves the list of system scope summaries.
+      description: |
+        Retrieves the list of system scope summaries. Only the number of predefied tags are returned instead of all the tags.
+      operationId: getSystemScopeSummaries
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SystemScopeSummaries'
+
+  system-scopes:
+    post:
+      x-vcloud-added-in: 36.0
+#      x-vcloud-event: com/vmware/vcloud/event/tag/systemScope/create
+      tags:
+        - systemScopes
+      summary: Create a system scope.
+      description: |
+        Create a system scope, which is a collection of predefined tags and usage settings of these tags for organizations.
+      operationId: createSystemScope
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: systemScope
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SystemScope'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SystemScope'
+        400:
+          $ref: './common/response.yaml#/components/responses/BadRequest'
+
+  system-scope:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: tagSystemScope
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - systemScope
+      summary: Get the specific system scope.
+      description: |
+        Retrieves the specific system scope.
+      operationId: getSystemScope
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/SystemScope"
+
+    put:
+      x-vcloud-added-in: 36.0
+#      x-vcloud-event: com/vmware/vcloud/event/tag/systemScope/modify
+      tags:
+        - systemScope
+      summary: Update the system scope.
+      description: |
+        Update the system scope.
+      operationId: updateSystemScope
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: systemScope
+          in: body
+          description: the system scope to update.
+          required: true
+          schema:
+            $ref: '#/definitions/SystemScope'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/SystemScope"
+
+    delete:
+      x-vcloud-added-in: 36.0
+#      x-vcloud-event: com/vmware/vcloud/event/tag/systemScope/delete
+      tags:
+        - systemScope
+      summary: Delete the specific system scope.
+      description: |
+        Delete the specific system scope. If recursive delete is set to true,
+        all tags with the system scope will also be deleted from all entities.
+      operationId: deleteSystemScope
+      parameters:
+        - $ref: "./common/delete.yaml#/parameters/recursiveDelete"
+      responses:
+        204:
+          description: No Content
+
+definitions:
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  Tag:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes the most basic tag structure: its value and scope.
+    type: object
+    properties:
+      value:
+        type: string
+        description: The value of the tag. The value is case-insensitive and will be converted to lower-case.
+      scope:
+        type: string
+        description: The scope or context in which this tag is used for. The value is case-insensitive and will be converted to lower-case.
+    x-vcloud-property-annotations:
+      value:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      scope:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    x-vcloud-cross-references:
+      - cross-reference:
+          alias: isSystemScope
+
+  Tags:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of a tags that users can use to assign to entities.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './tags/tags.yaml#/definitions/Tag'
+
+  CommonScope:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes a scope, which is a context in which the tag is applied.
+    type: object
+    properties:
+      value:
+        type: string
+        description: The value of the scope such as "vcd-security".
+      name:
+        type: string
+        description: User-friendly name of the scope such as "Security". This is not set for general/free-form scopes created by the user.
+      description:
+        type: string
+        description: The description about the scope. This is not set for general/free-form scopes created by the user.
+      orgUsageSettings:
+        $ref: "#/definitions/SystemScopeUsageSettings"
+        description: |
+          The usage settings that determines how predefined tags in this system scope can be viewed/used.
+          This is not set for general/free-form scopes created by the user.
+
+  Scopes:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of a unique scopes associated with tags.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './tags/tags.yaml#/definitions/Scope'
+
+  Scope:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes a scope, which is a context in which the tag is applied.
+    allOf:
+      - $ref: "./tags/tags.yaml#/definitions/CommonScope"
+    x-vcloud-property-annotations:
+      value:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      description:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgUsageSettings:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          alias: isSystemScope
+
+  CommonSystemScope:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes a system scope. System scope is a scope that's system-wide and has a list of predefined tags associated with it.
+    allOf:
+      - $ref: "./tags/tags.yaml#/definitions/CommonScope"
+      - type: object
+        properties:
+          id:
+            type: string
+            description: The id of the system scope.
+          preserveTags:
+            type: boolean
+            description: |
+              True means that when an entity is copied/moved (i.e. VM), any tag with with this system scope is preserved with the entity.
+              This property cannot be updated.
+            default: true
+
+  SystemScopeSummaries:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of summaries of system scopes.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './tags/tags.yaml#/definitions/SystemScopeSummary'
+
+  SystemScopeSummary:
+    x-vcloud-added-in: 36.0
+    description: |
+      Summary of a systems cope.  Only the count of its predefined tags are returned.
+    allOf:
+      - $ref: "./tags/tags.yaml#/definitions/CommonSystemScope"
+      - type: object
+        properties:
+          predefinedTagCount:
+            description: The number of predefined tags.
+            type: integer
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: tagSystemScope
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      value:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      description:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgUsageSettings:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      preserveTags:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      predefinedTagCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  SystemScope:
+    x-vcloud-added-in: 36.0
+    description: |
+      The system scope information.
+    allOf:
+      - $ref: "./tags/tags.yaml#/definitions/CommonSystemScope"
+      - type: object
+        properties:
+          predefinedTags:
+            description: |
+              The list of all predefined tags associated with this system scope. User can add or remove tags by updating this list.
+              A predefined tag that is removed from this list will also have the tag removed from entities that use the tag.
+            type: array
+            items:
+              $ref: './tags/tags.yaml#/definitions/PredefinedTag'
+            minItems: 0
+            maxItems: 64
+        required:
+          - name
+          - value
+          - orgUsageSettings
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: tagSystemScope
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgUsageSettings:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      preserveTags:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      predefinedTags:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  PredefinedTag:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes a predefined tag for a system scope.
+    type: object
+    properties:
+      value:
+        type: string
+        description: The value of the tag, which is case-agnostic.
+    required:
+      - value
+
+  SystemScopeUsageSettings:
+    x-vcloud-added-in: 36.0
+    description: The usage settings that determines how predefined tags in this system scope can be used.
+    type: object
+    properties:
+      canUseTags:
+        type: boolean
+        description: True means that user in any organization can use the use existing tags with this scope when tagging an entity.
+        default: true
+      canAddNewTags:
+        type: boolean
+        description: True means that user in any organization can add new tags with the system scope when tagging an entity.
+        default: true
+    x-vcloud-property-annotations:
+      canUseTags:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      canAddNewTags:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable

@@ -1,0 +1,258 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The VMware Cloud Director quota policy API allows to create and view quota policies in system and tenant organizations.
+  title: VMware Cloud Director Quota Policy API
+
+paths:
+  quota-policies:
+    get:
+      x-vcloud-multisite: true
+      tags:
+        - quotaPolicies
+      summary: Get list of quota policies.
+      x-vcloud-added-in: 35.0
+      description: |
+        Get list of quota policies.
+        Results can be filtered by id
+        Returns all the quota policies which are available in the system.
+      operationId: queryQuotaPolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/QuotaPolicies"
+
+    post:
+      tags:
+        - quotaPolicies
+      summary: Creates a new quota policy
+      x-vcloud-added-in: 35.0
+      description: |
+        Creates a new quota policy
+      operationId: createQuotaPolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: quotaPolicyParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/QuotaPolicy"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/QuotaPolicy"
+
+  quota-policy:
+    parameters:
+      - name: quotaPolicyId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: quotaPolicy
+    get:
+      tags:
+        - quotaPolicies
+      summary: Get the specified quota policy
+      x-vcloud-added-in: 35.0
+      operationId: getQuotaPolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/QuotaPolicy"
+    put:
+      tags:
+        - quotaPolicies
+      summary: Update the specified quota policy
+      x-vcloud-added-in: 35.0
+      operationId: updateQuotaPolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: updateQuotaPolicyParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/QuotaPolicy"
+      produces:
+        - application/json
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/QuotaPolicy"
+    delete:
+      tags:
+        - quotaPolicies
+      summary: Delete the specified quota policy.
+      x-vcloud-added-in: 35.0
+      operationId: deleteQuotaPolicy
+      responses:
+        204:
+          description: No Content
+
+  capabilities:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - capabilities
+      summary: Retrieves capabilities for quotaPolicy feature.
+      operationId: getQuotaPolicyCapabilities
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './common/capability.yaml#/definitions/Capabilities'
+        204:
+          description: No Content
+
+definitions:
+
+  QuotaPolicy:
+    type: object
+    x-vcloud-added-in: 35.0
+    properties:
+      id:
+        type: string
+        description: |
+          URN for quota policy. This is immutable.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: quotaPolicy
+          - constraint: ReadOnly
+      description:
+        type: string
+        minLength: 1
+        maxLength: 256
+        default: "A quota policy."
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      name:
+        type: string
+        minLength: 1
+        maxLength: 128
+        required: true
+        description: |
+          Display name for the quota policy.
+      orgId:
+        type: string
+        description: |
+          URN of org in which this policy is created. This is immutable
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: org
+          - constraint: ReadOnly
+      quotaPoolDefinitions:
+          type: array
+          description: A list of quota pool definitions.
+          x-vcloud-constraints:
+            - constraint: NonSortable
+            - constraint: NonSearchable
+          items:
+            $ref: '#/definitions/QuotaPoolDefinition'
+      isAutoGenerated:
+        type: boolean
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        description: |
+          This field cannot be updated and is a read-only field in the client. It defines if the quota policy
+          is auto-generated.
+    required:
+      - name
+      - quotaPoolDefinitions
+
+  QuotaPoolDefinition:
+    type: object
+    x-vcloud-added-in: 35.0
+    properties:
+      quotaResourceName:
+        type: string
+        description: |
+          The localized name of quota resource type.
+        example: Running VMs quota is the user friendly name for resource type VM
+                 with qualifiers deployed == true.
+                 Consumed Memory quota is the user fiendly name for resource type memory.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      resourceType:
+        type: string
+        description: |
+          The quota resource type such as memory, cpu, vm etc.
+          Available resource types: memory, cpu, storage, urn:vcloud:legacy:vm, urn:vcloud:type:vmware.tkgcluster:1.0.0
+      quotaResourceUnit:
+        type: string
+        description: |
+          The unit of quota defined for quota resource type.
+          Available quota units for resource types:
+          memory - MB
+          cpu - MHz
+          storage - MB
+          urn:vcloud:legacy:vm - count
+        example: memory unit - MB, cpu unit - MHz, storage unit - MB
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      quota:
+        type: integer
+        format: int64
+        description: |
+          The quota amount for this resource.
+      qualifiers:
+        type: array
+        description: |
+           The qualifiers for quota resource type, such as vm.guestOs == Windows.
+           This is optional. Qualifiers just helps in narrowing down quota resource
+           based on values of one or more of its properties. If vm is a quota resource,
+           from the above example, only VMs with Windows guest OS will be considered
+           for quota eligibility. If more than one qualifier is provided, system will
+           use AND operator to process them.
+        example: vm.guestOs == Windows
+        items:
+          type: string
+    required:
+      - resourceType
+      - quota
+
+  QuotaPolicies:
+    description: |
+      A list of quota policies.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of quota policies.
+            items:
+              $ref: '#/definitions/QuotaPolicy'

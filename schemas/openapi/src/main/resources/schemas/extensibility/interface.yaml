@@ -1,0 +1,311 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Defined Entity Interfaces
+  description: Interfaces for defined entities are used for classification and Behaviors definition.
+  version: "1.0"
+
+paths:
+  interfaces:
+    get:
+      tags:
+        - definedInterface
+      summary: Gets the collection of interfaces defined in the vCD instance. Allows collection refinement through traditional FIQL-based filtering
+      description: Gets the collection of interfaces defined in the vCD instance. Allows collection refinement through traditional FIQL-based filtering
+      operationId: queryInterfaces
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      produces:
+        - application/json
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DefinedInterfaces'
+    post:
+      tags:
+        - definedInterface
+      summary: Creates a defined interface.
+      description: |
+        Creates a defined interface.
+        The version must follow semantic versioning rules.
+      x-vcloud-added-in: 35.0
+      operationId: createInterface
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: definedInterface
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DefinedInterface"
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/DefinedInterface'
+
+  interface:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        example: urn:vcloud:interface:vmware.sddc:1.0.0
+    get:
+      tags:
+        - definedInterface
+      summary: Gets the interface with the unique identifier (URN)
+      description: |
+        Gets the interface with the unique identifier (URN)
+      x-vcloud-added-in: 35.0
+      operationId: getInterface
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DefinedInterface'
+    put:
+      tags:
+        - definedInterface
+      summary: Updates the interface with the unique identifier (URN)
+      description: |
+        Updates the interface with the unique identifier (URN)
+        The version must follow semantic versioning rules.
+      x-vcloud-added-in: 35.0
+      operationId: updateInterface
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: definedInterface
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DefinedInterface'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DefinedInterface'
+    delete:
+      tags:
+        - definedInterface
+      summary: Deletes the interface with the unique identifier (URN)
+      description: |
+        Deletes the interface with the unique identifier (URN)
+      x-vcloud-added-in: 35.0
+      operationId: deleteInterface
+      responses:
+        204:
+          description: No Content
+
+  behaviors:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Get the Behaviors of the Defined Interface.
+      x-vcloud-added-in: 35.0
+      description: |
+        Retrieve the Behaviors of the specified Defined Interface.
+      operationId: getInterfaceBehaviors
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behaviors'
+    post:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Add a new interface Behavior if the Interface is not in use
+      x-vcloud-added-in: 35.0
+      description: |
+        Add a new Behavior to the Interface. Only allowed if the Interface is not in use.
+      operationId: addInterfaceBehavior
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: behavior
+          in: body
+          required: true
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+    put:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Update all the executions of the specified Behaviors (possibly removing or adding some)
+      x-vcloud-added-in: 35.0
+      description: |
+        Update all Behaviors, possibly adding or removing some if the Interface is not in use.
+        If the Interface is in use, then only the executions of the existing Behaviors can be updated.
+        The Behaviors can be specified by ID or by name.
+      operationId: updateInterfaceBehaviors
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: behaviors
+          in: body
+          required: true
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behaviors'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behaviors'
+
+  behavior:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: behaviorId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Get a Behavior in the Defined Interface.
+      x-vcloud-added-in: 35.0
+      description: |
+        Retrieve a specific Behavior in the specified Defined Interface.
+      operationId: getInterfaceBehavior
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+    put:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Update the execution of the specified Behavior in the Defined Interface
+      x-vcloud-added-in: 35.0
+      description: |
+        Update the execution of the specified Behavior in the Defined Interface.
+        The Behaviors can be specified by ID or by name.
+      operationId: updateInterfaceBehavior
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: behavior
+          in: body
+          required: true
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+    delete:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Remove a Behavior from the Defined Interface.
+      x-vcloud-added-in: 35.0
+      description: |
+        Remove a Behavior from the Defined Interface.
+        The Behaviors can be specified by ID or by name.
+      operationId: deleteInterfaceBehavior
+      responses:
+        204:
+          description: No Content
+
+definitions:
+  # "Interface" is an unusable keyword, hence this name
+  DefinedInterface:
+    x-vcloud-added-in: 35.0
+    description: |
+      Interface for a defined entity.
+      The combination of nss+version+vendor should be unique.
+    type: object
+    properties:
+      name:
+        type: string
+        example: SDDC Interface
+      id:
+        type: string
+        example: urn:vcloud:interface:vmware.sddc:1.0.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      version:
+        type: string
+        x-vcloud-constraints:
+          - constraint: Version
+        example: 1.0.0
+        description: The interface's version. The version should follow semantic versioning rules.
+      vendor:
+        type: string
+        example: vmware
+        description: The vendor name.
+      nss:
+        type: string
+        example: myCustomEntity
+        description: A unique namespace associated with the interface.
+      readonly:
+        type: boolean
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        example: false
+        description: True if the entity type cannot be modified.
+      required:
+        - name
+        - version
+        - vendor
+        - nss
+
+  DefinedInterfaces:
+    x-vcloud-added-in: 35.0
+    description: |
+      A paginated list of defined interfaces.
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/DefinedInterface'
+
+

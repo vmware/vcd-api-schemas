@@ -1,0 +1,227 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Tokens API
+  version: "1.0"
+  title: vCloud Director Tokens API
+
+paths:
+  tokens:
+    get:
+      tags:
+        - token
+      summary: Retrieve tokens
+      x-vcloud-added-in: 33.0
+      operationId: getTokens
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Tokens"
+    post:
+      tags:
+        - token
+      summary: Creates a new token of the specified type
+      x-vcloud-added-in: 33.0
+      description: |
+        Creates a new token. Proxy tokens are tied to the current user and can be used to access the set
+         of proxies available to the user.
+      operationId: createToken
+      consumes:
+        - application/json
+      parameters:
+        - name: tokenParameters
+          in: body
+          required: false
+          schema:
+            $ref: "#/definitions/TokenParameters"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Token"
+
+  token:
+    parameters:
+      - name: id
+        description: Token ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: token
+
+    get:
+      tags:
+        - token
+      summary: Retrieves a specific token
+      x-vcloud-added-in: 33.0
+      operationId: getToken
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Token"
+
+    delete:
+      tags:
+        - token
+      summary: |
+        Delete a specific token. Use this to revoke the current token in case of a leak.
+      x-vcloud-added-in: 33.0
+      operationId: deleteToken
+      responses:
+        204:
+          description: No Content
+
+definitions:
+  Tokens:
+    x-vcloud-added-in: 33.0
+    description: |
+      A paginated list of user specific tokens used for accessing proxies.
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/Token'
+
+  Token:
+    x-vcloud-added-in: 33.0
+    description: |
+      Specifies a user, the user's organization, and the user assigned token that can be used to
+       access proxies as well as the expiration timestamp of the token (in UTC). Parameters cannot
+       be edited once a token is created.
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID of this token. Sorting on this field is not supported.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: token
+      name:
+        type: string
+        description: Name of the token
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      token:
+        type: string
+        description: User specific token that can be used to access proxies. Sorting on this field is not supported.
+        x-vcloud-restricted: Proxy tokens are visible only to the owner of the token. Extension tokens are visible only on creation.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      expirationTimeUtc:
+        type: string
+        format: date-time
+        description: Time stamp representing when the token will expire (in UTC).
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      owner:
+        $ref: '#/definitions/EntityReference'
+        description: Owner of the token. Either a user or an extension
+      username:
+        type: string
+        description: Name of the user that this token is assigned to.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        x-vcloud-added-in: 33.0
+        x-vcloud-removed-in: 35.0
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: owner.name
+      userId:
+        type: string
+        description: |
+            ID of the user that this token is assigned to. Sorting on this field is not supported.
+             Can not be updated.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: user
+        x-vcloud-added-in: 33.0
+        x-vcloud-removed-in: 35.0
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: owner.id
+      orgName:
+        type: string
+        description: Name of the organization that the assigned user belongs to. Sorting and filtering on this field is not supported.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: NonSearchable
+        x-vcloud-added-in: 33.0
+        x-vcloud-removed-in: 35.0
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: org.name
+      org:
+        $ref: '#/definitions/EntityReference'
+      type:
+        type: string
+        description: Type of the token. Can be of type PROXY or EXTENSION
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        x-vcloud-added-in: 35.0
+    required:
+      - id
+      - name
+    x-vcloud-property-annotations:
+      org:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: NonSearchable
+      owner:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+
+  TokenParameters:
+    x-vcloud-added-in: 35.0
+    description: |
+      Information for the token to be created. Required for API v35.0+
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the token to create
+      type:
+        type: string
+        description: The type of token to be created. Valid types are ["PROXY", "EXTENSION"]
+      extensionId:
+        type: string
+        description: The urn id of the extension to get a token for
+
+  EntityReference:
+    $ref: './common/entity.yaml#/definitions/EntityReference'
+

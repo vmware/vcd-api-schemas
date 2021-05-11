@@ -1,0 +1,897 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Virtual Center API allows for basic CRUD operations of a VC.
+  title: Virtual Center API
+
+paths:
+
+  rootResourcePools:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get resource pools of a VC
+      description: |
+        Get a list of all root resource pools.
+        If a resource pool is ineligible, but is in the response,
+        this means it has children, which are eligible.
+        A resource pool will be ineligible,
+        unless the cluster has an ESXi host on it.
+        The list will be sorted by name, case insensitive.
+      operationId: getRootResourcePools
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ResourcePools"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  childResourcePools:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get resource pools of a VC
+      description: |
+        Get list of child resource pools of the specified parent.
+        If a resource pool is ineligible, but is in the response,
+        this means it has children, which are eligible.
+        A resource pool will be ineligible,
+        unless the cluster has an ESXi host on it.
+        The list will be sorted by name, case insensitive.
+      operationId: getChildResourcePools
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: moref
+          in: path
+          required: true
+          type: string
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ResourcePools"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  storageProfiles:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get storage profiles of a VC
+      description: |
+        Get a list of all storage profiles for a VC.
+        Supported contexts are:
+        Resource Pool Moref (_context==moref) - |
+        Returns all the storage profiles which are related to a specific Resoure Pool.
+        Example: /cloudapi/{ver}/virtualCenters/{urn}/storageProfiles?filter=_context==resgroup-N
+      operationId: getStorageProfiles
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/StorageProfiles"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  supportedHardwareVersions:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get supported hardware versions of a resource pool
+      description: |
+        Get a set of all supported hardware versions by the ESXi hosts in the resource pool.
+      operationId: getSupportedHardwareVersions
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: moref
+          in: path
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/HardwareVersions"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  kubernetesConfig:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - VirtualCenter
+      summary: Get kubernetes configuration for a resource pool.
+      description: |
+        Get kubernetes configuration for a resource pool which is backed by a kubernetes enabled cluster.
+      operationId: getResourcePoolKubernetesConfig
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: moref
+          in: path
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ResourcePoolKubernetesConfig"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  virtualMachineClasses:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - VirtualCenter
+      summary: Get a list of Virtual Machine Classes associated with this resource pool.
+      description: |
+        Get a list of Virtual Machine Classes associated with this resource pool.
+        This API throws 400 BadRequestException if called against a resource pool which is not Kubernetes enabled.
+      operationId: queryVirtualMachineClasses
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: moref
+          in: path
+          required: true
+          type: string
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "./compute-policy/compute-policy-2.0.0.yaml#/definitions/VirtualMachineClasses"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  virtualCenter:
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Get Virtual Center server
+      description: |
+        Retrieve the representation of a vCenter server registered and managed by vCD.
+      operationId: getVirtualCenter
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/VCenterServer"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Update specified Virtual Center server
+      description: |
+         Update the representation of a registered vCenter server.
+         This operation is asynchronous and returns a task that
+         you can monitor to track the progress of the request.
+      operationId: updateVirtualCenter
+      consumes:
+        - application/json
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: updateVCenterServerParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/VCenterServer"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+    delete:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Detach the specified Virtual Center server
+      description: |
+         Unregister a vCenter server.
+         This operation is asynchronous and returns a task that
+         you can monitor to track the progress of the request.
+      operationId: deleteVirtualCenter
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  virtualCenterMetrics:
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Get Virtual Center server metrics
+      description: |
+        Retrieve the metrics of a registered vCenter server.
+      operationId: getVirtualCenterMetrics
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/VCenterServerMetrics"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  nsxVManagerSettings:
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Get Virtual Center server network settings
+      description: |
+        Retrieve the networking configuration of a registered vCenter server.
+      operationId: getNsxVManagerSettings
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/NsxVManagerSettings"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+    put:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Update specified Virtual Center server network settings
+      description: |
+         Update the network settings of a registered vCenter server.
+         This operation is asynchronous and returns a task that
+         you can monitor to track the progress of the request.
+      operationId: updateNsxVManagerSettings
+      consumes:
+        - application/json
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: updateVCenterServerParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/NsxVManagerSettings"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  virtualCenters:
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      summary: Gets a paged list of Virtual Center servers.
+      description: |
+        Retrieves a paged list of all Virtual Center servers in the system.
+      operationId: queryVirtualCenters
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VCenterServers"
+    post:
+      x-vcloud-added-in: 34.0
+      tags:
+        - VirtualCenter
+      operationId: attachVirtualCenter
+      summary: Attach a Virtual Center server
+      description: Attach a Virtual Center server.
+      consumes:
+        - application/json
+      parameters:
+        - name: vimserver
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/VCenterServer"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+        401:
+          description: Unauthorized
+
+definitions:
+
+  ResourcePools:
+    description: |
+      A list of Resource Pools
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: "./vc/resourcePool.yaml#/definitions/ResourcePool"
+
+  StorageProfiles:
+    description: |
+      A list of Storage Profiles
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: "./vc/virtualCenter.yaml#/definitions/StorageProfile"
+
+  StorageProfile:
+    description: |
+      A Storage Profile.
+    type: object
+    properties:
+      moref:
+        type: string
+        description: The Moref of the Storage Profile.
+      name:
+        type: string
+        description: The name of the Storage Profile.
+
+  SupportedHardwareVersion:
+    x-vcloud-added-in: 35.2
+    description: supported ESXi virtual hardware version.
+    type: object
+    properties:
+      isDefault:
+        type: boolean
+        description: indicates whether this virtual hardware version is the default in vCenter.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      name:
+        type: string
+        description: The name of the virtual hardware version.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  HardwareVersions:
+    x-vcloud-added-in: 33.0
+    description: Set of supported ESXi virtual hardware versions.
+    type: object
+    properties:
+      versions:
+        type: array
+        items:
+          type: string
+      supportedVersions:
+        type: array
+        items:
+          $ref: '#/definitions/SupportedHardwareVersion'
+    x-vcloud-property-annotations:
+      versions:
+        x-vcloud-added-in: 33.0
+        x-vcloud-deprecated-in: 35.2
+        x-vcloud-deprecated-alternative: supportedVersions
+      supportedVersions:
+        x-vcloud-added-in: 35.2
+
+  NsxVManager:
+    x-vcloud-added-in: 34.0
+    description: |
+      An object representing an NSX-V server.
+    type: object
+    properties:
+      username:
+        type: string
+        description: User name to connect to the NSX-V server.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      password:
+        type: string
+        description: Cleartext password to connect to the NSX-V server.
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      url:
+        type: string
+        description: URL of the server.
+        format: uri
+        example: https://sampleVsm.vmware.com
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      softwareVersion:
+        type: string
+        description: Version of the NSX-V Manager
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    required:
+      - username
+      - url
+
+  VCenterServer:
+    x-vcloud-added-in: 34.0
+    description: |
+      An object representing a vCenter server.
+    type: object
+    properties:
+      vcId:
+        type: string
+        description: URN of the associated vCenter server.
+        example: urn:vcloud:vimserver:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: vimserver
+      name:
+        type: string
+        description: The name of the vCenter server.
+        example: vCenter Sample Name
+      description:
+        type: string
+        description: Optional description.
+        example: vCenter Sample Description
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      username:
+        type: string
+        description: User name to connect to the server.
+      password:
+        type: string
+        description: Cleartext password to connect to the server.
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      url:
+        type: string
+        description: URL of the server.
+        format: uri
+        example: https://sampleVc.vmware.com
+      isEnabled:
+        type: boolean
+        default: false
+        description: True if the vCenter server is enabled for use with vCloud Director.
+      vsphereWebClientServerUrl:
+        type: string
+        description: The URL of vCenter web client server.
+        format: uri
+      hasProxy:
+        type: boolean
+        default: false
+        description: When present, indicates that a proxy exists within vCloud Director that proxies this vCenter server
+                     for access by authorized end-users. Setting this field to true when registering a vCenter server
+                     will result in a proxy being created for the vCenter server, and another
+                     for the corresponding SSO endpoint (if different from the vCenter server's endpoint).
+                     This field is immutable after the vCenter Server is registered, and will be updated by the system
+                     when/if the proxy is removed.
+      rootFolder:
+        type: string
+        description: vCenter root folder in which the vCloud Director system folder will
+                     be created. This parameter only takes the folder name and not
+                     directory structure.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      vcNoneNetwork:
+        type: string
+        description: Network in Vcenter to be used as 'NONE' network by vCD.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      tenantVisibleName:
+        type: string
+        description: Public label of this vCenter server visible to all tenants.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      isConnected:
+        type: boolean
+        default: false
+        description: True if the vCenter server is connected.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      mode:
+        type: string
+        enum: [NONE, IAAS, SDDC, MIXED]
+        description: The vcenter mode. One of
+              <ul>
+                     <li>NONE - undetermined</li>
+                     <li>IAAS - provider scoped</li>
+                     <li>SDDC - tenant scoped</li>
+                     <li>MIXED</li>
+              </ul>
+              IAAS indicates this vCenter server is scoped to the provider. SDDC indicates that this
+              vCenter server is scoped to tenants, while MIXED indicates mixed mode, where both uses are
+              allowed in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      listenerState:
+        type: string
+        description: The vcenter listener state. One of
+             <ul>
+                     <li>INITIAL</li>
+                     <li>INVALID_SETTINGS</li>
+                     <li>UNSUPPORTED</li>
+                     <li>DISCONNECTED</li>
+                     <li>CONNECTING</li>
+                     <li>CONNECTED_SYNCING</li>
+                     <li>CONNECTED</li>
+                     <li>STOP_REQ</li>
+                     <li>STOP_AND_PURGE_REQ</li>
+                     <li>STOP_ACK</li>
+            </ul>
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      clusterHealthStatus:
+        type: string
+        enum: [GRAY, RED, YELLOW, GREEN]
+        description: The overall health status of clusters in this vCenter server. One of
+              <ul>
+                     <li>GRAY</li>
+                     <li>RED</li>
+                     <li>YELLOW</li>
+                     <li>GREEN</li>
+              </ul>
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      vcVersion:
+        type: string
+        description: The version of the VIM server.
+        example: 6.7.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      buildNumber:
+        x-vcloud-added-in: 35.2
+        type: string
+        description: The build number of the VIM server.
+        example: 12345
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      uuid:
+        type: string
+        description: The instance UUID property of the vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      nsxVManager:
+        $ref: '#/definitions/NsxVManager'
+        description: the NSX-V attached to this Virtual Center server, when present.
+      proxyConfigurationUrn:
+        required: false
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: proxyConfiguration
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    required:
+      - name
+      - username
+      - url
+      - vsphereWebClientServerUrl
+
+  VCenterServerMetrics:
+    x-vcloud-added-in: 34.0
+    description: |
+      An object representing metrics of a vCenter server.
+    type: object
+    properties:
+      vcId:
+        type: string
+        description: URN of the associated vCenter server.
+        example: urn:vcloud:vimserver:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: vimserver
+      clustersCount:
+        type: integer
+        description: The number of clusters in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      totalVmCount:
+        type: integer
+        description: The number of VMs in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      poweredOnVmCount:
+        type: integer
+        description: The number of powered-on VMs in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      totalMemMb:
+        type: integer
+        description: The total memory (in MB) in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      reservedMemMb:
+        type: integer
+        description: The reserved memory (in MB) in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      demandedMemMb:
+        type: integer
+        description: The demanded memory (in MB) in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      totalCpuMhz:
+        type: integer
+        description: The total CPU (in MHz) in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      reservedCpuMhz:
+        type: integer
+        description: The reserved CPU (in MHz) in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      demandedCpuMhz:
+        type: integer
+        description: The demanded CPU (in MHz) in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      totalStorageMb:
+        type: integer
+        description: The size (in MB) of all datastores in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      freeStorageMb:
+        type: integer
+        description: The size of free storage (in MB) of all datastores in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      uncommittedStorageMb:
+        type: integer
+        description: The size of uncommitted storage (in MB) of all datastores in this vCenter server.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NsxVManagerSettings:
+    x-vcloud-added-in: 34.0
+    description: |
+      An object representing networking configuration of a vCenter server.
+    type: object
+    properties:
+      vcId:
+        type: string
+        description: URN of the associated vCenter server.
+        example: urn:vcloud:vimserver:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: vimserver
+      networkProviderScope:
+        type: string
+        description: Public label of this NSX server visible to all tenants.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      controlVmResourcePoolVcPath:
+        type: string
+        description: Path to the resource pool to use for creating Control VM for Cross-VDC Networking.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      controlVmDatastoreName:
+        type: string
+        description: Name of the Datastore to use for creating Control VM for Cross-VDC Networking.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      controlVmManagementInterfaceName:
+        type: string
+        description: Name of the management interface to use for creating Control VM for Cross-VDC Networking.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    required:
+      - vcId
+      - networkProviderScope
+      - controlVmResourcePoolVcPath
+      - controlVmDatastoreName
+      - controlVmManagementInterfaceName
+
+  VCenterServers:
+    description: |
+      A list of vCenter servers.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of vCenter server.
+            items:
+              $ref: '#/definitions/VCenterServer'
+
+  ResourcePoolKubernetesConfig:
+    x-vcloud-added-in: 35.0
+    description: |
+      Kubernetes configuration for a resource pool backed by kubernetes enabled cluster.
+    type: object
+    properties:
+      controlPlaneEndpoint:
+        type: string
+        description: |
+          Endpoint for the kubernetes enabled cluster backed by this Resource Pool.
+

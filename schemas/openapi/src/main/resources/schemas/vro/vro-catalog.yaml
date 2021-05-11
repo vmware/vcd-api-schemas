@@ -1,0 +1,469 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    vRealize Orchestrator Catalog Overlay API.
+  version: "1.0"
+  title: vRealize Orchestrator Catalog Overlay API
+
+paths:
+  vroServerCatalog:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: List vRO Server namespaces
+      description: A REST endpoint for listing all catalog entry points.
+        Each Orchestrator plug-in exposes its own catalog entry point that is accessible at /catalog/{pluginname}.
+        The Orchestrator server exposes a separate catalog entry point that is accessible at /catalog/System
+      operationId: getCatalogDetails
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: "#/definitions/CatalogWsInventoryItem"
+
+  vroServerCatalogNamespace:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: List vRO Server namespace items
+      description: A REST endpoint for retrieving the root elements in a namespace. All Orchestrator plug-ins that have an inventory,
+        usually provide a single root element. The Orchestrator server does not have a single root. Instead, for the System namespace,
+        the Orchestrator REST API returns a list that contains links to all system types (workflows, tasks, etc.)
+      operationId: getInventoryItemByNamespace
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: namespace
+          in: path
+          description: Namespace name
+          required: true
+          type: string
+        - $ref: "./vro/vro-catalog.yaml#/parameters/keys"
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: "#/definitions/CatalogWsInventoryItem"
+
+  vroServerCatalogNamespaceType:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: List vRO Server namespace items
+      description: A REST endpoint for retrieving the root elements in a namespace. All Orchestrator plug-ins that have an inventory,
+        usually provide a single root element. The Orchestrator server does not have a single root. Instead, for the System namespace,
+        the Orchestrator REST API returns a list that contains links to all system types (workflows, tasks, etc.)
+      operationId: getInventoryItemsListByType
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: namespace
+          in: path
+          description: Namespace name
+          required: true
+          type: string
+        - name: type
+          in: path
+          description: Item type
+          required: true
+          type: string
+        - $ref: "./vro/vro-catalog.yaml#/parameters/maxResult"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/startIndex"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/startFromId"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/queryCount"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/keys"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/conditions"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/sortOrders"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/rootObject"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/tags"
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: "#/definitions/CatalogInventoryItemsList"
+
+  vroServerCatalogNamespaceTypeId:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: List vRO Server namespace items by id
+      description: A REST endpoint for retrieving an element by its type and ID. All Orchestrator objects can be accessed or
+        identified by their unique combination of namespace, type and ID.
+      operationId: getInventoryItemById
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: namespace
+          in: path
+          description: Namespace name
+          required: true
+          type: string
+        - name: type
+          in: path
+          description: Item type
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: Item type id
+          required: true
+          type: string
+        - $ref: "./vro/vro-catalog.yaml#/parameters/keys"
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: "#/definitions/CatalogWsInventoryItem"
+
+  getByRelation:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: Find by relation
+      description: Every Orchestrator plug-in can define relations between its types. For example,
+        hierarchy structures can be defined as 'CHILDREN' relations between parent and children types.
+        If the request is successful, the API responds with an HTTP 200 OK status code and a list containing the child objects
+        that are accessible through a given relation, if any.
+      operationId: getInventoryItemsListByRelation
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: namespace
+          in: path
+          description: Namespace name
+          required: true
+          type: string
+        - name: parentType
+          in: path
+          description: parentType
+          required: true
+          type: string
+        - name: parentId
+          in: path
+          description: parentId
+          required: true
+          type: string
+        - name: relationName
+          in: path
+          description: relationName
+          required: true
+          type: string
+        - $ref: "./vro/vro-catalog.yaml#/parameters/maxResult"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/startIndex"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/queryCount"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/keys"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/conditions"
+        - $ref: "./vro/vro-catalog.yaml#/parameters/sortOrders"
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: "#/definitions/CatalogInventoryItemsList"
+
+  getNamespaceIcon:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: Download icon for module
+      description: If the request is successful, the API responds with an HTTP 200 OK status code and the requested icon image
+        as a downloadable attachment that has an 'image/png' MIME type.
+      operationId: getIconByNamespace
+      x-vcloud-added-in: 36.0
+      produces:
+        - image/png
+        - image/jpeg
+        - image/svg+xml
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: namespace
+          in: path
+          description: Namespace name
+          required: true
+          type: string
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            type: string
+            format: binary
+
+  getNamespaceTypeIcon:
+    get:
+      tags:
+        - vrealizeCatalog
+      summary: Download icon for module type
+      description: If the request is successful, the API responds with an HTTP 200 OK status code and the requested icon image
+        as a downloadable attachment that has an 'image/png' MIME type.
+      operationId: getIconByNamespaceType
+      x-vcloud-added-in: 36.0
+      produces:
+        - image/png
+        - image/jpeg
+        - image/svg+xml
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: namespace
+          in: path
+          description: Namespace name
+          required: true
+          type: string
+        - name: type
+          in: path
+          description: Type
+          required: true
+          type: string
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            type: string
+            format: binary
+
+  getCategoryById:
+    get:
+      tags:
+        - vrealizeCategory
+      summary: Get Category
+      description: Endpoint for retrieving details for a category.
+      operationId: getCategoryById
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: vroId
+          in: path
+          description: vRO Server Id
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: Category Id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: "#/definitions/WsCategory"
+
+parameters:
+  maxResult:
+    in: query
+    name: maxResult
+    required: false
+    type: integer
+    description: maxResult
+    x-vcloud-added-in: 36.0
+  startIndex:
+    in: query
+    name: startIndex
+    required: false
+    type: integer
+    description: startIndex
+    x-vcloud-added-in: 36.0
+  startFromId:
+    in: query
+    name: startFromId
+    required: false
+    type: string
+    description: startFromId
+    x-vcloud-added-in: 36.0
+  queryCount:
+    in: query
+    name: queryCount
+    required: false
+    type: boolean
+    description: queryCount
+    x-vcloud-added-in: 36.0
+  keys:
+    in: query
+    name: keys
+    required: false
+    type: array
+    items:
+      type: string
+    description: Keys
+    collectionFormat: multi
+    x-vcloud-added-in: 36.0
+  conditions:
+    in: query
+    name: conditions
+    required: false
+    type: array
+    items:
+      type: string
+    description: conditions
+    collectionFormat: multi
+    x-vcloud-added-in: 36.0
+  sortOrders:
+    in: query
+    name: sortOrders
+    required: false
+    type: array
+    items:
+      type: string
+    description: sortOrders
+    collectionFormat: multi
+    x-vcloud-added-in: 36.0
+  rootObject:
+    in: query
+    name: rootObject
+    required: false
+    type: string
+    description: rootObject
+    x-vcloud-added-in: 36.0
+  tags:
+    in: query
+    name: tags
+    required: false
+    type: array
+    items:
+      type: string
+    description: tags
+    collectionFormat: multi
+    x-vcloud-added-in: 36.0
+
+definitions:
+  WsCategory:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      description:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      pathIds:
+        type: array
+        items:
+          type: string
+      relations:
+        $ref: "#/definitions/CatalogRelations"
+      type:
+        type: string
+        description: |
+          Allowed values are:
+          - ResourceElementCategory
+          - ConfigurationElementCategory
+          - WorkflowCategory
+          - PolicyTemplateCategory
+          - ScriptModuleCategory
+
+  CatalogWsInventoryItem:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      attributes:
+        type: array
+        items:
+          $ref: "#/definitions/CatalogWsAttribute"
+      href:
+        type: string
+      relations:
+        $ref: "#/definitions/CatalogRelations"
+
+  CatalogInventoryItemsList:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      count:
+        type: integer
+      startIndex:
+        type: integer
+      lastItemToken:
+        type: string
+      link:
+        type: array
+        items:
+          $ref: "#/definitions/CatalogLink"
+
+  CatalogWsAttribute:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      displayValue:
+        type: string
+      name:
+        type: string
+      value:
+        type: string
+
+  CatalogRelations:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      count:
+        type: integer
+      startIndex:
+        type: integer
+      link:
+        type: array
+        items:
+          $ref: "#/definitions/CatalogLink"
+
+  CatalogLink:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      attributes:
+        type: array
+        items:
+          $ref: "#/definitions/CatalogWsAttribute"
+      href:
+        type: string
+      rel:
+        type: string
+      type:
+        type: string

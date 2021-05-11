@@ -1,0 +1,302 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Advisories API
+  version: "1.0"
+  title: vCloud Director Advisories API
+
+paths:
+  advisory-definitions:
+    get:
+      tags:
+        - Advisory
+      summary: Get a list of all advisory definitions.
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      x-vcloud-default-sort:
+        default-sort-field: priority
+        sort-ascending: false
+      description: |
+        Get a list of all advisory definitions.
+      operationId: queryAdvisoryDefinitions
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AdvisoryDefinitions'
+    post:
+      tags:
+        - Advisory
+      summary: Create a new advisory definition.
+      x-vcloud-added-in: 35.0
+      x-vcloud-event: com/vmware/vcloud/event/advisoryDefinition/create
+      operationId: createAdvisoryDefinition
+      consumes:
+        - application/json
+      parameters:
+        - name: newAdvisoryDefinition
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/AdvisoryDefinition"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/AdvisoryDefinition"
+
+  advisory-definition:
+    parameters:
+      - name: advisoryId
+        in: path
+        description: advisory URN
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: advisoryDefinition
+    get:
+      tags:
+        - Advisory
+      summary: Get the advisory definition with the specified id.
+      x-vcloud-added-in: 35.0
+      operationId: getAdvisoryDefinition
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AdvisoryDefinition"
+    delete:
+      tags:
+        - Advisory
+      summary: Delete the advisory with the associated specified id.
+      x-vcloud-added-in: 35.0
+      operationId: deleteAdvisoryDefinition
+      responses:
+        204:
+          description: No Content
+
+  advisories:
+    get:
+      tags:
+        - Advisory
+      summary: Get a list of all advisories accessible to the user.
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      x-vcloud-default-sort:
+        default-sort-field: priority
+        sort-ascending: false
+      description: |
+        Get a list of all advisories accessible to the user.
+      operationId: queryAdvisories
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Advisories'
+
+  advisory:
+    parameters:
+      - name: advisoryId
+        in: path
+        description: advisory URN
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: advisory
+    get:
+      tags:
+        - Advisory
+      summary: Get the advisory with the specified id.
+      x-vcloud-added-in: 35.0
+      operationId: getAdvisory
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Advisory"
+    put:
+      tags:
+        - Advisory
+      summary: Updates an advisory.
+      x-vcloud-added-in: 35.0
+      description: |
+        Updates an advisory for the active session using a specified id.
+        Advisories that have a MANDATORY priority may not be updated.
+      operationId: updateAdvisory
+      consumes:
+        - application/json
+      parameters:
+        - name: modifiedAdvisory
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Advisory"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Advisory"
+
+definitions:
+  Advisory:
+    x-vcloud-added-in: 35.0
+    description: |
+      A message specified by a system administrator org administrator. It
+      is to be displayed to users to alert them to general conditions that
+      may affect them.
+    type: object
+    properties:
+      id:
+        type: string
+        description: A unique identifier for the advisory (read-only).
+      targetId:
+        type: string
+        description: The id reference to the target entity this advisory is for.
+      message:
+        type: string
+        description: A localized message for this advisory.
+        maxLength: 512
+      priority:
+        type: string
+        description: |
+          Priority for an advisory that indicates the level of urgency. These
+          priorities are listed in ascending sort order.
+          <ul>
+            <li>
+              <em>MANDATORY</em>: A mandatory message which is always displayed;
+              these advisories cannot be snoozed or dismissed (see documentation
+              on displayStart and displayEnd)
+            </li>
+            <li>
+              <em>CRITICAL</em>: A high priority, potentially actionable message which can be
+              snoozed or dismissed
+            </li>
+            <li>
+              <em>IMPORTANT</em>: A potentially actionable message which can be snoozed or dismissed
+            </li>
+            <li>
+              <em>NOTICE</em>: An informational message which can be dismissed (but not snoozed)
+            </li>
+          </ul>
+        default: 'NOTICE'
+      displayStart:
+        type: string
+        format: date-time
+        description: |
+          The ISO-8601 timestamp from which this advisory is applicable. Defaults to
+          the server's current time if unspecified. If permissible, users may update this value
+          to a time in the future to snooze this advisory.
+      displayEnd:
+        type: string
+        format: date-time
+        description: |
+          The ISO-8601 timestamp representing when this advisory is no longer applicable.
+          If permissible, users may update this value to a time in the past to dismiss
+          this advisory. The displayEnd timestamp must be >= displayStart.
+      source:
+        type: string
+        description: |
+          Represents where the advisory is being generated from. This is a read-only field.
+          Can be of type USER or INTERNAL.
+      required:
+        - targetId
+        - message
+        - displayEnd
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: advisory
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      targetId:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: org
+              - arg: site
+      message:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      source:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  Advisories:
+    x-vcloud-added-in: 35.0
+    description: |
+      A list of Advisories.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of advisories.
+            items:
+              $ref: '#/definitions/Advisory'
+
+  AdvisoryDefinition:
+    x-vcloud-added-in: 35.0
+    type: object
+    allOf:
+      - $ref: '#/definitions/Advisory'
+        x-vcloud-property-annotations:
+          id:
+            x-vcloud-constraints:
+              - constraint: Urn
+                args:
+                  - arg: advisoryDefinition
+              - constraint: NonSortable
+              - constraint: ReadOnly
+
+  AdvisoryDefinitions:
+    x-vcloud-added-in: 35.0
+    description: |
+      A list of Advisories definitions.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of advisory definitions.
+            items:
+              $ref: '#/definitions/AdvisoryDefinition'
+

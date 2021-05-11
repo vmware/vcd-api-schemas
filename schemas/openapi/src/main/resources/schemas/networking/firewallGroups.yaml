@@ -1,0 +1,473 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Firewall Group API allows for management of an Edge or vDC Group's Firewall Groups.
+    Firewall Groups are a grouping construct currently used for firewall rules.
+    A firewall group can contain a list of ip addresses, list of Org vDC networks, or list of VM criteria.
+  version: "1.0"
+  title: vDC Firewall Group API
+
+paths:
+
+  firewallGroupSummaries:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroups
+      summary: Retrieves the Firewall Groups.
+      description: |
+        Get all firewall groups. Results can be filtered by name and context (_context).
+        Supported contexts are:
+          <ul>
+          <li>Org Vdc Network ID <code>(_context==networkId)</code> -
+          Returns all the firewall groups which the specified network is a member of.
+          <li>Edge Gateway ID <code>(_context==edgeGatewayId)</code> -
+          Returns all the firewall groups which are available to the specific edge gateway.
+          <li>Network Provider ID <code>(_context==networkProviderId)</code> -
+          Returns all the firewall groups which are available under a specific network provider. This context requires system admin privilege.
+          </ul>
+      operationId: getFirewallGroups
+      parameters:
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/FirewallGroups'
+
+  firewallGroups:
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroups
+      summary: Create a firewall group
+      description: |
+        Create a firewall group.
+      operationId: createFirewallGroup
+      consumes:
+      - application/json
+      parameters:
+      - name: firewallGroup
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/FirewallGroupDetails'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  firewallGroup:
+    parameters:
+    - name: firewallGroupId
+      in: path
+      required: true
+      type: string
+      x-vcloud-constraints:
+        - constraint: Urn
+          args:
+            - arg: firewallGroup
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroup
+      summary: Retrieves a specific firewall group.
+      operationId: getFirewallGroup
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/FirewallGroupDetails'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroup
+      summary: Updates the Firewall Group.
+      operationId: updateFirewallGroup
+      consumes:
+      - application/json
+      parameters:
+      - name: firewallGroup
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/FirewallGroupDetails'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroup
+      summary: Deletes a Firewall Group.
+      operationId: deleteFirewallGroup
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  firewallGroupAssociatedVMs:
+     parameters:
+       - name: firewallGroupId
+         in: path
+         required: true
+         type: string
+         x-vcloud-constraints:
+           - constraint: Urn
+             args:
+               - arg: firewallGroup
+
+     get:
+       x-vcloud-added-in: 34.0
+       tags:
+         - firewallGroup
+       summary: Retrieves associated VMs for a specific firewall group.
+       description: |
+         Get all associated VMs for a specific firewall group. Associated VM members
+         can only be obtained for firewall groups with typeValue <em>STATIC_MEMBERS</em> or <em>VM_CRITERIA</em>.
+       operationId: getFirewallGroupAssociatedVMs
+       parameters:
+         - $ref: "./common/query.yaml#/parameters/queryFilter"
+         - $ref: "./common/query.yaml#/parameters/querySortAsc"
+         - $ref: "./common/query.yaml#/parameters/querySortDesc"
+         - $ref: "./common/query.yaml#/parameters/queryPage"
+         - $ref: "./common/query.yaml#/parameters/queryPageSize"
+       produces:
+         - application/json
+       responses:
+         200:
+           description: OK
+           schema:
+             $ref: '#/definitions/FirewallGroupAssociatedVMs'
+         404:
+           $ref: "./common/response.yaml#/components/responses/NotFound"
+
+
+definitions:
+
+  FirewallGroups:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of Firewall Groups
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/definitions/FirewallGroupSummary'
+
+  FirewallGroupSummary:
+    x-vcloud-added-in: 33.0
+    description: |
+      A Firewall Group object.
+    type: object
+    allOf:
+      - $ref: "./networking/firewallGroups.yaml#/definitions/FirewallGroupScope"
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: The id of the firewall group.
+          name:
+            type: string
+            description: The name of the firewall group.
+          description:
+            type: string
+            description: The description of the firewall group
+          type:
+            $ref: "./networking/firewallGroups.yaml#/definitions/FirewallGroupType"
+            description: |
+              Defines the type of Firewall Group which determines what can be members of this group such as IP Addresses, Org vDC networks, or VMs based on dynamic
+              criteria. This property is now deprecated and replaced with typeValue.
+          typeValue:
+            x-vcloud-added-in: 35.2
+            type: string
+            description: |
+              Defines the type of Firewall Group which determines what can be members of this group such as IP Addresses, Org vDC networks, or VMs based on dynamic
+              criteria.  Below are valid values.
+              <ul>
+                <li> <code> IP_SET </code> should be used when using particular IP Addresses of VMs, Networks, etc.
+                <li> <code> STATIC_MEMBERS </code> should be used when specifying exact members such as a particular Org vDC Network.
+                <li> <code> VM_CRITERIA </code> should be used when specifying some dynamic criteria that matches a VM member such as VM name or Operating System name.
+                     This type is valid only if the firewall group is scoped to a vDC Group.
+              </ul>
+              The default is IP_SET.
+        required:
+         - name
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: firewallGroup
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-added-in: 34.0
+        x-vcloud-deprecated-in: 35.2
+        x-vcloud-deprecated-alternative: typeValue
+      typeValue:
+        x-vcloud-added-in: 35.2
+
+  FirewallGroupDetails:
+    x-vcloud-added-in: 33.0
+    description: |
+      A Firewall Group object.
+    allOf:
+      - $ref: "./networking/firewallGroups.yaml#/definitions/FirewallGroupSummary"
+      - type: object
+        properties:
+          ipAddresses:
+            type: array
+            description: |
+              IP Addresses included in the group. This is only applicable for IP_SET Firewall Groups. This can support IPv4 and IPv6 addresses in single, range, and CIDR formats.
+            items:
+              type: string
+          members:
+            type: array
+            description: |
+              The list of static member entities such as Org vDC Networks to be used. This is only applicable for SECURITY_GROUP/STATIC_MEMBERS Firewall Groups.
+              The objects used must be scoped to the particular Edge Gateway / vDC Group specified.
+            items:
+              $ref: '#/definitions/EntityReference'
+          vmCriteria:
+            type: array
+            description: |
+              The list of dynamic criteria that determines whether a VM belongs to a firewall group.  A VM needs to meet at least one criteria to belong to the
+              firewall group. In other words, the logical AND is used for rules within a single criteria and the logical OR is used in between each criteria.
+              This is only applicable for VM_CRITERIA Firewall Groups.
+            maxItems: 3
+            items:
+              $ref: "./networking/firewallGroups.yaml#/definitions/VmCriteria"
+
+        x-vcloud-property-annotations:
+          ipAddresses:
+            x-vcloud-constraints:
+            - constraint: NonSearchable
+            - constraint: NonSortable
+          members:
+            x-vcloud-added-in: 34.0
+            x-vcloud-constraints:
+              - constraint: NonSearchable
+              - constraint: NonSortable
+          vmCriteria:
+            x-vcloud-added-in: 36.0
+            x-vcloud-constraints:
+              - constraint: NonSearchable
+              - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  FirewallGroupType:
+    x-vcloud-added-in: 34.0
+    x-vcloud-deprecated-in: 36.0
+    type: object
+    description: |
+      Defines the type of Firewall Group. These groups can be used in Firewall Rules to define rules that are scoped to the IP Addresses/Members
+      defined in a Firewall Group.
+      <ul>
+        <li> <code> IP_SET </code> should be used when using particular IP Addresses of VMs, Networks, etc.
+        <li> <code> SECURITY_GROUP </code> should be used when specifying exact members such as a particular Org vDC Network.
+      </ul>
+      The default is IP_SET.
+    enum:
+      - IP_SET
+      - SECURITY_GROUP
+
+  FirewallGroupScope:
+    description:
+      Describes the scope and relationship that this firewall group has with other VCD entities.
+    type: object
+    properties:
+      orgRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The organization that this firewall group belongs to. This property is read-only and cannot be updated.
+      edgeGatewayRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The edge gateway that this firewall group is scoped to. This means that this firewall group can be used when configuring firewall rules for the edge gateway.
+          This property is now deprecated. ownerRef should be used instead
+      ownerRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The vDC Group or Edge Gateway that this firewall group is scoped to. This group can be used for configuring rules for either an Edge Gateway or vDC Group.
+          If an Edge Gateway is specified that belongs to a vDC Group, the the firewall group will be scoped to the vDC Group.
+      networkProviderScope:
+        type: string
+        description: |
+          The network provider scope that this object belongs to. This is a read-only property and is determined by the input context entity ID during object creation.
+    x-vcloud-property-annotations:
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      edgeGatewayRef:
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: ownerRef
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ownerRef:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      contextEntityId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  FirewallGroupAssociatedVMs:
+    x-vcloud-added-in: 34.0
+    description: |
+      List of associated VMs for firewall group
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/firewallGroups.yaml#/definitions/FirewallGroupAssociatedVM'
+
+  FirewallGroupAssociatedVM:
+    x-vcloud-added-in: 34.0
+    description:
+      Represents an associated virtual machine. Contains the VM name and parent vApp name.
+    type: object
+    properties:
+      vmRef:
+        $ref: '#/definitions/EntityReference'
+        description: |
+          Reference to the vm associated with this firewall group.
+      vappRef:
+        $ref: '#/definitions/EntityReference'
+        description: |
+          Reference to the vApp of the associated vm.
+      vdcRef:
+        $ref: '#/definitions/EntityReference'
+        description: |
+          Reference to the vDC of the associated vm.
+      orgRef:
+        $ref: '#/definitions/EntityReference'
+        description: |
+          Reference to the organization of the associated vm.
+    x-vcloud-property-annotations:
+      vmRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vappRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vdcRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  VmCriteriaRule:
+    x-vcloud-added-in: 36.0
+    description:
+      A criteria rule that contains specific attributes that a VM can match with.
+    type: object
+    properties:
+      attributeType:
+        type: string
+        description: |
+          The attribute type of a VM used for VM matching.  Below are supported types:
+          <ul>
+          <li> VM_TAG - Match the VM based on the tags associated with that VM.
+          <li> VM_NAME - Match the VM based on the name of the VM. Only CONTAINS and STARTS_WITH operators are supported for this type.
+          </ul>
+      attributeValue:
+        type: string
+        description: |
+          The attribute value that is used to determine if a VM's attribute value matches the rule.
+          Example: if the attribute type is VM_NAME, user should set this value to the name of the VM to match with.
+      operator:
+        type: string
+        description: |
+          The operator to perform to determine whether the rule's attribute value matches a VM's attribute value.  Example: if the attribute type is VM_NAME,
+          user can set this operator to determine whether a VM's name must be an exact match or starts with that name.
+          Below are supported types:
+          <ul>
+          <li> EQUALS - Match occurs if the VM's attribute value is exactly the same as the rule's attribute value.
+          <li> CONTAINS - Match occurs if the VM's attribute value is contains the rule's attribute value.
+          <li> STARTS_WITH - Match occurs if the VM's attribute value starts with the rule's attribute value.
+          <li> ENDS_WITH - Match occurs if the VM's attribute value ends with the rule's attribute value.
+          </ul>
+    required:
+      - attributeType
+      - attributeValue
+      - operator
+    x-vcloud-property-annotations:
+      attributeType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      attributeValue:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      operator:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  VmCriteria:
+    x-vcloud-added-in: 36.0
+    description:
+      List of rules that a VM must all match for the criteria to be true (VM is part of the firewall group).
+    type: object
+    properties:
+      rules:
+        type: array
+        description: List of rules that a VM must all match for the criteria to be true (VM is part of the firewall group).
+        minItems: 1
+        maxItems: 4
+        items:
+          $ref: "#/definitions/VmCriteriaRule"
+    x-vcloud-property-annotations:
+      rules:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+

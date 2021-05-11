@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
   #L%
   -->
 
+
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
@@ -39,7 +40,8 @@
            targetNamespace="http://www.vmware.com/vcloud/v1.5"
            version="1.0">
 
-    <xs:import namespace="http://www.vmware.com/vcloud/extension/v1.5" />
+    <xs:import namespace="http://www.vmware.com/vcloud/extension/v1.5" schemaLocation="../extension/vmwextensions.xsd"/>
+
     <xs:include schemaLocation="../vcloud/vdc.xsd"/>
     <xs:include schemaLocation="../vcloud/vdcStorageProfile.xsd"/>
     <xs:include schemaLocation="../vcloud/vendorServices.xsd"/>
@@ -202,7 +204,10 @@
                                 resources you allocate are committed as a pool
                                 to the organization vDC. vApps in vDCs that
                                 support this allocation model can specify
-                                values for resource and limit.)
+                                values for resource and limit.)&lt;br&gt;
+                                &lt;b&gt;FLEX&lt;/b&gt; (A generic type
+                                of VDC where all the settings are in full
+                                control of the creator.)
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -413,6 +418,57 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="DefaultComputePolicy" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Default vDC compute policy in this vDC. It is mandatory
+                                for FLEX type of VDCs.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MaxComputePolicy" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Maximum compute policy in this vDC. If not specified then the
+                                default policy would also be considered as maximum policy.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="IsElastic" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Set to true to indicate if the FLEX vDC is to
+                                be elastic. This is an optional field and is useful
+                                only for FLEX vDC creation.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="IncludeMemoryOverhead" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Set to true to indicate if the FLEX vDC is to
+                                include memory overhead into its accounting for admission control.
+                                This is an optional field and is useful
+                                only for FLEX vDC creation.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -577,6 +633,33 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Reference to a universal network pool.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="IsElastic" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Set to true to indicate if the FLEX vDC is to
+                                be elastic. This is an optional field and is useful
+                                only for FLEX vDC creation.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="IncludeMemoryOverhead" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Set to true to indicate if the FLEX vDC is to
+                                include memory overhead into its accounting for admission control.
+                                This is an optional field and is useful
+                                only for FLEX vDC creation.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -778,6 +861,9 @@
 
     <xs:complexType name="NetworkPoolType">
         <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.admin.networkPool</meta:content-type>
+            </xs:appinfo>
             <xs:documentation source="since">0.9</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents a network pool.
@@ -976,6 +1062,16 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="InheritPvdcDefaultSettings" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="35.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if this Org VDC storage profile should inheirt the default settings of the parent PVDC storage profile.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="ProviderVdcStorageProfile" type="ReferenceType" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
@@ -1068,4 +1164,74 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:element name="PvdcComputePolicy" type="PvdcComputePolicyType" />
+    <xs:complexType name="PvdcComputePolicyType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="TENANT_VM_GROUP" />
+                <meta:content-type>application/vnd.vmware.admin.pvdcComputePolicyType</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">TENANT_VM_GROUP</xs:documentation>
+            <xs:documentation xml:lang="en">
+                 Represents provider vdc compute configuration policy.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="EntityType">
+                <xs:sequence>
+                    <xs:element name="PolicyDescription" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Description of the provider vdc compute policy.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NamedVmGroupReferences" type="vcloud-ext:VMWVmGroupReferencesType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="TENANT_VM_GROUP"/></xs:appinfo>
+                            <xs:documentation source="since">TENANT_VM_GROUP</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                References to named VM group.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="PvdcComputePolicies" type="PvdcComputePoliciesType" />
+    <xs:complexType name="PvdcComputePoliciesType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="TENANT_VM_GROUP" />
+                <meta:content-type>application/vnd.vmware.admin.pvdcComputePoliciesType</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">TENANT_VM_GROUP</xs:documentation>
+            <xs:documentation xml:lang="en">
+                 List of pvdc compute policies in given pvdc.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+            <xs:sequence>
+                <xs:element name="ComputePolicy" type="PvdcComputePolicyType" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation source="since">TENANT_VM_GROUP</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            List of pvdc compute policies in given pvdc.
+                        </xs:documentation>
+                        <xs:documentation source="required">true</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
 </xs:schema>
+

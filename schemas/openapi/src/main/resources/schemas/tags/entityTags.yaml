@@ -1,0 +1,197 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API to manage tags for an entity.
+    The supported entity types are documented in the "/1.0.0/entity/{id}/tags" API.
+  version: "1.0"
+  title: Tag API
+
+paths:
+
+  entity-tags-summaries:
+    get:
+      x-vcloud-added-in: 36.0
+      x-vcloud-default-sort:
+        default-sort-field: entityType
+        sort-ascending: true
+      tags:
+        - entityTags
+      summary: Retrieves the list of entities that have at least one tag assigned to it.
+      description: |
+        Retrieves the list of entities that have at least one tag assigned to it.
+        The list of tags is limited to the first 10 found. For the full list of tags,
+        use the API <code>/1.0.0/entity/{id}/tags</code>.
+        Besides entityType, additional supported filters are:
+        <ul>
+        <li>tag - The tag to search by
+        <li>scope - The scope to search by
+        </ul>
+        Example: <code>filter=(tag==Web;scope==Security;entityType==vm)</code>
+      operationId: getEntityTagsSummaries
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityTagsSummaries'
+
+  entity-tags:
+    parameters:
+      - name: id
+        description: the URN of the entity to manage tag for.
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - entityTags
+      summary: Retrieves the tag information for a specific entity.
+      description: |
+        Retrieves the tag information for a specific entity. If user has view right to the entity, user can view its tags.
+      operationId: getEntityTags
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityTags'
+
+    put:
+      x-vcloud-added-in: 36.0
+#      x-vcloud-event: com/vmware/vcloud/event/tag/entityTags/modify
+      tags:
+        - entityTags
+      summary: Update the tag information for a specific entity.
+      description: |
+        Update the tag information for a specific entity. An empty list of tags means to delete all dags for the entity.
+        If user has edit permission on the entity, user can edit its tags.
+        Only entities of specific types are supported.
+        Supported types which can be determined based on a VCD Entity's URN ID such as "vm" in "urn:vcloud:vm:<uuid>".
+          <ul>
+          <li>vm - Virtual Machines. Note that if a VM tag has a scope of "vcd-security", that tag value can be used
+                   when defining dynamic Security/Firewall Group to match the VM for DFW use-case.
+          </ul>
+      operationId: updateEntityTags
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: entityTags
+          in: body
+          description: the list of tags to update.
+          required: true
+          schema:
+            $ref: '#/definitions/EntityTags'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityTags"
+
+definitions:
+
+  Tag:
+    $ref: "./tags/tags.yaml#/definitions/Tag"
+
+  CommonEntityTags:
+    x-vcloud-added-in: 36.0
+    description: |
+      Describes a tag information for a specific entity.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique identifier of the entity in URN format. The entity type must be supported, which is documented
+          in "/1.0.0/tags/entitySummaries" API.
+      name:
+        type: string
+        description: The name of the entity.
+        readOnly: true
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vm
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+
+  EntityTagsSummaries:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of entities that are tagged.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './tags/entityTags.yaml#/definitions/EntityTagsSummary'
+
+  EntityTagsSummary:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of entities that are tagged. The summary only contains a partial list of the tags.
+    allOf:
+      - $ref: "./tags/entityTags.yaml#/definitions/CommonEntityTags"
+      - type: object
+        properties:
+          entityType:
+            type: string
+            description: The type of entity. See endpoint documentation for /1.0.0/entity/{id}/tags for full list of supported type.
+          firstTenTags:
+            description: The list of first 10 tags found that are assigned to this entity.
+            type: array
+            items:
+              $ref: '#/definitions/Tag'
+            minItems: 0
+            maxItems: 10
+    x-vcloud-cross-references:
+      - cross-reference:
+          alias: tag
+      - cross-reference:
+          alias: scope
+    x-vcloud-property-annotations:
+      entityType:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  EntityTags:
+    x-vcloud-added-in: 36.0
+    description: |
+      List of entities that are tagged.
+    allOf:
+      - $ref: "./tags/entityTags.yaml#/definitions/CommonEntityTags"
+      - type: object
+        properties:
+          tags:
+            description: The list of all tags that are assigned to this entity.
+            type: array
+            items:
+              $ref: '#/definitions/Tag'
+            minItems: 0
+            maxItems: 64

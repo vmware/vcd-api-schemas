@@ -1,0 +1,570 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for managing Edge Gateways belonging to a particular vDC. Edge gateways can be
+    backed by an NSX-T or an NSX-V installation.
+  version: "1.0"
+  title: Edge Gateways API
+
+paths:
+
+  edgeGateways:
+
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeGateways
+      summary: Create a new edge gateway
+      description: |
+        Create a new edge gateway for a vDC
+      operationId: createEdgeGateway
+      consumes:
+        - application/json
+      parameters:
+        - name: edgeGateway
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeGateway'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    get:
+      x-vcloud-added-in: 32.0
+      x-vcloud-multisite: true
+      tags:
+        - edgeGateways
+      summary: Get all the edge gateways
+      description: |
+        Get all edge gateways. If "ownerRef.id" filter is not specified, then user will see all the edge gateways in the organization they have the right to view.
+        Results can be filtered by ownerRef. Combination of ownerRef and _context. <code>(_context==includeAccessible)</code>
+        can be used to get all the edge gateways which are available to an Org vDC including the gateways which are owned by
+        datacenter groups but available to Org vDC.
+      operationId: getAllEdgeGateways
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeGateways'
+
+  edgeGateway:
+
+    parameters:
+    - name: gatewayId
+      in: path
+      required: true
+      type: string
+      x-vcloud-constraints:
+        - constraint: Urn
+          args:
+            - arg: gateway
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+      - edgeGateway
+      summary: Retrieves a specific Edge Gateway
+      operationId: getEdgeGateway
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeGateway'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+      - edgeGateway
+      summary: Updates a specific Edge Gateway
+      operationId: updateEdgeGateway
+      consumes:
+      - application/json
+      parameters:
+      - name: gateway
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/EdgeGateway'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+      - edgeGateway
+      summary: Deletes a specific Edge Gateway
+      operationId: deleteEdgeGateway
+      parameters:
+      - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  usedIpAddresses:
+    parameters:
+    - name: gatewayId
+      in: path
+      required: true
+      type: string
+      x-vcloud-constraints:
+        - constraint: Urn
+          args:
+            - arg: gateway
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - edgeGateway
+      summary: Retrieve the list of IP addresses which are being used by the edge gateway.
+      description: |
+        Get all the IP Addresses which are being used by the Edge Gateway such as the primary IP or an IP used by a given
+        Edge Service, such as NAT. These IP addresses are a subset of the IPs allocated from the connected external networks.
+        If the IP is  being consumed by any of the configured services on the edge gateway then name of service will be returned.
+      operationId: getUsedIpAddresses
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/GatewayUsedIpAddresses'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeGateways:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of edge gateways
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: A list of EdgeGateways.
+            items:
+              $ref: '#/definitions/EdgeGateway'
+
+  EdgeGateway:
+    x-vcloud-added-in: 32.0
+    description: |
+      An edge gateway object
+    allOf:
+    - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+    - type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the edge gateway.
+        name:
+          type: string
+          description: The name of the edge gateway.
+        description:
+          type: string
+          description: The description of the edge gateway(optional).
+        edgeGatewayUplinks:
+          description: The uplink connections for the edge gateway.
+          type: array
+          items:
+            $ref: './networking/edgeGateways.yaml#/definitions/EdgeGatewayUplink'
+        distributedRoutingEnabled:
+          type: boolean
+          default: false
+          description: A flag indicating whether distributed routing is enabled or not. The default is false.
+        orgVdcNetworkCount:
+          type: integer
+          description: The number of Org vDC networks connected to the gateway.
+        gatewayBacking:
+          $ref: './networking/edgeGateways.yaml#/definitions/EdgeGatewayBacking'
+          description: The backing details of the edge gateway; only required if importing an NSX-T router.
+        orgVdc:
+          $ref: '#/definitions/EntityReference'
+          description: |
+            The organization vDC which the gateway belongs to. Property is deprecated. Please use ownerRef.
+        ownerRef:
+          $ref: '#/definitions/EntityReference'
+          description: |
+            The organization vDC or vDC Group that this edge gateway belongs to. If the ownerRef is set to a vDC Group, this gateway
+            will be available across all the participating Organization vDCs in the vDC Group.
+        orgRef:
+          $ref: '#/definitions/EntityReference'
+          description: The organization to which the gateway belongs.
+        serviceNetworkDefinition:
+          type: string
+          description: |
+            The network definition in CDIR form that DNS and DHCP service on an NSX-T edge will run on. The subnet prefix length must be 27.
+            This property applies to creating or importing an NSX-T Edge. This is not supported for VMC.
+            If nothing is set, the default is 192.168.255.225/27.  The DHCP listener IP network is on 192.168.255.225/30.
+            The DNS listener IP network is on 192.168.255.228/32.  This field cannot be updated.
+        edgeClusterConfig:
+          $ref: './networking/edgeGateways.yaml#/definitions/GatewayEdgeClusterConfig'
+          description: |
+            Edge Cluster Configuration for the Edge Gateway. Can be specified if a gateway needs to be placed on a specific set of Edge Clusters.
+            For NSX-T Edges, user should specify the ID of the NSX-T edge cluster as the value of primaryEdgeCluster's backingId. The gateway
+            defaults to the Edge Cluster of the connected External Network's backing Tier-0 router, if nothing is specified. The value of secondaryEdgeCluster
+            will be set to NULL for NSX-T edge gateways.
+            For NSX-V Edges, this is read-only and the legacy API must be used for edge specific placement.
+    required:
+      - name
+      - edgeGatewayUplinks
+      - orgVdc
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      edgeGatewayUplinks:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      gatewayBacking:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgVdc:
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: ownerRef
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      ownerRef:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      distributedRoutingEnabled:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgRef:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgVdcNetworkCount:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      serviceNetworkDefinition:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      edgeClusterConfig:
+        x-vcloud-added-in: 34.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeGatewayUplink:
+    x-vcloud-added-in: 32.0
+    description: |
+      The uplink (i.e. external network) that the edge gateway is connected to. This also contains the external network IPs that are allocated to the edge.
+    type: object
+    properties:
+      uplinkId:
+        type: string
+        description: The identifier of the external network this edge gateway is connected to.
+      uplinkName:
+        type: string
+        description: The name of the external network this edge gateway is connected to.
+      subnets:
+        $ref: "#/definitions/EdgeGatewaySubnets"
+        description: |
+          Set of subnets this edge will have access to.
+      connected:
+        type: boolean
+        description: Whether or not the gateway is connected to this uplink. This value defaults to true if it is not set. When filtering by this field,
+          if the filter is false, all gateways that have 0 connected uplinks will be returned, while if it is true, all gateways with at least one connected
+          uplink will be returned.
+        default: true
+      quickAddAllocatedIpCount:
+        type: integer
+        description: If set on create or update api calls, the specified number of IP addresses will be additionally allocated for this uplink.
+          IPs will be allocated from multiple subnets if needed.
+      dedicated:
+        type: boolean
+        description: If set to true, then the associated external network is exclusively used by this edge gateway.
+        default: false
+      vrfLiteBacked:
+        type: boolean
+        description: Whether the associated external network is backed by a NSX-T VRF-Lite Tier-0.
+    x-vcloud-property-annotations:
+      uplinkId:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      uplinkName:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      subnets:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      connected:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      quickAddAllocatedIpCount:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dedicated:
+        x-vcloud-added-in: 34.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vrfLiteBacked:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeGatewayType:
+    x-vcloud-added-in: 32.0
+    description: |
+      The type of the edge gateway.
+    type: object
+    enum:
+      - NSXV_BACKED
+      - NSXT_BACKED
+      - NSXT_IMPORTED
+
+  EdgeGatewayBacking:
+    x-vcloud-added-in: 32.0
+    description: |
+      The backing details of the edge gateway
+    type: object
+    properties:
+      backingId:
+        type: string
+        description: The identifier of the edge gateways backing router.
+      gatewayType:
+        $ref: '#/definitions/EdgeGatewayType'
+        description: The type of the gateway. Describes if this is an NSX-T edge gateway or an NSX-V edge gateway.
+      networkProvider:
+        $ref: '#/definitions/EntityReference'
+        description: The backing network provider, either NSX-T or NSX-V.
+    x-vcloud-property-annotations:
+      backingId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+      gatewayType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProvider:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+
+  GatewayEdgeClusterConfig:
+    x-vcloud-added-in: 34.0
+    description: |
+      Represents the Edge Cluster Configuration for a given Edge Gateway.
+    type: object
+    properties:
+      primaryEdgeCluster:
+        $ref: '#/definitions/GatewayEdgeClusterReference'
+        description: |
+          This represents the Primary Edge Cluster used for the gateway.
+          For NSX-T Edges, this means the Edge Cluster the Tier 1 SR resides on. The user should
+          specify the ID of the NSX-T edge cluster as the value of primaryEdgeCluster's backingId.
+          For NSX-V Edges, this means the primary appliance for the gateway.
+      secondaryEdgeCluster:
+        $ref: '#/definitions/GatewayEdgeClusterReference'
+        description: |
+          This represents the Secondary Edge Cluster used for the gateway.
+          It is only applicable for NSX-V Edges when High Availability is enabled. If HA
+          is enabled and no secondary edge cluster is specified, both appliances will be
+          deployed on the primary edge cluster. If there is a specific secondary edge cluster,
+          the standby/secondary appliance will be deployed on the secondary edge cluster.
+          For NSX-T Edges, the value of secondaryEdgeCluster should be set to NULL.
+    required:
+      - primaryEdgeCluster
+    x-vcloud-property-annotations:
+      primaryEdgeCluster:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      secondaryEdgeCluster:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  GatewayEdgeClusterReference:
+    x-vcloud-added-in: 34.0
+    description: |
+      This represents the reference to an Edge Cluster used for the gateway.
+    type: object
+    properties:
+      edgeClusterRef:
+        $ref: '#/definitions/EntityReference'
+        description: The reference to VCD Edge Cluster.
+      backingId:
+        type: string
+        description: |
+          The Id of the edge cluster in NSX-T manager. The user should
+          specify the id of NSX-T edge cluster during edge gateway create/update.
+          VCD will automatically create a corresponding VCD Edge cluster object
+          referencing the specified NSX-T edge cluster.
+          For NSX-V Edges, this is set to NULL.
+    x-vcloud-property-annotations:
+      edgeClusterRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      backingId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EdgeGatewaySubnets:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of Subnets of an edge gateway
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/EdgeGatewaySubnet'
+
+  EdgeGatewaySubnet:
+    x-vcloud-added-in: 32.0
+    description: |
+      Subnet for edge gateway that contains the IPs from the external network that are allocated to the edge.
+    allOf:
+    - $ref: './networking/commonObject.yaml#/definitions/Subnet'
+    - type: object
+      properties:
+        primaryIp:
+          type: string
+          description: |
+            The primary IP address allocated for this subnet. If not specified, this IP is auto-allocated.  This IP belongs to the external network
+            and can be used for system-configured NAT rules such as DNS forwarder configuration.
+        autoAllocateIpRanges:
+          type: boolean
+          default: false
+          description: Used for create and update api calls. If set to true, IP Ranges are automatically generated based on totalIpCount.
+      x-vcloud-property-annotations:
+        primaryIp:
+          x-vcloud-added-in: 33.0
+          x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        autoAllocateIpRanges:
+          x-vcloud-added-in: 33.0
+          x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  GatewayUsedIpAddresses:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of IP addresses used by an edge gateway.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/edgeGateways.yaml#/definitions/GatewayUsedIpAddress'
+
+  GatewayUsedIpAddress:
+    x-vcloud-added-in: 33.0
+    description: |
+      Describes an IP address currently be used by the edge gateway. The IP belongs to the IPs allocated to the edge.
+    type: object
+    properties:
+      networkRef:
+        $ref: '#/definitions/EntityReference'
+        description: The external network that this IP Address belongs to.
+      ipAddress:
+        type: string
+        description: The IP address in used.
+      category:
+        type: string
+        description: The catagory that an IP can be used for.
+        $ref: '#/definitions/GatewayUsedIpAddressCategory'
+    x-vcloud-property-annotations:
+      networkRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      ipAddress:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      category:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+
+  GatewayUsedIpAddressCategory:
+    x-vcloud-added-in: 33.0
+    description: |
+      The categories that an IP can be used for.
+    type: object
+    enum:
+      - SNAT
+      - DNAT
+      - Load_Balancer
+      - IPsec_VPN
+      - SSL_VPN
+      - L2_VPN
+      - PRIMARY_IP
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

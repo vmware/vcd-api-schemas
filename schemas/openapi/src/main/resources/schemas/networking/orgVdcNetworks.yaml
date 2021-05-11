@@ -1,0 +1,886 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The organization vDC network API allows for management of networks that span an organization vDC or a vDC Group which can contain
+    many organization vDCs.
+  version: "1.0"
+  title: Organization vDC Network API
+
+paths:
+
+  dvpgProperties:
+
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 34.0
+      summary: Returns the DVPG properties, such as promiscuous mode and forged transmit, of a specific Org vDC network. This is a SysAdmin only API.
+      tags:
+        - dvpgProperties
+      operationId: getDvpgProperties
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DvpgProperties"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 34.0
+      summary: Toggles the DVPG properties of a specific Org vDC network. Allows for update of promiscuous mode and forged transmit. This is a SysAdmin only API.
+      tags:
+        - dvpgProperties
+      operationId: updateDvpgProperties
+      consumes:
+        - application/json
+      parameters:
+        - name: dvpgProperties
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DvpgProperties"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  orgVdcNetworks:
+    get:
+      x-vcloud-added-in: 31.0
+      x-vcloud-multisite: true
+      tags:
+        - orgVdcNetworks
+      summary: Get all Org vDC networks.
+      description: |
+        Get all Org vDC networks. If "ownerRef" property is not specified in the filter, then user
+        must have the rights to view all the vDCs within an organization in order to see all the networks in the organization.
+        Results can be filtered by ownerRef or combination of ownerRef and _context. <code>(_context==includeAccessible)</code>
+        can be used to get all the networks which are available to an Org vDC.
+      operationId: getAllVdcNetworks
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./networking/orgVdcNetworks.yaml#/definitions/QueryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VdcNetworks'
+
+    post:
+      x-vcloud-added-in: 31.0
+      tags:
+        - orgVdcNetworks
+      summary: Create an organization vDC network.
+      operationId: createNetwork
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcNetwork
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcNetwork'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  orgVdcNetwork:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 31.0
+      tags:
+        - orgVdcNetwork
+      summary: Retrieves a specific Org vDC network.
+      operationId: getOrgVdcNetwork
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VdcNetwork'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetwork
+      summary: Updates a specific Org vDC network.
+      operationId: updateNetwork
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcNetwork
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcNetwork'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetwork
+      summary: Deletes a specific Org vDC network.
+      operationId: deleteNetwork
+      parameters:
+        - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  reset:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetwork
+      summary: Reset a specific isolated Org vDC network.
+      description: |
+        Reset a specific isolated Org vDC network.  Reset involves redeploying the internal edge gateway of the isolated Org vDC Network if present.
+        An error is returned if the network is not isolated.
+      operationId: resetNetwork
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  syncSyslog:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    post:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetwork
+      summary: Synchronize syslog server settings for a Org vDC network.
+      description: |
+        When the IP addresses of the primary or secondary syslog server are updated, this api can synchronize syslog server settings
+        of an Isolated Org VDC Network against the vCD Syslog Settings. An error is returned if network is a direct network.
+      operationId: syncSyslogSettingsOfNetwork
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  sync:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    post:
+      x-vcloud-added-in: 35.0
+      tags:
+        - orgVdcNetwork
+      summary: Sync/repair a specific Org vDC network.
+      description: |
+        Sync/repair the vDC Group Cross vDC network.
+        An example usage is to realize a network in the participating vDC which was unreachable
+        when the network was created. This operation is only allowed for VIRTUAL_WIRE
+        backed cross vDC networks.
+      operationId: syncOrgVdcNetwork
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  allocatedIpAddresses:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetwork
+      summary: Retrieve the list of IP addresses allocated to the network.
+      description: |
+        Get all the allocated IPs for a given Org vDC network. This returns all the
+        IP addresses of network which are allocated to a vApp VM, an edge gateway interface and the
+        addresses being used in a NAT routed environment.
+        Results can be filtered by IP address.
+      operationId: getAllocatedIpAddresses
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AllocatedIpAddresses'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  secondaryAllocatedIpAddresses:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - orgVdcNetwork
+      summary: Retrieve the list of secondary IP addresses allocated to the network, if the network is a dual stack network.
+      description: |
+        Get all the secondary allocated IPs for a given Org vDC network. This returns all the
+        IP addresses of network which are allocated to a vApp VM, an edge gateway interface, from
+        the IPv6 subnet of the Org vDC network.
+        Results can be filtered by IP address.
+      operationId: getSecondaryAllocatedIpAddresses
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AllocatedIpAddresses'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  dhcp:
+    parameters:
+      - name: vdcNetworkId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetworkDhcp
+      summary: Retrieves Dhcp configuration of a specific Org vDC network.
+      operationId: getNetworkDhcpConfig
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VdcNetworkDhcpConfig'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetworkDhcp
+      summary: Updates Dhcp configuration of a specific Org vDC network.
+      operationId: updateNetworkDhcpConfig
+      consumes:
+        - application/json
+      parameters:
+        - name: dhcpConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcNetworkDhcpConfig'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+        - orgVdcNetworkDhcp
+      summary: Removes Dhcp configuration on a specific Org vDC network.
+      operationId: deleteNetworkDhcpConfig
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  VdcNetworks:
+    x-vcloud-added-in: 31.0
+    description: |
+      List of Org vDC networks
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/VdcNetwork'
+
+  VdcNetwork:
+    x-vcloud-added-in: 31.0
+    description: |
+      An organization vDC network.
+    allOf:
+      - $ref: './networking/commonObject.yaml#/definitions/Network'
+      - type: object
+        properties:
+          backingNetworkId:
+            type: string
+            description: The NSX id of the backing network.
+          backingNetworkType:
+            $ref: './networking/orgVdcNetworks.yaml#/definitions/BackingNetworkType'
+            description: The object type of the backing network.
+          parentNetworkId:
+            $ref: '#/definitions/EntityReference'
+            description: The parent network if the network is a direct network, otherwise it will be null.
+          networkType:
+            $ref: './networking/orgVdcNetworks.yaml#/definitions/VdcNetworkFenceType'
+            description: |
+              The type of network. Changing the network type allows converting between an isolated and routed network.
+              Note that the "connection" field must also be set if converting from isolated to routed network.
+          orgVdc:
+            $ref: '#/definitions/EntityReference'
+            description: |
+              The organization vDC the network belongs to. This should be unset if the network is owned by a vDC Group.
+              For API version 35.0 and above, this field will be treated as read only. Please use ownerRef for new network creation.
+          ownerRef:
+            $ref: '#/definitions/EntityReference'
+            description: |
+              The org vDC or vDC Group that this network belongs to. If the ownerRef is set to a vDC Group, this network
+              will be available across all the vDCs in the vDC Group. If the vDC Group is backed by a NSX-V network provider,
+              the org vDC network is automatically connected to the distributed router associated with the vDC Group and
+              the "connection" field does not need to be set. For API version 35.0 and above, this field should be set for
+              network creation.
+          orgVdcIsNsxTBacked:
+            description: For an Org vDC network, whether the vDC is backed by NSX-T.
+            type: boolean
+            default: false
+          orgRef:
+            $ref: '#/definitions/EntityReference'
+            description: The organization to which the network belongs.
+          connection:
+            $ref: './networking/orgVdcNetworks.yaml#/definitions/RouterConnection'
+            description: |
+              The edge gateway that the network is attached to.
+          isDefaultNetwork:
+            type: boolean
+            description: |
+              Deprecated unused field, this property will be removed in future release.
+          shared:
+            type: boolean
+            description: Whether this network is shared with other organization vDCs.
+          enableDualSubnetNetwork:
+            description: Whether or not this network will support two subnets
+            type: boolean
+            default: false
+          status:
+            $ref: './networking/orgVdcNetworks.yaml#/definitions/OrgVdcNetworkStatus'
+            description:  |
+              Description of the network's status.
+            readOnly: true
+          lastTaskFailureMessage:
+            type:  string
+            description: |
+              Brief failure message if the last configuration task failed.
+              Deprecated in Api 33.0, this property will be removed in next release.
+            readOnly: true
+          guestVlanTaggingAllowed:
+            type: boolean
+            description: Whether guest VLAN tagging is allowed.
+          retainNicResources:
+            type: boolean
+            description: Whether network resources such as IP/MAC Addresses are to be retained.
+          crossVdcNetworkId:
+            type: string
+            description: The id of the cross vdc network if this is a stretched network, otherwise it will be null.
+            readOnly: true
+          crossVdcNetworkLocationId:
+            type: string
+            description: The id of the org from which this network can be managed if this is a stretched network, otherwise it will be null.
+            readOnly: true
+          totalIpCount:
+            type: integer
+            description: The number of IP addresses defined by the static ip pools. If the network contains any IpV6 subnets, the total ip count will be null.
+            readOnly: true
+          usedIpCount:
+            type: integer
+            description: The number of IP address used from the static ip pools.
+            readOnly: true
+          routeAdvertised:
+            type: boolean
+            description: |
+              Whether this network is advertised so that it can be routed out to the external networks. This applies only to
+              network backed by NSX-T. Value will be unset if route advertisement is not applicable.
+            readOnly: true
+          securityGroups:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+            description: |
+              The list of firewall groups of type SECURITY_GROUP/STATIC_MEMBERS that are assigned to the Org VDC Network. These groups can then be used
+              in firewall rules to protect the Org VDC Network and allow/deny traffic.
+    x-vcloud-property-annotations:
+      backingNetworkId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+      backingNetworkType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgVdc:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      orgVdcIsNsxTBacked:
+        x-vcloud-added-in: 36.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+        x-vcloud-restricted: Visible to provider users only
+      orgRef:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      ownerRef:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      connection:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      isDefaultNetwork:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      lastTaskFailureMessage:
+        x-vcloud-deprecated-in: 33.0
+        x-vcloud-deprecated-alternative: |
+          Please use VCD Task API to monitor status of last task.
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      guestVlanTaggingAllowed:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      retainNicResources:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      crossVdcNetworkId:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      crossVdcNetworkLocationId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      totalIpCount:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      usedIpCount:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      routeAdvertised:
+        x-vcloud-added-in: 34.0
+      securityGroups:
+        x-vcloud-added-in: 34.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enableDualSubnetNetwork:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  RouterConnection:
+    x-vcloud-added-in: 31.0
+    description: |
+      Describes the connection between a routed network and an edge gateway. This must be set if converting from an isolated to a routed network.
+    type: object
+    properties:
+      routerRef:
+        $ref: '#/definitions/EntityReference'
+        description: The edge gateway that this network is attached to.
+      connectionType:
+        $ref: '#/definitions/VdcNetworkConnectionType'
+        description: |
+          How the network is connected to the edge gateway. This field is updatable to allow conversions between different types.
+          If owner is a VDC group that is backed by a NSX-V network provider, this field does not need to be set. The organization
+          VDC network will be automatically connected to the distributed router associated with the VDC group.
+      connected:
+        type: boolean
+        default: true
+        description: Whether network is marked as connected in NSX.
+    x-vcloud-property-annotations:
+      connected:
+        x-vcloud-added-in: 33.0
+
+  VdcNetworkDhcpConfig:
+    x-vcloud-added-in: 32.0
+    description: |
+      Configuration for the DHCP service that runs for the network. In order to use DHCPv6 in NSX-T, the network must be configured in EDGE mode, the network must be
+      attached to a router, and the router must have a SLAAC profile configured with DHCPv6 mode.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: Whether the DHCP service is currently enabled on network.
+        default: true
+      leaseTime:
+        type: integer
+        description: |
+          The amount of time in milliseconds of how long a DHCP IP will be leased out for. The minimum is 60ms while the maximum is 4294967295ms, which is
+          roughly 49 days.
+        default: 86400
+        format: int64
+      dhcpPools:
+        type: array
+        items:
+          $ref: '#/definitions/VdcNetworkDhcpPool'
+        description: Range of DHCP IP addresses
+      mode:
+        type: string
+        description: |
+          This value describes how the DHCP service is configured for this network. Once a DHCP service has been created, the mode attribute cannot be changed.
+          The mode field will default to 'EDGE' if it is not provided. This field only applies to networks backed by an NSX-T network provider.
+          <ul>
+          <li>The supported values are EDGE and NETWORK.</li>
+          <li>If EDGE is specified, the DHCP service of the edge is used to obtain DHCP IPs.</li>
+          <li>If NETWORK is specified, a DHCP server is created for use by this network.</li>
+          </ul>
+          In order to use DHCP for IPV6, NETWORK mode must be used. Routed networks which are using NETWORK DHCP services can be disconnected from the edge gateway
+          and still retain their DHCP configuration, however network using EDGE DHCP cannot be disconnected from the gateway until DHCP has been disabled.
+      ipAddress:
+        type: string
+        description: |
+          The IP address of the DHCP service. This is required upon create if using NETWORK mode. This field only applies to networks backed by an NSX-T
+          network provider.
+    x-vcloud-property-annotations:
+      mode:
+        x-vcloud-added-in: 35.0
+      leaseTime:
+        x-vcloud-added-in: 35.0
+      ipAddress:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV4_IP
+              - arg: IPV6_IP
+
+  VdcNetworkDhcpPool:
+    x-vcloud-added-in: 32.0
+    description: |
+      A range of DHCP ip addresses and its lease time configuration.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: Whether the DHCP address pool is currently enabled
+      ipRange:
+        $ref: "./commonObject.yaml#/definitions/IpRange"
+      maxLeaseTime:
+        type: integer
+        minimum: 0
+        description: Max lease time in seconds
+      defaultLeaseTime:
+        type: integer
+        minimum: 0
+        description: Default lease time in seconds
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  VdcNetworkConnectionType:
+    x-vcloud-added-in: 31.0
+    description: |
+      Describes how a network is connected to a gateway.
+    type: object
+    enum:
+      - DISTRIBUTED
+      - INTERNAL
+      - SUBINTERFACE
+
+  VdcNetworkFenceType:
+    x-vcloud-added-in: 31.0
+    description: |
+      The network type.
+    type: object
+    enum:
+      - DIRECT
+      - DIRECT_UPLINK
+      - ISOLATED
+      - OPAQUE
+      - NAT_ROUTED
+      - CROSS_VDC
+
+  OrgVdcNetworkStatus:
+    x-vcloud-added-in: 32.0
+    description: |
+      Represents status of a Org Vdc network. This value will be PENDING if the network has been recorded by VCD but has not been fully configured,
+      CONFIGURING if the network is in transition, REALIZED if the existing state of the network has been fully realized, or REALIZED_FAILED if there
+      was an error creating the network.
+    type: object
+    enum:
+      - PENDING
+      - CONFIGURING
+      - REALIZED
+      - REALIZATION_FAILED
+
+  BackingNetworkType:
+    x-vcloud-added-in: 32.0
+    description: |
+      The backing network type.
+    type: object
+    enum:
+      - DV_PORTGROUP
+      - VIRTUAL_WIRE
+      - IMPORTED_T_LOGICAL_SWITCH
+      - OPAQUE_NETWORK
+      - NSXT_FIXED_SEGMENT
+      - NSXT_FLEXIBLE_SEGMENT
+
+  AllocatedIpAddresses:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of allocated IP addresses.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/orgVdcNetworks.yaml#/definitions/AllocatedIpAddress'
+
+  AllocatedIpAddress:
+    x-vcloud-added-in: 32.0
+    description: |
+      Describes an allocated IP address for a network. IP addresses can be allocated
+      to a vApp VM, an edge gateway interface or may be used in a NAT routed environment.
+      If the address is allocated to an edge gateway, the name of the entity will be 'Edge Gateway'.
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier for record. This is to support UI operations.
+      entityId:
+        type: string
+        description: Id of the entity to which the IP address is allocated such as a VM.
+      entityName:
+        type: string
+        description: Name of the entity to which the IP address is allocated.
+      vAppName:
+        type: string
+        description: Name of the vApp whose VM is using allocated IP address.
+      ipAddress:
+        type: string
+        description: The allocated IP address.
+      deployed:
+        type: boolean
+        description: Whether the entity using this IP address is currently deployed.
+      allocationType:
+        $ref: '#/definitions/AllocatedIpAddressAllocationType'
+        description: The possible allocation types for allocated network address like VSM allocated, VM allocated or NAT routed.
+      networkRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The vApp network or Org vDC network to which this entity is connected.
+      orgRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The organization that this entity belongs to.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      entityId:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+              - arg: vm
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      entityName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vAppName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      deployed:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      allocationType:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkRef:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgRef:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  AllocatedIpAddressAllocationType:
+    x-vcloud-added-in: 32.0
+    description: |
+      The possible allocation types for allocated network address.
+      VM_ALLOCATED means that the IP address is allocated by a VM,
+      NAT_ROUTED means that the IP address is used in a NAT routed environment and
+      VSM_ALLOCATED means that the IP address is allocated to an NSX edge gateway interface.
+    type: object
+    enum:
+      - VM_ALLOCATED
+      - NAT_ROUTED
+      - VSM_ALLOCATED
+
+  DvSwitch:
+    $ref: "./networking/vCenterResources.yaml#/definitions/DvSwitch"
+
+  DvpgProperty:
+    x-vcloud-added-in: 34.0
+    description: |
+      A set of properties which can be managed on a DVPG
+    type: object
+    properties:
+      dvpgMoref:
+        type: string
+        description: The VC Moref of the DVPG
+      vlanId:
+        type: integer
+        description: VLAN Id for the DVPG
+      promiscuousMode:
+        type: boolean
+        description: Whether promiscuous mode is currently enabled
+      forgedTransmit:
+        type: boolean
+        description: Whether forged transmit is currently enabled
+      dvSwitch:
+        $ref: '#/definitions/DvSwitch'
+        description: The DVSwitch that this DVPG was created on
+    x-vcloud-property-annotations:
+      dvpgMoref:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vlanId:
+        x-vcloud-added-in: 35.2
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      promiscuousMode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      forgedTransmit:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dvSwitch:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  DvpgProperties:
+    x-vcloud-added-in: 34.0
+    description: A list of DvpgProperty for all the DVPG's backing a network
+    type: object
+    properties:
+      dvpgProperties:
+        type: array
+        items:
+          $ref: '#/definitions/DvpgProperty'
+        description: List of DvpgProperty for each DVPG backing this network
+
+  QueryPageSize:
+    in: query
+    name: pageSize
+    required: true
+    minimum: 0
+    maximum: 32
+    default: 16
+    type: integer
+    description: Results per page to fetch.
+
+

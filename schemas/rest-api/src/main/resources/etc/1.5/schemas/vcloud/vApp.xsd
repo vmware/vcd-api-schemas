@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -28,12 +28,10 @@
   #L%
   -->
 
+
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-           xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common"
            xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
            xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1"
-           xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
-           xmlns:vmw="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
            xmlns:meta="http://www.vmware.com/vcloud/meta"
@@ -173,6 +171,57 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="VdcComputePolicy" type="ReferenceType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                 A reference to a vdc compute policy. A VM will always belong
+                                 to vdc compute policy. The specified vDC compute policy must exist
+                                 in organization vDC. If not specified, default vDC compute policy
+                                 will be used.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputePolicy" type="ComputePolicyType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">VM_SIZING_POLICY</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                 A reference to a vdc compute policy. This contains VM's actual
+                                 vdc compute policy reference and also optionally an add-on
+                                 policy which always defines VM's sizing.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputePolicyCompliance" type="ComputePolicyComplianceType"  minOccurs="0"  maxOccurs="2">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">VM_SIZING_POLICY</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                 This element shows VM's non compliance details against a
+                                 given compute policy.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="IsComputePolicyCompliant" type="xs:boolean"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if VM is compliant with the associated compute policies
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="BootOptions" type="BootOptionsType"  minOccurs="0"  maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="21.0"/></xs:appinfo>
@@ -195,6 +244,16 @@
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>
+                <xs:attribute name="encrypted" type="xs:boolean" use="optional">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if VM is encrypted. This is a read-only value.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="needsCustomization" type="xs:boolean" use="optional">
                     <xs:annotation>
                         <xs:documentation source="modifiable">none</xs:documentation>
@@ -348,6 +407,135 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:element name="ComputePolicy" type="ComputePolicyType" />
+    <xs:complexType name="ComputePolicyType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="VM_SIZING_POLICY" />
+                <meta:content-type>application/vnd.vmware.vcloud.computePolicySection</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">VM_SIZING_POLICY</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Compute policy details of the VM.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" type="ReferenceType" name="VmPlacementPolicy">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                VdcComputePolicy that defines VM's placement on a host through
+                                various affinity constraints.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element  minOccurs="0" maxOccurs="1" type="xs:boolean" name="VmPlacementPolicyFinal">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="33.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True indicates that the placement policy cannot be removed from a VM that is
+                                instantiated with it. This value defaults to false.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" maxOccurs="1" type="ReferenceType" name="VmSizingPolicy">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                VdcComputePolicy that defines VM's sizing and resource allocation.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element  minOccurs="0" maxOccurs="1" type="xs:boolean" name="VmSizingPolicyFinal">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="33.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True indicates that the sizing policy cannot be removed from a VM that is
+                                instantiated with it. This value defaults to false.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="ComputePolicyCompliance" type="ComputePolicyComplianceType" />
+    <xs:complexType name="ComputePolicyComplianceType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="VM_SIZING_POLICY" />
+                <meta:content-type>application/vnd.vmware.vcloud.computePolicyComplianceSection</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">VM_SIZING_POLICY</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Compute policy compliance details of the VM.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+                <xs:sequence>
+                    <xs:element minOccurs="1" maxOccurs="1" type="xs:dateTime" name="LastComplianceCheckTime">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Time when last compliance check for this VM for this policy was done.
+                                This is a read-only value.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="1" maxOccurs="1" type="xs:string" name="PolicyName">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Name of the policy whose compliance details are presented here.
+                                This is a read-only value.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="1" maxOccurs="unbounded" type="xs:string" name="NonComplianceMessage">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Detailed reason about non-compliance of the VM. This is a read-only value.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:element name="VmCapabilities" type="VmCapabilitiesType"/>
     <xs:complexType name="VmCapabilitiesType">
         <xs:annotation>
@@ -457,6 +645,7 @@
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -799,6 +988,37 @@
                         </xs:annotation>
                     </xs:element>
 
+                    <xs:element name="IpType" type="IpTypeType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation xml:lang="en">
+                                Type of the IP address assigned to this NIC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                    <xs:element name="SecondaryIpAddress" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation xml:lang="en">
+                                Secondary IP address associated with this NIC.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                    <xs:element name="SecondaryIpType" type="IpTypeType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation xml:lang="en">
+                                Type of the secondary IP address assigned to this NIC. This will be populated with 'IPv6'
+                                for dual stack networks, even if there is no secondary IP.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
                     <xs:element name="ExternalIpAddress" type="IpAddressType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
@@ -835,21 +1055,38 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="IpAddressAllocationMode" type="xs:string">
+                    <xs:element name="IpAddressAllocationMode" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 IP address allocation mode for this connection.
-                                One of:&lt;br&gt;
-                                &lt;b&gt;POOL&lt;/b&gt; (A static IP address is allocated
-                                automatically from a pool of addresses.)&lt;br&gt;
-                                &lt;b&gt;DHCP&lt;/b&gt; (The IP address is obtained from a DHCP
-                                service.)&lt;br&gt;
-                                &lt;b&gt;MANUAL&lt;/b&gt; (The IP address is assigned manually in
-                                the IpAddress element.)&lt;br&gt;
-                                &lt;b&gt;NONE&lt;/b&gt; (No IP addressing mode specified.)
+                                One of:
+                                POOL (A static IP address is allocated
+                                automatically from a pool of addresses.),
+                                DHCP (The IP address is obtained from a DHCP
+                                service.),
+                                MANUAL (The IP address is assigned manually in
+                                the IpAddress element.),
+                                NONE (No IP addressing mode specified.)
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SecondaryIpAddressAllocationMode" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation xml:lang="en">
+                                Secondary IP address allocation mode for the secondary IP address associated with this connection.
+                                One of:
+                                POOL (A static IP address is allocated
+                                automatically from a pool of addresses.),
+                                DHCP (The IP address is obtained from a DHCP
+                                service.),
+                                MANUAL (The IP address is assigned manually in
+                                the IpAddress element.),
+                                NONE (No IP addressing mode specified.)
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="NetworkAdapterType" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -866,6 +1103,7 @@
                                 &lt;b&gt;VMXNET2 (based on the VMXNET adapter but provides some high-performance features)&lt;/b&gt;&lt;br&gt;
                                 &lt;b&gt;VMXNET3 (next generation of a paravirtualized NIC designed for performance; not related to VMXNET or VMXNET2)&lt;/b&gt;&lt;br&gt;
                                 &lt;b&gt;FLEXIBLE (identifies itself as a Vlance adapter when a virtual machine boots, but initializes itself and functions as either a Vlance or a VMXNET adapter, depending on which driver initializes it)&lt;/b&gt;&lt;br&gt;
+                                &lt;b&gt;SRIOVETHERNETCARD (Single Root I/O Virtualization virtual NIC, see https://kb.vmware.com/s/article/2038739)&lt;/b&gt;&lt;br&gt;
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -897,13 +1135,12 @@
 
     <xs:simpleType name="VirtualCpuTypeType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                Xxxxx. One of:&lt;br&gt;
-                32 -- xxxx&lt;br&gt;
-                64 -- xxxx
+                Describes virtualCpu type of VM.
+                VM32 -- for VMs which do not support longMode;
+                VM64 -- for VMs which support longMode.
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -914,13 +1151,10 @@
 
     <xs:simpleType name="MediaTypeType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                Xxxxx. One of:&lt;br&gt;
-                xx -- xxxx&lt;br&gt;
-                xx -- xxxx
+                Represents media supported by VM. This can be an ISO image and/or floppy.
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -931,7 +1165,6 @@
 
     <xs:simpleType name="MediaStateType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -956,11 +1189,10 @@
 
     <xs:complexType name="MediaSettingsType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                TBD
+                Describes a media in a VM device and what media is attached to it.
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -970,7 +1202,9 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
-                            TBD
+                            Describes the media device whose media mount is being specified here.
+                            This deviceId must match the RASD.InstanceID attribute in the
+                            VirtualHardwareSection of the vApp's OVF description.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1039,7 +1273,6 @@
 
     <xs:complexType name="DiskSettingsType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -1164,20 +1397,82 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="resizable" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">34.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if the disk can be grown.  This is a read-only value.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="encrypted" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">34.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if the disk is encrypted. This is a read-only value.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="shareable" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">35.0</xs:documentation>
+                            <xs:documentation source="deprecated">36.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="35.0" /></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if the disk is shareable. This is a read-only value.
+                                This attribute is deprecated; use sharingType instead.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="sharingType" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">36.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Sharing type of the disk. This attribute is immutable.
+                                This attribute can only have values defined by DiskSharingType.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:simpleType name="DiskSharingType">
+        <xs:annotation>
+            <xs:appinfo><meta:version added-in="36.0" /></xs:appinfo>
+            <xs:documentation source="since">36.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Sharing type of named disks.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="None" />
+            <xs:enumeration value="DiskSharing" />
+            <xs:enumeration value="ControllerSharing" />
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="ResourceSharesLevelType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                Xxxxx. One of:&lt;br&gt;
-                xx -- xxxx&lt;br&gt;
-                xx -- xxxx
+                Allocation level for how much of a resource can be consumed by the
+                underlying virtualization infrastructure. These levels map to a
+                pre-determined set of numeric values for shares. Custom shares can be
+                specified by using ResourceShareLevel as Custom.
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -1190,11 +1485,11 @@
 
     <xs:complexType name="MediaSectionType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                xxxx
+                The section of the VM representation that has to do with the VM's media
+                devices (floppies and CDROM)
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -1204,7 +1499,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                Describes a media in a VM device and what media is attached to it.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1216,11 +1511,10 @@
 
     <xs:complexType name="DiskSectionType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                xxxx
+                The section of the VM representation that has to do with the VM's disks.
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -1230,7 +1524,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                A description of a virtual disk of a VM.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1242,11 +1536,11 @@
 
     <xs:complexType name="ComputeResourceType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
-                xxxx
+                Stores the configured value, reservation, shares and limit for compute
+                resources such CPU and Memory for a virtualized workload.
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -1256,7 +1550,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                The amount of resource configured on the virtual machine.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1265,7 +1559,8 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                The amount of reservation of this resource on the underlying 
+                                virtualization infrastructure.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1274,7 +1569,9 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                The limit for how much of this resource can be consumed on the
+                                underlying virtualization infrastructure. This is only valid when
+                                the resource allocation is not unlimited.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1283,7 +1580,9 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                Pre-determined relative priorities according to which the
+                                non-reserved portion of this resource is made available to the
+                                virtualized workload.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1292,7 +1591,8 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                xxx.
+                                Custom priority for the resource. This is a read-only, unless the
+                                share level is CUSTOM.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1302,7 +1602,16 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="HardwareVersionBaseType" abstract="true" />
+    <xs:complexType name="HardwareVersionBaseType" abstract="true">
+      <xs:annotation>
+        <xs:appinfo>
+          <jaxb:property name="content" />
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string" />
+      </xs:simpleContent>
+    </xs:complexType>
 
     <xs:complexType name="HardwareVersionType">
         <xs:annotation>
@@ -1310,9 +1619,12 @@
             <xs:documentation xml:lang="en">
                 Represents a supported virtual hardware version.
             </xs:documentation>
+            <xs:appinfo>
+              <jaxb:property name="content" />
+            </xs:appinfo>
         </xs:annotation>
 
-        <xs:complexContent mixed="true">
+        <xs:simpleContent>
             <xs:extension base="HardwareVersionBaseType">
                 <xs:attribute name="href" type="xs:anyURI" use="optional">
                     <xs:annotation>
@@ -1334,13 +1646,12 @@
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
-        </xs:complexContent>
+        </xs:simpleContent>
     </xs:complexType>
 
     <xs:element name="VmSpecSection" substitutionGroup="ovf:Section" type="VmSpecSectionType"/>
     <xs:complexType name="VmSpecSectionType">
         <xs:annotation>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:appinfo>
                 <meta:content-type>application/vnd.vmware.vcloud.simpleVirtualHardwareSection</meta:content-type>
@@ -2190,6 +2501,36 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="VdcComputePolicy" type="ReferenceType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                 A reference to a vdc compute policy. A VM will always belong
+                                 to vdc compute policy. The specified vDC compute policy must exist
+                                 in organization vDC. If not specified, default vDC compute policy
+                                 will be used.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputePolicy" type="ComputePolicyType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="33.0"/>
+                            </xs:appinfo>
+                            <xs:documentation source="added-in">VM_SIZING_POLICY</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A reference to a vdc compute policy. This contains VM's actual
+                                vdc compute policy reference and also optionally an add-on
+                                policy which always defines VM's sizing.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="LocalityParams"
                         type="LocalityParamsType" minOccurs="0"
                         maxOccurs="1">
@@ -2258,10 +2599,8 @@
                 <meta:version added-in="INSTANTIATE_VM_TEMPLATE" />
             </xs:appinfo>
             <xs:documentation source="since">INSTANTIATE_VM_TEMPLATE</xs:documentation>
-            <xs:documentation source="internal" />
             <xs:documentation xml:lang="en">
                 Represents an existing VM template from a Catalog.
-                Internal use only.
             </xs:documentation>
         </xs:annotation>
 
@@ -2374,10 +2713,8 @@
                 <meta:version added-in="INSTANTIATE_VM_TEMPLATE" />
             </xs:appinfo>
             <xs:documentation source="since">INSTANTIATE_VM_TEMPLATE</xs:documentation>
-            <xs:documentation source="internal" />
             <xs:documentation xml:lang="en">
                 Represents VM template instantiation parameters.
-                Internal use only.
             </xs:documentation>
         </xs:annotation>
 
@@ -2411,6 +2748,21 @@
                                 this element is missing, empty, or set
                                 to false and one or more EulaSection
                                 elements are present.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputePolicy" type="ComputePolicyType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY"/>
+                            </xs:appinfo>
+                            <xs:documentation source="added-in">VM_SIZING_POLICY</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A reference to a vdc compute policy. This contains VM's actual
+                                vdc compute policy reference and also optionally an add-on
+                                policy which always defines VM's sizing.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -2563,7 +2915,6 @@
             <xs:appinfo>
                 <meta:content-type>application/vnd.vmware.vcloud.CreateVmParams</meta:content-type>
             </xs:appinfo>
-            <xs:documentation source="internal" />
             <xs:appinfo><meta:version added-in="CREATE_BLANK_VM" /></xs:appinfo>
             <xs:documentation source="since">CREATE_BLANK_VM</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -2968,9 +3319,10 @@
 
     <xs:complexType name="SourcedVmInstantiationParamsType">
         <xs:annotation>
-            <xs:documentation source="deprecated">5.6</xs:documentation>
-            <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.1" removed-in="API_VERSION_POST9_1_UPDATE"/></xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">5.6</xs:documentation>
+            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents instantiation parameters. Deprecated in favor of
                 SourcedCompositionItemParamType
@@ -3079,13 +3431,14 @@
                     </xs:element>
                     <xs:element name="SourcedVmInstantiationParams" type="SourcedVmInstantiationParamsType" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
+                            <xs:appinfo><meta:version added-in="5.1" removed-in="API_VERSION_POST9_1_UPDATE"/></xs:appinfo>
                             <xs:documentation source="deprecated">5.6</xs:documentation>
-                            <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Represents virtual machine instantiation parameters.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="SourcedItem" type="SourcedCompositionItemParamType" minOccurs="0" maxOccurs="unbounded">
@@ -3528,6 +3881,65 @@
 
     <xs:element name="CloneVAppParams" type="CloneVAppParamsType"/>
 
+    <xs:element name="MoveVAppParams" type="MoveVAppParamsType"/>
+    <xs:complexType name="MoveVAppParamsType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="34.0"/>
+                <meta:content-type>application/vnd.vmware.vcloud.moveVAppParams</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">34.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Parameters for a MoveVApp request.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="ParamsType">
+                <xs:sequence>
+                    <xs:element name="Source" type="ReferenceType">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A reference to a source vApp that will be moved.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="ovf:Section">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                An ovf:Section_Type element that specifies vApp
+                                configuration on instantiate, compose, or
+                                recompose.
+                            </xs:documentation>
+                            <xs:documentation source="validSubstitutionElements">
+                                [http://www.vmware.com/vcloud/v1.5] NetworkConfigSection
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                    <xs:element name="SourcedItem" type="SourcedCompositionItemParamType" minOccurs="1" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Represents VM instantiation parameters of the VMs in the source vApp.
+                                SourceDelete is always ignored in the Move vApp context.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:element name="DeployVAppParams" type="DeployVAppParamsType"/>
     <xs:complexType name="DeployVAppParamsType">
         <xs:annotation>
@@ -3674,7 +4086,13 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-
+                    <xs:element name="CaptureVmParams" type="CaptureVmParamsType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">Params to customize template VM during capture</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element ref="ovf:Section" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3686,8 +4104,8 @@
                     </xs:element>
                     <xs:element name="VdcStorageProfile" type="ReferenceType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
+                            <xs:appinfo><meta:version added-in="5.1" removed-in="API_VERSION_POST9_1_UPDATE"/></xs:appinfo>
                             <xs:documentation source="deprecated">5.5</xs:documentation>
-                            <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation>
                                 A reference to the storage profile to be
@@ -3695,6 +4113,7 @@
                                 capture. Ignored by vCloud Director 5.5 and later.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="TargetCatalogItem" type="ReferenceType" minOccurs="0" maxOccurs="1">
@@ -3706,6 +4125,47 @@
                                 To overwrite an existing vApp template with the one created by this
                                 capture, place a reference to the existing template here. Otherwise,
                                 the operation creates a new vApp template.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CaptureVmParamsType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.vcloud.captureVmParams</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">0.9</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Parameters for a VM which is being captured.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="ParamsType">
+                <xs:sequence>
+                    <xs:element name="Source" type="ReferenceType">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">A reference to VM being captured.</xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="VdcComputePolicy" type="ReferenceType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                 A reference to a vdc compute policy for template VM. During instantiation
+                                 this vdc compute policy should be present in destination vDC.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -3993,3 +4453,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

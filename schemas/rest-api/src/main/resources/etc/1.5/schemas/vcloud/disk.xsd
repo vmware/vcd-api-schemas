@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -85,18 +86,25 @@
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>
-                <xs:attribute name="size" type="xs:long" use="required">
+                <xs:attribute name="size" type="xs:long">
                     <xs:annotation>
-                        <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:appinfo><meta:version added-in="5.1" removed-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="deprecated">33.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Size of the disk in bytes.&lt;br&gt;
-                            &lt;br&gt;
-                            You must supply this attribute in an update request,
-                            but you cannot change its value after the object has
-                            been created.
+                            Size of the disk in bytes.
                         </xs:documentation>
-                        <xs:documentation source="required">true</xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sizeMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Size of the disk in MB.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="iops" type="xs:long" use="optional">
@@ -105,6 +113,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                            IOPS request for the created disk
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="encrypted" type="xs:boolean" use="optional">
+                    <xs:annotation>
+                    <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                           True if disk is encrypted. This is a read-only attribute.
                         </xs:documentation>
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
@@ -142,6 +160,37 @@
                            You must supply this attribute in an update request,
                            but you cannot change its value after the object has
                            been created.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="shareable" type="xs:boolean" use="optional">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="35.0" /></xs:appinfo>
+                        <xs:documentation source="deprecated">36.0</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            This attribute is immutable; used for create only.
+                            If set true, a shareable disk is created.
+                            Shareable and controllerSharing are mutually exclusive.
+                            This attribute is deprecated; use sharingType instead.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sharingType" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            This attribute is immutable; used for create only.
+                            This is the sharing type expressed as a string.
+                            This attribute can only have values defined by DiskSharingType.
+                            One of:<br/>
+                            <b>None</b> Non shared disk(default)<br/>
+                            <b>DiskSharing</b> Disk level shared disk<br/>
+                            <b>ControllerSharing</b> Controller level shared disk<br/>
+                            <br/>
                         </xs:documentation>
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
@@ -196,7 +245,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="DiskAttachOrDetachParams" type="DiskAttachOrDetachParamsType"></xs:element>
+    <xs:element name="DiskAttachOrDetachParams" type="DiskAttachOrDetachParamsType" />
     <xs:complexType name="DiskAttachOrDetachParamsType">
         <xs:annotation>
             <xs:appinfo>
@@ -252,4 +301,64 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:element name="DiskMoveParams" type="DiskMoveParamsType" />
+    <xs:complexType name="DiskMoveParamsType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="DISK_MIGRATION"/>
+                <meta:content-type>application/vnd.vmware.vcloud.diskMoveParams</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">DISK_MIGRATION</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Parameters for moving a named disk to a different Org VDC.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="VCloudExtensibleType">
+                <xs:sequence>
+                    <xs:element name="Vdc" type="ReferenceType">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="DISK_MIGRATION"/></xs:appinfo>
+                            <xs:documentation source="since">DISK_MIGRATION</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A reference to the destination Org VDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="StoragePolicy" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="DISK_MIGRATION"/></xs:appinfo>
+                            <xs:documentation source="since">DISK_MIGRATION</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A reference to the storage policy that will be
+                                used for the disk in the destination Org VDC.
+                                If unset, the default storage policy of the
+                                destination Org VDC will be used.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Iops" type="xs:long" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="DISK_MIGRATION"/></xs:appinfo>
+                            <xs:documentation source="since">DISK_MIGRATION</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The IOPS that should be set on the disk. If
+                                unset, the default disk IOPS value of the
+                                storage policy will be used.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
 </xs:schema>
+

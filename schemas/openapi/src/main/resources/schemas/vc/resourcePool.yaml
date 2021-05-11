@@ -1,0 +1,40 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    Entity used to describe a resource pool in vCenter.
+  title: Resource Pool
+  version: "1.0"
+
+definitions:
+
+  ResourcePool:
+    description: |
+      A vCenter Resource Pool.
+    type: object
+    properties:
+      moref:
+        type: string
+        description: The vCenter Id of the Resource Pool. It must be in the format (resgroup-#).
+      name:
+        type: string
+        description: The name of the Resource Pool.
+      vcId:
+        type: string
+        description: The vCenter the Resource Pool belongs to.
+      eligible:
+        type: boolean
+        description: |
+          Used in resource pool tree navigation.
+          Indicates whether the resource pool is eligible or not.
+      kubernetesEnabled:
+        type: boolean
+        x-vcloud-added-in: 35.0
+        description: |
+          Indicates whether the resource pool's cluster is enabled for vSphere Kubernetes.
+

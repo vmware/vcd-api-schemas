@@ -1,0 +1,197 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Proxy Configuration API allows for management of proxies used by vCloud Director to connect
+    to vCenter Servers, ESXi hosts, or NSX servers.
+  title: Proxy Configuration API
+  version: "1.0"
+
+paths:
+  proxy-configurations:
+    get:
+      tags:
+        - proxyConfiguration
+      summary: Gets a paged list of proxy configurations.
+      x-vcloud-added-in: 34.0
+      description: |
+        Gets a paged list of proxy configurations.
+      operationId: queryProxyConfigurations
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ProxyConfigurations"
+    post:
+      tags:
+        - proxyConfiguration
+      summary: Creates a proxy configuration.
+      x-vcloud-added-in: 34.0
+      description: |
+        Creates a proxy configuration.
+      operationId: createProxyConfiguration
+      parameters:
+        - name: proxyConfiguration
+          description: The new proxy configuration API model.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ProxyConfiguration"
+      consumes:
+        - application/json
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  proxy-configuration:
+    parameters:
+      - name: id
+        description: Proxy Configuration ID URN
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: proxyConfiguration
+
+    get:
+      tags:
+        - proxyConfiguration
+      summary: Retrieves a specific proxy configuration.
+      x-vcloud-added-in: 34.0
+      operationId: getProxyConfiguration
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ProxyConfiguration"
+
+    put:
+      tags:
+        - proxyConfiguration
+      summary: Update a specific proxy configuration.
+      x-vcloud-added-in: 34.0
+      operationId: updateProxyConfiguration
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedProxyConfiguration
+          description: The updated proxy configuration API model.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ProxyConfiguration"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ProxyConfiguration"
+
+    delete:
+      tags:
+        - proxyConfiguration
+      summary: Delete a specific proxy configuration.
+      x-vcloud-added-in: 34.0
+      operationId: deleteProxyConfiguration
+      responses:
+        204:
+          description: No Content
+
+definitions:
+
+  ProxyConfigurations:
+    x-vcloud-added-in: 34.0
+    description: |
+      A paginated list of proxy configurations
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/ProxyConfiguration'
+
+  ProxyConfiguration:
+    x-vcloud-added-in: 34.0
+    description: |
+      A Proxy Configuration. This configuration object declares a backend proxy that sits between vCD and the vSphere/NSX/ESX estate.
+    type: object
+    properties:
+      name:
+        type: string
+        pattern: '.*[\S].*'
+        example: Proxy Sample Name
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: proxyConfiguration
+      description:
+        type: string
+        description: Optional description.
+        example: Configuration to connect to VC-1
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      authType:
+        type: string
+        enum: [BASIC, BEARER]
+      username:
+        type: string
+        description: username to connect to the proxy server.
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      password:
+        type: string
+        description: password to connect to the proxy server, when auth type is Basic.
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      token:
+        type: string
+        description: authentication token to connect to the proxy server, when auth type is Bearer.
+        x-vcloud-password: true
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      host:
+        type: string
+        description: hostname of the proxy server.
+        example: sampleProxy.vmware.com
+      port:
+        type: integer
+        description: port of the proxy server.
+    required:
+      - name
+      - authType
+      - password
+      - host
+      - port
+

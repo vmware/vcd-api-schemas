@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -148,6 +149,17 @@
                     <xs:documentation source="required">true</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="IgnoreIopsPlacement" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo><meta:version added-in="35.0"/></xs:appinfo>
+                    <xs:documentation source="modifiable">always</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        True if VCD IOPs placement should be ignored for all disks using this
+                        storage policy.
+                    </xs:documentation>
+                    <xs:documentation source="required">false</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -224,6 +236,16 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="InheritPvdcDefaultSettings" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="35.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if this Org VDC storage profile should inherit the default settings of the parent PVDC storage profile.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="StorageUsedMB" type="xs:long" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="9.0"/></xs:appinfo>
@@ -249,3 +271,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

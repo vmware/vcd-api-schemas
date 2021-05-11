@@ -1,0 +1,71 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API to manage tags for a Virtual Machine.
+  version: "1.0"
+  title: VM Tag API
+
+paths:
+
+  vm-tags:
+    parameters:
+      - name: vmId
+        description: the URN of the VM to manage tag for.
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 36.0
+      tags:
+        - vmTags
+      summary: Retrieves all the tags for the VM.
+      description: |
+        Retrieves all the tags for the VM. User can view the tags if user can view the VM.
+      operationId: getVmTags
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityTags'
+
+    put:
+      x-vcloud-added-in: 36.0
+      tags:
+        - vmTags
+      summary: Update the tag for the VM.
+      description: |
+        Update the tag for the VM. An empty list of tags means to delete all dags for the VM.
+        User can edit the tags if user can modify the VM. Note that if a VM tag has a scope of "vcd-security",
+        that tag value can be used when defining dynamic Security/Firewall Group to match the VM for DFW use-case.
+      operationId: updateVmTags
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: EntityTags
+          in: body
+          description: the list of tags to update.
+          required: true
+          schema:
+            $ref: "#/definitions/EntityTags"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityTags"
+
+definitions:
+
+  EntityTags:
+    $ref: "./tags/taggedEntities.yaml#/definitions/EntityTags"
+

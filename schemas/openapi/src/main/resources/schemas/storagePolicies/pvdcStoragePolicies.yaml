@@ -1,0 +1,436 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+
+swagger: "2.0"
+info:
+  description: |
+    The PVDC Storage Policy API allows for management of storage policies configured for provider VDCs.
+  version: "1.0"
+  title: PVDC Storage Policy API
+
+paths:
+  pvdcStoragePolicy:
+    parameters:
+      - name: pvdcStoragePolicyUrn
+        in: path
+        description: pvdcStoragePolicyUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: providervdcstoragepolicy
+    get:
+      x-vcloud-added-in: 35.2
+      tags:
+        - pvdcStoragePolicy
+      summary: Get specified Provider VDC storage policy.
+      operationId: getPvdcStoragePolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PvdcStoragePolicy"
+
+  pvdcStoragePolicies:
+    get:
+      x-vcloud-added-in: 35.2
+      tags:
+        - pvdcStoragePolicy
+      summary: Get a paged list of all Provider VDC level storage policies in the system
+      description: |
+        Get a paged list of all Provider VDC level storage policies in the system
+      operationId: getPvdcStoragePolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/PvdcStoragePolicies'
+
+  capabilities:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: providervdcstoragepolicy
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - capabilities
+      summary: Retrieves capabilities of a specific provider VDC storage policy.
+      description: |
+        Retrieves the current capabilities configured on a specific provider VDC storage policy.
+        These cannot be edited.
+      operationId: getPvdcStoragePolicyCapabilities
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './common/capability.yaml#/definitions/Capabilities'
+
+  inheritableSettings:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: providervdcstoragepolicy
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - pvdcStoragePolicy
+      summary: |
+        Retrieves the settings that child Org VDC storage policies of this provider VDC
+        storage policy should inherit.
+      description: |
+        Retrieves the settings that child Org VDC storage policies of this provider VDC
+        storage policy should inherit.
+      operationId: getPvdcStoragePolicyInheritableSettings
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StoragePolicySettings'
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - pvdcStoragePolicy
+      summary: |
+        Updates the settings that child Org VDC storage policies of this provider VDC
+        storage policy should inherit.
+      description: |
+        Updates the settings that child Org VDC storage policies of this provider VDC
+        storage policy should inherit.
+      operationId: updatePvdcStoragePolicyInheritableSettings
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSettings
+          description: The updated inheritable settings.
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StoragePolicySettings'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StoragePolicySettings'
+
+  supportedEntityTypes:
+    get:
+      x-vcloud-added-in: 35.2
+      tags:
+        - pvdcStoragePolicy
+      summary: Get a paged list of all supported entity types configured for storage policies in the system
+      description: |
+        Get a paged list of all supported entity types configured for storage policies in the system
+      operationId: getAllSupportedStorageEntityTypes
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StoragePolicySupportedEntityTypes'
+
+    put:
+      x-vcloud-added-in: 35.2
+      tags:
+        - pvdcStoragePolicy
+      summary: |
+        Updates the supported entity types for the specified provider VDC storage policy.
+      operationId: updateAllStoragePolicySupportedEntityTypes
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSupportedEntityTypes
+          description: The updated list of supported entity types.
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StoragePolicySupportedEntityType'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StoragePolicySupportedEntityTypes'
+
+  pvdcStoragePolicySupportedEntityTypes:
+    parameters:
+      - name: pvdcStoragePolicyUrn
+        in: path
+        description: pvdcStoragePolicyUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: providervdcstoragepolicy
+
+    get:
+      x-vcloud-added-in: 35.2
+      tags:
+        - pvdcStoragePolicy
+      summary: Get a paged list of the supported entity types for the specified Provider VDC storage policy.
+      operationId: getPvdcStoragePolicySupportedEntityTypes
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StoragePolicySupportedEntityTypes'
+
+    put:
+      x-vcloud-added-in: 35.2
+      tags:
+        - pvdcStoragePolicy
+      summary: |
+        Updates the supported entity types for the specified provider VDC storage policy.
+      operationId: updatePvdcStoragePolicySupportedEntityTypes
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSupportedEntityTypes
+          description: The updated list of supported entity types.
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StoragePolicySupportedEntityType'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StoragePolicySupportedEntityTypes'
+
+definitions:
+  PvdcStoragePolicy:
+    x-vcloud-added-in: 35.2
+    description: |
+      A Provider VDC storage policy.
+    type: object
+    properties:
+      id:
+        type: string
+        description: "Unique VCD Id for the policy."
+      name:
+        type: string
+        description: "Unique name for the policy."
+        minLength: 1
+        maxLength: 128
+      storagePolicyMoref:
+        type: string
+        description: "Unique Id in Virtual Center of the policy."
+      isEnabled:
+        description: "Enabled state of the policy, defaults to true."
+        type: boolean
+        default: true
+      providerVdcRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "The PVDC that this policy belongs to."
+      vcRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "The VC that this policy belongs to."
+      totalCapacityMb:
+        type: integer
+        format: int64
+        description: "Total capacity in MB for this storage policy"
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+          - constraint: Urn
+            args:
+              - arg: providervdcstoragepolicy
+      storagePolicyMoref:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: UUID
+          - constraint: NonSortable
+      providerVdcRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      vcRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      totalCapacityMb:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./common/capability.yaml#/definitions/Capability"
+          referenced-property: name
+          alias: capabilityName
+          description: |
+            A filter to look up storage policies that contain certain capabilities.
+            Example usage:
+            filter?capabilityName==VSphere/Encryption
+      - cross-reference:
+          referenced-type: "#/definitions/StoragePolicySupportedEntityType"
+          referenced-property: name
+          alias: entityTypeName
+          description: |
+            A filter to look up storage policies with the supported entity type.
+            Example usage:
+            filter?entityTypeName==com.vmware.vcloud.entity.vapp
+      - cross-reference:
+          referenced-type: "#/definitions/StoragePolicySettings"
+          referenced-property: supportsAllValidEntityTypes
+          alias: supportsAllValidEntityTypes
+          description: |
+            A filter to look up storage policies which support all entity types
+            Example usage:
+            filter?supportsAllValidEntityTypes==true
+    required:
+      - name
+      - storagePolicyMoref
+      - providerVdcUrn
+      - vcUrn
+
+  PvdcStoragePolicies:
+    x-vcloud-added-in: 35.2
+    description: |
+      A list of Provider VDC storage policies.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of PVDC storage policies.
+            items:
+              $ref: '#/definitions/PvdcStoragePolicy'
+
+  StoragePolicySettings:
+    x-vcloud-added-in: 35.0
+    description: |
+      Various settings for a storage policy.
+    type: object
+    properties:
+      supportsAllValidEntityTypes:
+        type: boolean
+        default: true
+        description: If true, designates that this storage policy can be used with all valid entity types
+        x-vcloud-added-in: 35.2
+      diskIopsMax:
+        type: integer
+        format: int64
+        description: Maximum IOPS for any disk associated with this storage policy.
+        default: 0
+        minimum: 0
+      diskIopsPerGbMax:
+        type: integer
+        format: int64
+        description: |
+          Maximum IOPS that can be assigned to any disk associated with this storage policy based
+          on the size of the disk (in GB). This is also the default IOPS value used for any disk
+          associated with this policy. If set to zero, Default Disk IOPS is used as the default IOPS
+          to be assigned to any disk associated with this storage policy.
+        default: 0
+        minimum: 0
+      diskIopsDefault:
+        type: integer
+        format: int64
+        description: |
+          Default IOPS value to use for any disk associated with the storage policy.
+          This default is only used when Disk IOPS Per GB Max is set to zero.
+        default: 0
+        minimum: 0
+      storagePolicyIopsLimit:
+        type: integer
+        format: int64
+        description: |
+          The sum of IOPS across all disks associated with this policy will be limited to this value.
+        default: 0
+        minimum: 0
+      isIopsLimitingEnabled:
+        type: boolean
+        default: false
+        description: Whether IOPS limiting is enabled.
+      ignoreIopsPlacement:
+        type: boolean
+        default: false
+        description: Whether VCD IOPS placement should be ignored for disks using this policy.
+
+  StoragePolicySupportedEntityTypes:
+    x-vcloud-added-in: 35.2
+    description: |
+      A list of supported entity types for a Provider VDC storage policy.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of supported entity types.
+            items:
+              $ref: '#/definitions/StoragePolicySupportedEntityType'
+
+  StoragePolicySupportedEntityType:
+    x-vcloud-added-in: 35.2
+    description: |
+      A supported entity type for a storage policy.
+    type: object
+    properties:
+      name:
+        type: string
+        description: |
+          The name of the supported entity type. Can be either a static VCD type or a defined entity type.
+        example: 'urn:vcloud:type:vmware:vm'
+    required:
+      - name
+    x-vcloud-property-annotations:
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly

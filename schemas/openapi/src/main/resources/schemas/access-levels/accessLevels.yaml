@@ -1,0 +1,98 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Access Levels API allows users to view grantable
+    access levels for access controllable objects.
+    Access levels are READ(read-only access), READ_WRITE(read/write access) and
+    FULL_CONTROL(full-control of object can delete/transfer ownership).
+  version: "1.0"
+  title: vCloud Director Access Levels API
+
+paths:
+  accessLevels:
+    get:
+      tags:
+        - accessLevels
+      summary: Get all access levels.
+      description: |
+        Get all access levels.
+      operationId: queryAccessLevels
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      x-vcloud-added-in: 35.0
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AccessLevels'
+
+  accessLevel:
+    parameters:
+      - name: accessLevelUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: accessLevel
+    get:
+      tags:
+        - accessLevels
+      summary: Get the specified access level.
+      description: |
+        Get the specified access level.
+      operationId: getAccessLevel
+      x-vcloud-added-in: 35.0
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AccessLevel'
+
+definitions:
+  AccessLevels:
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: All access levels.
+            items:
+              $ref: '#/definitions/AccessLevel'
+
+  AccessLevel:
+    type: object
+    allOf:
+      - $ref: "./rbac/rights.yaml#/definitions/RightsMapping"
+      - type: object
+        properties:
+          id:
+            type: string
+            maxLength: 128
+            x-vcloud-constraints:
+              - constraint: Urn
+                args:
+                  - arg: accessLevel
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"
+

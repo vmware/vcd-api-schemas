@@ -1,0 +1,213 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The VMware Cloud Director QMS APIs are used to view effective quotas applicable to a given entity
+  title: VMware Cloud Director Quotas API
+
+paths:
+  user-quotas:
+    parameters:
+      - name: userUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: user
+    get:
+      tags:
+        - entityQuotas
+      summary: Get the effective quotas applicable for the given user.
+      x-vcloud-added-in: 35.0
+      operationId: getQuotasForUser
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Quotas"
+    put:
+      tags:
+        - entityQuotas
+      summary: Assign quotas to given target user.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotasToUser
+      consumes:
+        - application/json
+      parameters:
+        - name: quotas
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Quotas'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  group-quotas:
+    parameters:
+      - name: groupUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: group
+    get:
+      tags:
+        - entityQuotas
+      summary: Get the effective quotas applicable for the given group.
+      x-vcloud-added-in: 35.0
+      operationId: getQuotasForGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Quotas"
+    put:
+      tags:
+        - entityQuotas
+      summary: Assign quotas to given target group.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotasToGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: quotas
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Quotas'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  org-quotas:
+    parameters:
+      - name: orgUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: org
+    get:
+      tags:
+        - entityQuotas
+      summary: Get the effective quotas applicable for the given organization.
+      x-vcloud-added-in: 35.0
+      operationId: getQuotasForOrg
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Quotas"
+    put:
+      tags:
+        - entityQuotas
+      summary: Assign quotas to given target organization.
+      x-vcloud-added-in: 35.0
+      operationId: assignQuotasToOrg
+      consumes:
+        - application/json
+      parameters:
+        - name: quotas
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Quotas'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  vapp-quotas:
+    parameters:
+      - name: vappUrn
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vapp
+    get:
+      tags:
+        - entityQuotas
+      summary: Get the effective quotas applicable for the given vapp.
+      x-vcloud-added-in: 35.0
+      operationId: getQuotasForVApp
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Quotas"
+
+definitions:
+
+  Quotas:
+    description: |
+      A list of quota pools.
+    type: object
+    x-vcloud-added-in: 35.0
+    properties:
+      quotaPools:
+        type: array
+        items:
+          type: object
+          properties:
+            enforcingQuotaPolicy:
+              description: |
+                 The quota policy that enforced this quota.
+              x-vcloud-constraints:
+                - constraint: NonSortable
+                - constraint: ReadOnly
+              $ref: './qms/entity-quotas.yaml#/definitions/EnforcingQuotaPolicy'
+            quotaPoolDefinition:
+              description: |
+                 The quota pool definition used for the consumed quota resource.
+              x-vcloud-constraints:
+                - constraint: NonSortable
+                - constraint: ReadOnly
+              $ref: '#/definitions/QuotaPoolDefinition'
+            quotaConsumed:
+              type: integer
+              format: int64
+              description: |
+                 The quota amount consumed for this resource. This field is conditional and for group
+                 quotas it is not returned.
+              x-vcloud-constraints:
+                - constraint: ReadOnly
+
+  EnforcingQuotaPolicy:
+    x-vcloud-added-in: 35.0
+    description: Quota policy that enforces this quota.
+    allOf:
+      - $ref: '#/definitions/EntityReference'
+      - type: object
+        properties:
+          inheritedFrom:
+            description: |
+              The entity from which enforcing quota policy is inherited.
+            $ref: '#/definitions/EntityReference'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  QuotaPoolDefinition:
+    $ref: "./quota-policy/quota-policy.yaml#/definitions/QuotaPoolDefinition"

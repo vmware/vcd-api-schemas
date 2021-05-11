@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -241,6 +242,18 @@
                     <xs:documentation source="required">false</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="ResultReference" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                    <xs:documentation source="since">33.0</xs:documentation>
+                    <xs:documentation source="modifiable">always</xs:documentation>
+                    <xs:documentation>
+                        An optional element that can be used to hold the reference
+                        of a result.
+                    </xs:documentation>
+                    <xs:documentation source="required">false</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -272,6 +285,21 @@
                             links and link relations.
                         </xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="model" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:appinfo>
+                            <meta:version added-in="33.0"></meta:version>
+                        </xs:appinfo>
+                        <xs:documentation source="since">33.0</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Defines the model expected for modification calls. This
+                            field is populated when the href is expected to link to
+                            a vCloud OpenApi endpoint.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -625,6 +653,22 @@
                                 shadow virtual machines provisioned from this
                                 Provider vDC.
                             </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ReservationUsed" type="xs:long" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="since">35.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reservation Capacity used. This field is returned
+                                only if the VDC AllocationModel is
+                                Flex type. This number represents the
+                                reservation resources used in the given VDC.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="35.0"/>
+                            </xs:appinfo>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -1232,4 +1276,22 @@
             <xs:enumeration value="ssl" />
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="SchemaLinksType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="33.0" />
+                <meta:content-type>application/vnd.vmware.vcloud.schema</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">33.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Provides links to various API schema documents
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="SchemaResources" type="SchemaLinksType" />
 </xs:schema>
+

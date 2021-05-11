@@ -1,0 +1,238 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vDC API allows for management of an Organizaton vDC.
+  title: vDC API
+
+paths:
+  vdc-max-compute-policy:
+    parameters:
+      - name: orgVdcId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+        - vdc
+      summary: Updates Max Compute Policy of the vDC.
+      description: |
+        Updates Max Compute Policy of the vDC.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: updateVdcMaxComputePolicy
+      consumes:
+        - application/json
+      parameters:
+        - name: newVdcComputePolicyParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - vdc
+      summary: Retrieves Max Compute Policy of the vDC.
+      description: |
+        Retrieves Max Compute Policy of the vDC.
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: getVdcMaxComputePolicy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicy"
+
+  vdc:
+    parameters:
+      - name: orgVdcId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - vdc
+      summary: Retrieves a specific vDC via URN.
+      operationId: getVdc
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/OrgVdc"
+
+  vdcs:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - vdc
+      summary: Retrieves a list of vDCs
+      description: |
+        Retrieves a list of Org-scoped (if applicable) vDCs.
+        Results can be filtered by id, name, allocationType, and computePolicyType.
+
+        Supported filters for computePolicyType are:
+          (computePolicyType==VdcKubernetesPolicy) - |
+            Returns a list of all vDCs that have a VdcKubernetesPolicy compute policy.
+      operationId: queryVdcs
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/OrgVdcs"
+
+  computePolicies:
+    parameters:
+      - name: orgVdcId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - vdc
+      summary: Retrieves all compute policies of a vDC
+      description: |
+        Retrieves all compute policies of a vDC
+      x-vcloud-deprecated-in: 35.0
+      x-vcloud-deprecated-alternative: 2.0.0 version of API
+      operationId: getComputePolicies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcComputePolicies"
+
+definitions:
+  OrgVdc:
+    x-vcloud-added-in: 35.0
+    description: An object representing an Organization Virtual Datacenter in VCD.
+    type: object
+    properties:
+      id:
+        type: string
+        description: A unique identifier for the vdc.
+      name:
+        type: string
+        description: The name of the vdc.
+      description:
+        type: string
+        description: The description of the vdc.
+      allocationType:
+        type: string
+        description: |
+          The allocation type of the vdc, one of:
+            ALLOCATION_VAPP,
+            ALLOCATION_POOL,
+            RESERVATION_POOL,
+            FLEX
+      org:
+        description: The reference to the organization that the VDC belongs to
+        $ref: '#/definitions/EntityReference'
+
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdc
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      org:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./compute-policy/compute-policy-2.0.0.yaml#/definitions/VdcComputePolicy"
+          referenced-property: policyType
+          alias: computePolicyType
+          description: |
+            A filter to look up VDCs that contain certain compute policy types, cannot be used with
+            the computePolicyName filter
+            Supported filters:
+              computePolicyType==VdcKubernetesPolicy
+      - cross-reference:
+          referenced-type: "./compute-policy/compute-policy-2.0.0.yaml#/definitions/VdcComputePolicy"
+          referenced-property: name
+          alias: computePolicyName
+          description: |
+            A filter to look up VDCs that contain a VdcVmPolicy with a certain name. This does not
+            apply to Kubernetes policies and cannot be used with the computePolicyType filter
+            E.G: computePolicyName==someName
+
+  OrgVdcs:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of vDCs.
+    allOf:
+      - $ref: "query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: "#/definitions/OrgVdc"
+
+  VdcComputePolicy:
+    $ref: "./compute-policy/compute-policy.yaml#/definitions/VdcComputePolicy"
+
+  VdcComputePolicies:
+    $ref: "./compute-policy/compute-policy.yaml#/definitions/VdcComputePolicies"
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

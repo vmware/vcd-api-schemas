@@ -1,0 +1,129 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for SLAAC profile configuration of an NSX-T backed Org VDC edge gateway. SLAAC profiles can be setup on the Edge Gateway to enable
+    stateless address configuration, as well as IPv6 DNS. This feature is not available on NSX-V backed edge gateways.
+  version: "1.0"
+  title: Edge Gateway SLAAC Profile API
+
+paths:
+  slaacProfile:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewaySLAACProfile
+      summary: |
+        Retrieves the SLAAC profile on the edge gateway.
+      description: |
+        Retrieves the SLAAC profile on the edge gateway.
+      operationId: getSLAACProfile
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SLAACProfile'
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    put:
+      x-vcloud-added-in: 35.0
+      tags:
+        - edgeGatewaySLAACProfile
+      summary: Creates a SLAAC profile or updates the existing one if it already exists.
+      operationId: updateSLAACProfile
+      consumes:
+        - application/json
+      parameters:
+        - name: SLAACProfile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SLAACProfile'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+definitions:
+
+  SLAACProfile:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: The SLAAC profile containing the mode, the DNS configuration settings, and whether or not it is enabled. Only NSX-T edge gateways support a SLAAC profile.
+    properties:
+      enabled:
+        type: boolean
+        description: A flag indicating whether or not this profile is enabled.
+        default: false
+      mode:
+        description: |
+          Represents the various modes with which to configure SLAAC with. Supported values are SLAAC and DHCPv6.
+        type: string
+        default: SLAAC
+      dnsConfig:
+        $ref: '#/definitions/SLAACDnsConfig'
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      mode:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dnsConfig:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  SLAACDnsConfig:
+    x-vcloud-added-in: 35.0
+    type: object
+    description: The DNS settings for this SLAAC profile.
+    properties:
+      domainNames:
+        type: array
+        description: |
+          The list of domain names used as nameservers to configure on virtual machines connected to the gateway this profile is associated with.
+        items:
+          type: string
+        default: []
+      dnsServerIpv6Addresses:
+        type: array
+        description: |
+          The IP addresses of the DNS servers to be configured on virtual machines connected to the network using this profile. They must be valid IPv6 addresses.
+        items:
+          type: string
+        default: []
+    x-vcloud-property-annotations:
+      domainNames:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: DomainName
+      dnsServerIpv6Addresses:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV6_IP

@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -131,12 +132,15 @@
     <xs:complexType name="SspiKeytabUpdateParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1" removed-in="36.0"/>
                 <meta:content-type>application/vnd.vmware.admin.sspiKeytabUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">34.0</xs:documentation>
+            <xs:documentation source="removed-in">36.0</xs:documentation>
             <xs:documentation xml:lang="en">
-                Parameters for SSPI keytab update.
+                Parameters for SSPI keytab update. &lt;br&gt;
+                &lt;b&gt; Kerberos support has been removed.&lt;/b&gt;
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -144,6 +148,7 @@
                 <xs:attribute name="SspiServiceProviderName" type="xs:string" use="optional">
                     <xs:annotation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:documentation source="deprecated">34.0</xs:documentation>
                         <xs:documentation source="modifiable">create</xs:documentation>
                         <xs:documentation xml:lang="en">
                            Service provider name for SSPI.
@@ -159,12 +164,15 @@
     <xs:complexType name="SspiKeytabUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1" removed-in="36.0"/>
                 <meta:content-type>application/vnd.vmware.admin.sspiKeytabUploadSocketType</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">34.0</xs:documentation>
+            <xs:documentation source="removed-in">36.0</xs:documentation>
             <xs:documentation xml:lang="en">
-                Upload socket for SSPI keytab.
+                Upload socket for SSPI keytab. &lt;br&gt;
+                &lt;b&gt; Kerberos support has been removed.&lt;/b&gt;
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -180,7 +188,7 @@
                 <meta:content-type>application/vnd.vmware.admin.trustStoreUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
-            <xs:documentation xml:lang="en">
+            <xs:documentation source="deprecated">34.0</xs:documentation><xs:documentation xml:lang="en">
                 Parameters for updating the truststore.
             </xs:documentation>
         </xs:annotation>
@@ -218,3 +226,4 @@
     </xs:complexType>
 
 </xs:schema>
+

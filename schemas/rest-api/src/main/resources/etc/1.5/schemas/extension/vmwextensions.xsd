@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
   #L%
   -->
 
+
 <xs:schema xmlns="http://www.vmware.com/vcloud/extension/v1.5"
            xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -39,7 +40,7 @@
            targetNamespace="http://www.vmware.com/vcloud/extension/v1.5"
            version="1.0">
 
-    <xs:import namespace="http://www.vmware.com/vcloud/v1.5"/>
+           <xs:import namespace="http://www.vmware.com/vcloud/v1.5" schemaLocation="../master/master.xsd"/>
     <!-- note the absence of a schemaLocation in the above import to please the doc-generator -->
 
     <xs:include schemaLocation="notification.xsd"/>
@@ -129,24 +130,28 @@
             <xs:documentation xml:lang="en">
                 Parameters for preparing an ESX/ESXi host.
             </xs:documentation>
+            <xs:documentation source="deprecated">31.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+            This element is deprecated and no longer required or used.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Username" type="xs:string">
+            <xs:element name="Username" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="modifiable">always</xs:documentation>
                     <xs:documentation xml:lang="en">
                         The user name to use for host preparation login.
                        </xs:documentation>
-                       <xs:documentation source="required">true</xs:documentation>
+                       <xs:documentation source="required">false</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="Password" type="xs:string">
+            <xs:element name="Password" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="modifiable">always</xs:documentation>
                     <xs:documentation xml:lang="en">
                         The cleartext password to use for host preparation login.
                      </xs:documentation>
-                     <xs:documentation source="required">true</xs:documentation>
+                     <xs:documentation source="required">false</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -217,19 +222,49 @@
                     <xs:documentation source="required">true</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="ShieldManager" type="ShieldManagerType">
+            <xs:element name="ShieldManager" type="ShieldManagerType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="modifiable">always</xs:documentation>
                     <xs:documentation xml:lang="en">
                         vShield manager administrator credentials. Required for
                         register, modify.
                     </xs:documentation>
-                    <xs:documentation source="required">true</xs:documentation>
+                    <xs:documentation source="required">false</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
 
+    <xs:element name="NsxTManagers" type="NsxTManagersType"/>
+	<xs:complexType name="NsxTManagersType">
+		<xs:annotation>
+			<xs:appinfo>
+				<meta:version added-in="NSX_T_SUPPORT"/>
+				<meta:content-type>application/vnd.vmware.admin.networkManagers</meta:content-type>
+			</xs:appinfo>
+			<xs:documentation source="since">NSX_T_SUPPORT</xs:documentation>
+			<xs:documentation xml:lang="en">
+				Represents parameters to register an NSX-T Manager.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="vcloud:ResourceType">
+				<xs:sequence>
+					<xs:element name="NsxTManager" type="NsxTManagerType"
+						minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation source="modifiable">always</xs:documentation>
+							<xs:documentation xml:lang="en">
+								NSX-T manager administrator credentials. Required for
+								register, modify.
+							</xs:documentation>
+							<xs:documentation source="required">true</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
     <xs:element name="VimServer" type="VimServerType"/>
     <xs:complexType name="VimServerType">
         <xs:annotation>
@@ -252,6 +287,39 @@
                                 with vCloud Director.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="rootFolder" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="VCENTER_ROOT_FOLDER"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                vCenter root folder in which the vCloud Director system folder will
+                                be created. This parameter only takes the folder name and not
+                                directory structure.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="vcNoneNetwork" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="VC_NONE_NETWORK"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Network in Vcenter to be used as 'NONE' network by vCD.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputeProviderScope" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="PVDC_TAGGING_SUPPORT"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Public label of this vCenter server visible to all tenants.
+                                If this is changed, the compute provider scope of all child Provider VDCs will be reset to the new value.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="IsConnected" type="xs:boolean" minOccurs="0">
@@ -281,6 +349,16 @@
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 vShield manager user name.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="VsmVersion" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Version of the NSX-V Manager
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -335,6 +413,213 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="tenantScoped"
+                        type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="CPOM" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                none
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if the VIM server is scoped to tenants. Setting this to true
+                                when registering a vCenter will result in the vCenter being scoped
+                                as a dedicated vCenter (SDDC). After the vCenter is registered, this
+                                is a read-only field and ignored on update.
+                            </xs:documentation>
+                            <xs:documentation source="required">
+                                false
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="providerScoped"
+                        type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="CPOM" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                none
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if the VIM server is scoped to provider. This is a read-only
+                                field, and ignored on update/edit.
+                            </xs:documentation>
+                            <xs:documentation source="required">
+                                false
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="listenerState" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The vcenter listener state. One of { INITIAL, INVALID_SETTINGS, UNSUPPORTED,
+                                DISCONNECTED, CONNECTING, CONNECTED_SYNCING, CONNECTED, STOP_REQ,
+                                STOP_AND_PURGE_REQ, STOP_ACK }.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="clusterHealthStatus" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The overall health status of clusters in this vCenter. One of {GRAY, RED, YELLOW, GREEN}.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="proxyEnabled" type="xs:boolean" minOccurs="0">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                              When present, indicates that a proxy exists within vCloud Director that proxies this vCenter server
+                              for access by authorized end-users. Setting this field to true when registering a vCenter server
+                              will result in a proxy being created for the vCenter server, and another
+                              for the corresponding SSO endpoint (if different from the vCenter server's endpoint).
+                              This field is immutable after the vCenter Server is registered, and will be updated by the system
+                              when/if the proxy is removed.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="clustersCount" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The number of clusters in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="totalVmCount" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The number of VMs in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="poweredOnVmCount" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The number of powered-on VMs in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="totalMemMb" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The total memory (in MB) in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="reservedMemMb" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The reserved memory (in MB) in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="demandedMemMb" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The demanded memory (in MB) in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="totalCpuMhz" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The total CPU (in MHz) in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="reservedCpuMhz" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The reserved CPU (in MHz) in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="demandedCpuMhz" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The demanded CPU (in MHz) in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="totalStorageMb" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The size (in MB) of all datastores in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="freeStorageMb" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The size of free storage (in MB) of all datastores in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="uncommittedStorageMb" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The size of uncommitted storage (in MB) of all datastores in this vCenter.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -369,6 +654,89 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:element name="NsxTManager" type="NsxTManagerType"/>
+    <xs:complexType name="NsxTManagerType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="NSX_T_SUPPORT"/>
+                <meta:content-type>application/vnd.vmware.admin.nsxTmanager</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">NSX_T_SUPPORT</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Represents credentials to a NSX-T Manager.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ServerType">
+                <xs:sequence>
+                    <xs:element name="DeploymentType" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="SERVICE_APPS"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation source="since">SERVICE_APPS</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                How the NSX-T Manager is deployed.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="VirtualCenterReference" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="SERVICE_APPS"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation source="since">SERVICE_APPS</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reference to linked VCenter for VMC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ServiceAppReference" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="SERVICE_APPS"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation source="since">SERVICE_APPS</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reference to Service Application that owns this NSX-T Manager.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NetworkProviderScope" type="xs:string" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Public label of this NSX-T server visible to all tenants.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Version" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Version of the NsxT Manager.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ProxyConfigurationReference" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reference to Proxy Configuration to use for contacting this NSX-T Manager.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:element name="ShieldManager" type="ShieldManagerType"/>
     <xs:complexType name="ShieldManagerType">
         <xs:annotation>
@@ -383,6 +751,16 @@
         <xs:complexContent>
             <xs:extension base="ServerType">
                 <xs:sequence>
+                    <xs:element name="NetworkProviderScope" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="PVDC_TAGGING_SUPPORT"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Public label of this NSX server visible to all tenants.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="AssociatedVimServer" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -393,12 +771,12 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="ControlVmResourcePoolName" type="xs:string" minOccurs="0" maxOccurs="1">
+                    <xs:element name="ControlVmResourcePoolVcPath" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Name of the resource pool to use for creating DLR virtual appliance.
+                                Path to the resource pool to use for creating Control VM for Cross-VDC Networking.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -408,7 +786,7 @@
                             <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Name of the Datastore to use for creating DLR virtual appliance.
+                              Name of the Datastore to use for creating Control VM for Cross-VDC Networking.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -418,7 +796,17 @@
                             <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Name of the management interface to use for creating DLR virtual appliance.
+                                Name of the management interface to use for creating Control VM for Cross-VDC Networking.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SoftwareVersion" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Version of the NSX-V Manager
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -498,7 +886,7 @@
     <xs:complexType name="DiskDatastoreType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:content-type>application/vnd.vmware.admin.vmObjectRef</meta:content-type>
+                <meta:content-type>application/vnd.vmware.admin.vmDiskObjectRef</meta:content-type>
             </xs:appinfo>
             <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
@@ -930,13 +1318,15 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="Vdc" type="vcloud:ReferenceType" minOccurs="1" maxOccurs="1">
+                    <xs:element name="Vdc" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Target vDC for imported vApp template.
+                                Target vDC for imported vApp template. This is optional. If not provided,
+                                catalog's VDC will be picked randomly if catalog is not specifically using
+                                a VDC for storage.
                             </xs:documentation>
-                            <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="VdcStorageProfile" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
@@ -954,7 +1344,8 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Catalog in which the imported vApp template
-                                will be listed.
+                                will be listed. This is optional, but either VDC or catalog
+                                must be provided.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1079,13 +1470,14 @@
         <xs:complexContent>
             <xs:extension base="vcloud:EntityType">
                 <xs:sequence>
-                    <xs:element name="Ready" type="xs:boolean">
+                    <xs:element name="Ready" type="xs:boolean" minOccurs ="0">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Indicates whether the host is ready for use.
                             </xs:documentation>
-                            <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="deprecated">DEPRECATED_HOST_FEATURES</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="Available" type="xs:boolean">
@@ -1097,13 +1489,14 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="Enabled" type="xs:boolean">
+                    <xs:element name="Enabled" type="xs:boolean" minOccurs ="0">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Indicated whether the host is enabled for use.
                             </xs:documentation>
-                            <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="deprecated">DEPRECATED_HOST_FEATURES</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="Busy" type="xs:boolean">
@@ -1115,14 +1508,15 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="EnableHostForHostSpanning" type="xs:boolean">
+                    <xs:element name="EnableHostForHostSpanning" type="xs:boolean" minOccurs ="0">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Indicates whether the host is enabled for host
                                 spanning.
                             </xs:documentation>
-                            <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="deprecated">DEPRECATED_HOST_FEATURES</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="CpuType" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -1132,6 +1526,26 @@
                                 The CPU type of the host.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NumOfCpuCoresPhysical" type="xs:int">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="35.2"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                How many physical CPU cores the host has.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NumOfCpuCoresLogical" type="xs:int">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="35.2"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                How many logical CPU cores the host has.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="NumOfCpusPackages" type="xs:int">
@@ -1146,8 +1560,12 @@
                     <xs:element name="NumOfCpusLogical" type="xs:int">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation source="deprecated">35.2</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                How many logical CPUs the host has.
+                                How many physical CPU cores the host has.
+
+                                Note that this field is deprecated. Use NumOfCpuCoresPhysical and
+                                NumOfCpuCoresLogical instead.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1360,6 +1778,17 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="NsxTManagerReference" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="NSX_T_SUPPORT"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                An optional reference to a registered NSX-T Manager to back
+                                networking operations for this provider vDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="HostReferences" type="VMWHostReferencesType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">none</xs:documentation>
@@ -1379,6 +1808,29 @@
                                 virtual hardware version suported by all hosts
                                 in the primary resource pool. You can modify
                                 it when you add more resource pools.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AvailableUniversalNetworkPool" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="ADDED_UNIVERSAL_NETWORK_POOL_TO_EXT_PVDC"/></xs:appinfo>
+                            <xs:documentation source="since">ADDED_UNIVERSAL_NETWORK_POOL_TO_EXT_PVDC</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Selectable universal network reference.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputeProviderScope" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="35.0"/></xs:appinfo>
+                            <xs:documentation source="since">35.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The compute provider scope represents the compute fault domain for this provider vDC. This value
+                                is a tenant-facing tag that is shown to tenants when viewing fault domains of the child Organization vDCs (for ex. a VDC Group).
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1431,14 +1883,41 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="NsxTManagerReference" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="NSX_T_SUPPORT"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                An optional reference to a Registered NSX-T Manager to back
+                                networking operations for this Provider vDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="VxlanNetworkPool" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="VXLAN_NETWORK_POOL" /></xs:appinfo>
                             <xs:documentation source="since">VXLAN_NETWORK_POOL</xs:documentation>
                             <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
+                            <xs:documentation source="removed-in">33.0</xs:documentation>
                             <xs:documentation xml:lang="en">
+                                Deprecated. Use "NetworkPool" property.
                                 Reference to a VXLAN Network Pool to be assigned to this Provider VDC.
                                 Leave empty to have the system create the VXLAN pool and assign it to the Provider VDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NetworkPool" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0" /></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reference to a Geneve or VXLAN Network Pool to be assigned to this Provider VDC.
+                                Leave empty to have the system create a default VXLAN pool and
+                                assign it to the Provider VDC.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1510,6 +1989,17 @@
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The default username which will be used for preparing hosts.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AutoCreateNetworkPool" type="xs:boolean" default="true" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="since">36.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                If true, network pool is automatically created if no network pool is specified. Defaults to true.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -1803,11 +2293,12 @@
     <xs:complexType name="FencePoolType">
         <xs:annotation>
             <xs:appinfo>
-		    <meta:content-type>application/vnd.vmware.admin.fencePool</meta:content-type>
-            <xs:documentation source="deprecated">20.0</xs:documentation>
+                <meta:content-type>application/vnd.vmware.admin.fencePool</meta:content-type>
+                <xs:documentation source="deprecated">20.0</xs:documentation>
+                <xs:documentation source="removed-in">31.0</xs:documentation>
             </xs:appinfo>
             <xs:documentation source="since">1.0</xs:documentation>
-	    <xs:documentation xml:lang="en">
+            <xs:documentation xml:lang="en">
                 Represents a network pool backed by one or more vSphere isolated networks.
             </xs:documentation>
         </xs:annotation>
@@ -1941,11 +2432,60 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="GenevePoolType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                <meta:content-type>application/vnd.vmware.admin.genevePool</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">NSXT_ROUTER_IMPORT</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Represents a network pool using Geneve technology.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="VMWNetworkPoolType">
+                <xs:sequence>
+                    <xs:element name="TransportZonePath" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="NSXT_ROUTER_IMPORT" /></xs:appinfo>
+                            <xs:documentation source="since">NSXT_ROUTER_IMPORT</xs:documentation>
+                            <xs:documentation source="modifiable">create</xs:documentation>
+                            <xs:documentation xml:lang="en"> Transport Zone Path of Geneve Network Pool. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NsxTManagerRef" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="NSXT_ROUTER_IMPORT"/></xs:appinfo>
+                            <xs:documentation source="since">NSXT_ROUTER_IMPORT</xs:documentation>
+                            <xs:documentation source="modifiable">create</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The NSX-T Manager that contains the transport zone.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="UsedNetworksCount" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="NSXT_ROUTER_IMPORT"/></xs:appinfo>
+                            <xs:documentation source="since">NSXT_ROUTER_IMPORT</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                This is a read-only indication of how many networks in this pool are in use.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="VdsContextType">
         <xs:annotation>
             <xs:appinfo>
                 <meta:version added-in="5.1" />
-                <meta:content-type>application/vnd.vmware.admin.vxlanPool</meta:content-type>
+                <meta:content-type>application/vnd.vmware.admin.vdscontext</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -2596,6 +3136,18 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="Capabilities" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="34.0"/>
+                            </xs:appinfo>
+                            <xs:documentation source="since">34.0</xs:documentation>
+                            <xs:documentation>
+                                Capabilities supported by this storage profile.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
                 <xs:attribute name="name" type="xs:string" use="required">
                     <xs:annotation>
@@ -2688,12 +3240,14 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:element name="VMWProviderVdcResourcePool" type="VMWProviderVdcResourcePoolType" />
     <xs:complexType name="VMWProviderVdcResourcePoolType">
         <xs:annotation>
             <xs:appinfo>
+                <meta:version added-in="31.0" />
                 <meta:content-type>application/vnd.vmware.admin.vmwProviderVdcResourcePool</meta:content-type>
             </xs:appinfo>
-            <xs:documentation source="since">1.5</xs:documentation>
+            <xs:documentation source="since">31.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents backing resource pool for provider vDC.
             </xs:documentation>
@@ -2721,6 +3275,46 @@
                         <xs:annotation>
                             <xs:documentation xml:lang="en">
                                 Resource pool enabled status
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CpuReservationUsed" type="xs:long">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The resource pool's CPU usage in MHz.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CpuMaxUsage" type="xs:long">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The total CPU capacity in MHz for the given resource pool.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MemReservationUsed" type="xs:long">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The resource pool's memory usage in MB.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MemMaxUsage" type="xs:long">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The total memory capacity in MB for the given resource pool.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -2948,7 +3542,7 @@
     <xs:complexType name="StrandedItemVimObjectType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:content-type>application/vnd.vmware.admin.strandedItemVimObjects</meta:content-type>
+                <meta:content-type>application/vnd.vmware.admin.strandedItemVimObject</meta:content-type>
                 <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -3515,6 +4109,7 @@
                     </xs:annotation>
                 </xs:element>
             </xs:choice>
+            <xs:element name="NetworkProfileConfiguration" type="VdcTemplateNetworkProfileType" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -3533,6 +4128,24 @@
             <xs:extension base="VMWVdcTemplateSpecificationType">
                 <xs:sequence>
                     <xs:group ref="vcloud:AllocationPoolVdcSpecificationGroup" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VMWFlexVdcTemplateSpecificationType" abstract="false" >
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="35.0" />
+            </xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Specification for a VDC template using the Flex allocation model.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="VMWVdcTemplateSpecificationType" >
+                <xs:sequence>
+                    <xs:group ref="vcloud:AllocationVAppVdcSpecificationGroup" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -3613,6 +4226,17 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="NetworkBackingType" type="VdcTemplateNetworkBackingType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="35.0" />
+                            </xs:appinfo>
+                            <xs:documentation xml:lang="en">
+                                Network backing type (example: NSX_V) supported by this VDC template.
+                                Set during creation of template and cannot be modified.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="ProviderVdcReference" type="VMWVdcTemplateProviderVdcSpecificationType" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="5.7"/></xs:appinfo>
@@ -3641,6 +4265,32 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:simpleType name="VdcTemplateNetworkBackingType">
+        <xs:annotation>
+            <xs:appinfo><meta:version added-in="35.0" /></xs:appinfo>
+            <xs:documentation source="since">35.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Network backing type of Vdc Template.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NSX_V">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="35.0"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NSX_T">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="35.2"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="VMWVdcTemplateProviderVdcSpecificationType">
         <xs:annotation>
@@ -3680,11 +4330,37 @@
                 template is instantiated, the Name is replaced by the network reference
                 in the Value part of the Binding associated with the Provider VDC that
                 the system selects during instantiation.
+                Supported binding values are references to External networks and Edge clusters.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="Name" type="xs:anyURI"></xs:element>
             <xs:element name="Value" type="vcloud:ReferenceType"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="VdcTemplateNetworkProfileType">
+        <xs:annotation>
+            <xs:appinfo><meta:version added-in="35.2" /></xs:appinfo>
+            <xs:documentation source="since">35.2</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Network Profile configuration that is applied to VDC instantiated from a template.
+                In NSX_V VDCs Primary and Secondary Edge Clusters can be configured and used for
+                Edge Gateway deployments.
+                In NSX_T VDC only Services Edge Cluster can be configured and used for deploying
+                DHCP/VApp services
+
+                Binding name from the binding names needs to specified as ReferenceType to
+                PrimaryEdgeCluster SecondaryEdgeCluster and ServicesEdgeCluster properties
+
+                When VDC is instantiated, based on PVDC and binding name appropriate binding
+                value is selected to configure network profiles.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="PrimaryEdgeCluster" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="SecondaryEdgeCluster" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1"></xs:element>
+            <xs:element name="ServicesEdgeCluster" type="vcloud:ReferenceType" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -4106,3 +4782,4 @@
        </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

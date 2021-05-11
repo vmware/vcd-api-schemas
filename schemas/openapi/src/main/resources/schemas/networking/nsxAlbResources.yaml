@@ -1,0 +1,172 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The list of network resources retrieved from an NSX-ALB Controller mainly used for importing Load Balancer resources into VCD.
+  version: "1.0"
+  title: NSX-ALB resources
+
+paths:
+
+  importableClouds:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - nsxAlbResources
+      summary: Get all NSX-ALB Clouds from an NSX-ALB Controller.
+      description: |
+        Get all NSX-ALB Clouds that are configured on an NSX-ALB Controller.  Clouds that are already imported are marked appropriately.
+        The "_context" filter key must be set with the id of the Load Balancer Controller for which we want to get the NSX-ALB Clouds for.
+      operationId: getImportableClouds
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NsxAlbClouds'
+
+  importableServiceEngineGroups:
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - nsxAlbResources
+      summary: Get all importable Service Engine Groups from an NSX-ALB Cloud.
+      description: |
+        Get all importable Service Engine Groups that are configured for an NSX-ALB Cloud.
+        Service Engine Groups that are already imported are filtered out.
+        The "_context" filter key must be set with the id of the Load Balancer Cloud for which we want to get the NSX-ALB Service Engine Groups for.
+        Example: (_context==urn:vcloud:loadBalancerCloud:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+      operationId: getImportableServiceEngineGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NsxAlbServiceEngineGroups'
+
+definitions:
+  NsxAlbClouds:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of NSX-ALB Controller's Clouds.
+    type: object
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/nsxAlbResources.yaml#/definitions/NsxAlbCloud'
+
+  NsxAlbCloud:
+    x-vcloud-added-in: 35.0
+    description: |
+      An NSX-ALB Controller's Cloud.
+    properties:
+      id:
+        type: string
+        description: The unique id of the cloud.
+      displayName:
+        type: string
+        description: Name of the Cloud used in NSX-ALB Controller's logs or GUI.
+      alreadyImported:
+        type: boolean
+        description: True if the Cloud is already imported. Cloud cannot be imported again.
+      networkPoolRef:
+        $ref: '#/definitions/EntityReference'
+        description: The Network Pool associated with this Cloud. If unset, this Cloud cannot be imported.
+      transportZoneName:
+        type: string
+        description: |
+          Name of the transport zone in NSX-T associated with the NSX-ALB Cloud. If unset, the tranport zone associated with the Load Balancer Cloud
+          is not found in NSX-T.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      displayName:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      alreadyImported:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkPoolRef:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      transportZoneName:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NsxAlbServiceEngineGroups:
+    x-vcloud-added-in: 35.0
+    description: |
+      List of NSX-ALB Cloud's Service Engine Groups
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/NsxAlbServiceEngineGroup'
+
+  NsxAlbServiceEngineGroup:
+    x-vcloud-added-in: 35.0
+    description: |
+      An NSX-ALB Cloud's Service Engine Group
+    properties:
+      id:
+        type: string
+        description: The unique id of the service engine group.
+      displayName:
+        type: string
+        description: Name of the service engine group used in NSX-ALB Controller's logs or GUI.
+      haMode:
+        type: string
+        description: |
+          The service engine group's High Availability Mode.
+          ELASTIC_N_PLUS_M_BUFFER - Service Engines will scale out to N active nodes with M nodes as buffer.
+          ELASTIC_ACTIVE_ACTIVE - Active-Active with scale out.
+          LEGACY_ACTIVE_STANDBY - Traditional single Active-Standby configuration
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      displayName:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      haMode:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

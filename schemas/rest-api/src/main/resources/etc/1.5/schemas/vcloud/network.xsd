@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -1352,7 +1353,7 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Encryption protocol to be used. One of:
-                                AES, AES256, TRIPLEDES
+                                AES, AES256, TRIPLEDES, AESGCM
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1928,7 +1929,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">always</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Load balancer virtual server Ip Address.
+                            Load balancer virtual server IP Address.
                         </xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
                     </xs:annotation>
@@ -2173,7 +2174,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">always</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Ip Address for load balancer member.
+                            IP Address for load balancer member.
                         </xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
                     </xs:annotation>
@@ -2711,7 +2712,7 @@
                     </xs:element>
                     <xs:element name="AdvancedNetworkingEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="22.0"/></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="22.0" removed-in="31.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 True if Advanced Networking has been enabled.
@@ -2745,6 +2746,28 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 True if Network allows guest VLAN tagging.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Connected" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if Network is marked as connected in NSX. Defaults to true.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="DualStackNetwork" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True if Network is a dual stack network, false if not.
+                                A dual stack network has both an IPv4 and an IPv6 subnet.
+                                Defaults to false.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -3040,6 +3063,15 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="SubnetPrefixLength" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Network mask.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Dns1" type="IpAddressType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3176,7 +3208,7 @@
                 Tenant syslog server settings.
                 If logging is configured for firewall rules, the logs will be directed to these syslog servers
                 along with the provider syslog servers.
-                Only one tenant syslog server ip can be configured.
+                Only one tenant syslog server IP can be configured.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -3184,7 +3216,7 @@
                 <xs:annotation>
                     <xs:documentation source="modifiable">always</xs:documentation>
                     <xs:documentation xml:lang="en">
-                        syslog server ip address.
+                        Syslog server IP address.
                     </xs:documentation>
                     <xs:documentation source="required">false</xs:documentation>
                 </xs:annotation>
@@ -3256,10 +3288,8 @@
                         <xs:documentation source="modifiable">always
                         </xs:documentation>
                         <xs:documentation xml:lang="en">
-                            A reference to a VIRTUAL_WIRE object that
+                            A reference to the network backing object (logical switch, portgroup, etc.) that
                             exists on a vCenter server registered with the system.
-                            Required on Create when AdvancedNetworkingEnabled has a value of true.
-                            Ignored on update, or when AdvancedNetworkingEnabled has a value of false.
                         </xs:documentation>
                         <xs:documentation source="required">true
                         </xs:documentation>
@@ -3336,6 +3366,67 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="EdgeGatewayType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+            </xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Represents an EdgeGatewayType
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NSXV_BACKED">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NSXT_BACKED">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NSXT_IMPORTED">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="IpTypeType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="34.0"/>
+            </xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Represents an IP type, either IPv4 or IPv6
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IPV4">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="34.0"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="IPV6">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="34.0"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:element name="EdgeGateway" type="GatewayType"/>
     <xs:complexType name="GatewayType">
         <xs:annotation>
@@ -3357,6 +3448,18 @@
                         <xs:documentation source="modifiable">always</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Provides information to access edge gateway via VC
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="EdgeGatewayType" type="EdgeGatewayType" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                        </xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Represents a gateway.
                         </xs:documentation>
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
@@ -3543,6 +3646,20 @@
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:element>
+                <xs:element name="EdgeClusterConfiguration" type="EdgeClusterConfigurationType" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Represents the Edge Cluster Configuration for a given Edge Gateway.
+                            Can be changed if a gateway needs to be placed on a specific set of Edge Clusters.
+                            For NSX-V Edges, if nothing is specified on create or update, the Org VDC Default will be used.
+                            For NSX-T Edges, Open API must be used and this field is read only.
+                            If there is no value, the gateway uses the Edge Cluster of the connected External Network's backing Tier-0 router.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
             </xs:sequence>
         </xs:extension>
     </xs:complexContent>
@@ -3675,6 +3792,29 @@
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:element>
+                <xs:element name="Connected" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation source="since">33.0</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if interface is marked as connected in NSX
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="QuickAddAllocatedIpCount" type="xs:int" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation source="since">33.0</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            If set on create or update api calls, the specified number of IP addresses will be additionally allocated for this uplink.
+                            IPs will be allocated from multiple subnets if needed.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
             </xs:sequence>
         </xs:extension>
     </xs:complexContent>
@@ -3771,6 +3911,53 @@
     </xs:complexContent>
 </xs:complexType>
 
+    <xs:complexType name="EdgeClusterConfigurationType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="34.0"/>
+            </xs:appinfo>
+            <xs:documentation source="since">34.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Used for specifying specific Edge Cluster(s) for a given Edge Gateway. Specification is only applicable for NSX-V Edges, and if specified
+                this takes precedence over the Edge Cluster configuration on an Org vDC. For NSX-T Edges, this is only read-only and edge management must be done
+                via Cloud API.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="VCloudExtensibleType">
+                <xs:sequence>
+                    <xs:element name="PrimaryEdgeCluster" type="ReferenceType" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                This is the reference to the Primary Edge Cluster used for the gateway. This refers to a VCD Edge Cluster, which can be setup by the provider.
+                                This is required because if there is an Edge Cluster configuration, there must be some primary specified for deploying the Edge Gateway.
+                                For NSX-V Edges, this means the primary appliance for the gateway.
+                                For NSX-T, this means the Edge Cluster the Tier 1 SR resides on.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SecondaryEdgeCluster" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="34.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                This is the reference to the Secondary Edge Cluster used for the gateway. This refers to a VCD Edge Cluster, which can be setup by the provider.
+                                It is only applicable for NSX-V Edges when High Availability is enabled. If HA is enabled and no secondary edge cluster is specified,
+                                both appliances will be deployed on the primary edge cluster. If there is a specific secondary edge cluster, the standby/secondary appliance
+                                will be deployed on the secondary edge cluster.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
 <xs:complexType name="SubnetParticipationType">
     <xs:annotation>
         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
@@ -3793,7 +3980,7 @@
                         <xs:documentation source="required">true</xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element name="Netmask" type="IpAddressType" minOccurs="1" maxOccurs="1">
+                <xs:element name="Netmask" type="IpAddressType" minOccurs="0" maxOccurs="1">
                     <xs:annotation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">always</xs:documentation>
@@ -3803,12 +3990,24 @@
                         <xs:documentation source="required">true</xs:documentation>
                     </xs:annotation>
                 </xs:element>
+                <xs:element name="SubnetPrefixLength" type="xs:int" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <meta:version added-in="31.0"/>
+                        </xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Subnet prefix length for IPv6
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
                 <xs:element name="IpAddress" type="IpAddressType"  minOccurs="0" maxOccurs="1">
                     <xs:annotation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">always</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Ip Address to be assigned. Keep empty or omit element for auto assignment
+                            IP Address to be assigned. Keep empty or omit element for auto assignment
                         </xs:documentation>
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
@@ -3833,8 +4032,31 @@
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:element>
+                <xs:element name="TotalIpCount" type="xs:int" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="since">33.0</xs:documentation>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Total count of IP addresses in IP ranges for the subnet. Can be used to auto set IP ranges for subnet if AutoAllocateIpRanges set to true.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="AutoAllocateIpRanges" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="since">33.0</xs:documentation>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Used for create and update api calls. If set to true, IP Ranges are automatically generated based on totalIpCount.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
             </xs:sequence>
         </xs:extension>
     </xs:complexContent>
 </xs:complexType>
 </xs:schema>
+

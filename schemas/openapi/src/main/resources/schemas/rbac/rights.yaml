@@ -1,0 +1,181 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: Right types
+  version: "1.0"
+  title: Rights YAML
+
+paths:
+  rights:
+    get:
+      tags:
+        - rights
+      summary: Get list of rights visible to logged-in user
+      description: |
+        Get list of rights
+      operationId: queryRights
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Rights'
+
+  rights-id:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: right
+    get:
+      tags:
+        - rights
+      summary: Retrieve an individual right.
+      description: Retrieves the requested Right by id.
+      operationId: getRight
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Right'
+
+definitions:
+  Rights:
+    description: |
+      A list of rights.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of rights.
+            items:
+              $ref: '#/definitions/Right'
+
+  Right:
+    description: |
+      Right
+    type: object
+    properties:
+      name:
+        type: string
+        minLength: 1
+        maxLength: 128
+      id:
+        type: string
+        maxLength: 128
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: right
+          - constraint: ReadOnly
+      description:
+        type: string
+        minLength: 1
+        maxLength: 256
+      bundleKey:
+        type: string
+        minLength: 1
+        maxLength: 128
+      category:
+        type: string
+        minLength: 1
+        maxLength: 128
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsCategory
+      serviceNamespace:
+        type: string
+        minLength: 1
+        maxLength: 128
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      rightType:
+        type: string
+        enum: ['VIEW', 'MODIFY']
+      impliedRights:
+        x-vcloud-added-in: 32.0
+        type: array
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        description: The set of implied rights.
+        items:
+          $ref: '#/definitions/EntityReference'
+    required:
+      - name
+
+  RightsMapping:
+    description: |
+      RightsMapping
+    type: object
+    properties:
+      name:
+        minLength: 1
+        type: string
+        maxLength: 128
+      id:
+        type: string
+        maxLength: 128
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      description:
+        type: string
+        maxLength: 256
+      bundleKey:
+        type: string
+        minLength: 1
+        maxLength: 128
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      readOnly:
+        type: boolean
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+    required:
+      - name
+
+  PublishableRightsMapping:
+    description: |
+      RightsMapping that can be published to tenants
+    type: object
+    allOf:
+      - $ref: '#/definitions/RightsMapping'
+      - type: object
+        properties:
+          publishAll:
+            description: |
+              Read-only value indicating publishAll state
+            type: boolean
+            default: false
+            x-vcloud-constraints:
+              - constraint: ReadOnly
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"

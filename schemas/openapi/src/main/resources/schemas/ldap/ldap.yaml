@@ -1,0 +1,353 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  title: LDAP YAML
+  description: Base definitions for LDAP endpoints
+  version: "1.0"
+
+parameters:
+  testSearchUsername:
+    name: username
+    in: query
+    description: Username to use when testing LDAP search
+    required: false
+    type: string
+
+definitions:
+  LdapSettings:
+    description: |
+      LDAP Settings Specification
+    type:
+      object
+    properties:
+      hostName:
+        type:
+          string
+      port:
+        type:
+          integer
+      isSsl:
+        type:
+          boolean
+      isSslAcceptAll:
+        type:
+          boolean
+      realm:
+        type:
+          string
+      pagedSearchDisabled:
+        type:
+          boolean
+      pageSize:
+        type:
+          integer
+      maxResults:
+        type:
+          integer
+      maxUserGroups:
+        type:
+          integer
+      searchBase:
+        type:
+          string
+      userName:
+        type:
+          string
+      password:
+        type:
+          string
+      authenticationMechanism:
+        type:
+          string
+        enum: [SIMPLE, KERBEROS, M5DIGEST, NTLM]
+      groupSearchBase:
+        type:
+          string
+      isGroupSearchBaseEnabled:
+        type:
+          boolean
+      connectorType:
+        type:
+          string
+        enum: [ACTIVE_DIRECTORY, OPEN_LDAP]
+      userAttributes:
+        $ref: "#/definitions/LdapUserAttributesType"
+      groupAttributes:
+        $ref: "#/definitions/LdapGroupAttributesType"
+      useExternalKerberos:
+        type:
+          boolean
+
+  LdapUserAttributesType:
+    description: |
+      Defines how LDAP attributes are used when importing a user.
+    type:
+      object
+    properties:
+      objectClass:
+        type:
+          string
+      objectIdentifier:
+        type:
+          string
+      userName:
+        type:
+          string
+      email:
+        type:
+          string
+      fullName:
+        type:
+          string
+      givenName:
+        type:
+          string
+      surname:
+        type:
+          string
+      telephone:
+        type:
+          string
+      groupMembershipIdentifier:
+        type:
+          string
+      groupBackLinkIdentifier:
+        type:
+          string
+
+  LdapGroupAttributesType:
+    description: |
+      Defines how a group is imported from LDAP.
+    type:
+      object
+    properties:
+      objectClass:
+        type:
+          string
+      objectIdentifier:
+        type:
+          string
+      groupName:
+        type:
+          string
+      membership:
+        type:
+          string
+      membershipIdentifier:
+        type:
+          string
+      backLinkIdentifier:
+        type:
+          string
+
+  LdapTestResult:
+    description: |
+      Provides LDAP connection and settings test results
+    type:
+      object
+    properties:
+      connectionTest:
+        $ref: "#/definitions/LdapConnectionTestResult"
+      settingsTest:
+        type: array
+        items:
+          $ref: "#/definitions/LdapSettingsTestResult"
+
+  LdapConnectionTestResult:
+    description: |
+      Provides LDAP connection test results
+    type:
+      object
+    properties:
+      successful:
+        type:
+          boolean
+        description:
+          Flag for whether connection test was successful
+      error:
+        $ref: "../common/error.yaml#/definitions/Error"
+    required:
+      - successful
+
+  LdapSettingsTestResult:
+    description: |
+      Provides test attribute, result, and success boolean
+    type:
+      object
+    properties:
+      attribute:
+        type:
+          string
+        enum: [USER_OBJECT_IDENTIFIER, USERNAME, USER_EMAIL, USER_DISPLAY_NAME, USER_GIVEN_NAME, USER_SURNAME, USER_TELEPHONE, GROUP_NAME, GROUP_OBJECT_IDENTIFIER]
+        description:
+          LDAP attribute being tested
+      attributeValue:
+        type:
+          string
+        description:
+          Value of LDAP user attribute being tested
+      result:
+        type:
+          string
+        description:
+          Result of LADP user attribute being tested (what LDAP server returned)
+      successful:
+        type:
+          boolean
+        description:
+          Flag to indicate if the attribute is successful or not
+    required:
+      - successful
+
+  User:
+    description: |
+      LDAP User Spec object.
+    type:
+      object
+    properties:
+      username:
+        type:
+          string
+      description:
+        type:
+          string
+      orgEntityRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+      fullname:
+        type:
+          string
+      email:
+        type:
+          string
+      phoneNumber:
+        type:
+          string
+      im:
+        type:
+          string
+      external:
+        type:
+          boolean
+      nameInSource:
+        type:
+          string
+      sourceEntityRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "This field is under accelerated deprecation and will be removed next release."
+      enabled:
+        type:
+          boolean
+      locked:
+        type:
+          boolean
+      alertEmailPrefix:
+        type:
+          string
+        x-vcloud-deprecated-in: 36.0
+        x-vcloud-deprecated-alternative: No alternative, this field has never returned data
+      alertEmail:
+        type:
+          string
+        x-vcloud-deprecated-in: 36.0
+        x-vcloud-deprecated-alternative: No alternative, this field has never returned data
+      roleEntityRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+      roleInherited:
+        type:
+          boolean
+      delayAfterPowerOnSeconds:
+        type:
+          integer
+      storedVMQuota:
+        type:
+          integer
+        description: "The stored VM quota for this user. Defaults to 0 which means unlimited. This property is deprecated in 35.0. Use user quotas API."
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: Use user quotas API
+      deployedVMQuota:
+        type:
+          integer
+        description: "The deployed VM quota for this user. Defaults to 0 which means unlimited. This property is deprecated in 35.0. Use user quotas API."
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: Use user quotas API
+      inSync:
+        type:
+          boolean
+    x-vcloud-property-annotations:
+      sourceEntityRef:
+        x-vcloud-deprecated-in: 36.0
+        x-vcloud-deprecated-alternative: This field is unused.
+
+  UserGroup:
+    description: |
+      Group Spec object.
+    type:
+      object
+    properties:
+      name:
+        type:
+          string
+      id:
+        type:
+          string
+        x-vcloud-added-in: 34.0
+      description:
+        type:
+          string
+      orgEntityRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+      sourceEntityRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+        description: "This field is under accelerated deprecation and will be removed next release."
+      roleEntityRef:
+        $ref: "../common/entity.yaml#/definitions/EntityReference"
+      nameInSource:
+        type:
+          string
+      providerType:
+        type:
+          string
+        description: |
+          The provider type of the group.
+          Valid values are:
+          <ul>
+              <li> LDAP
+              <li> SAML
+              <li> OAUTH
+          </ul>
+    required:
+      - name
+      - description
+      - orgEntityRef
+      - roleEntityRef
+      - providerType
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+          - constraint: Urn
+            args:
+              - arg: group
+      sourceEntityRef:
+        x-vcloud-deprecated-in: 36.0
+        x-vcloud-deprecated-alternative: This field is unused.
+
+  UserGroups:
+    x-vcloud-added-in: 34.0
+    description: |
+      A list of groups.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of groups.
+            items:
+              $ref: '#/definitions/UserGroup'

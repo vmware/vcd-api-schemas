@@ -1,0 +1,24 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Cloud Director Site Settings API
+  version: "1.0"
+  title: Cloud Director Site Settings API
+
+paths:
+  siteSettings:
+    get:
+      tags:
+        - siteSettings
+      summary: Retrieve links for navigating site settings.
+      x-vcloud-added-in: 36.0
+      operationId: getSiteSettingsLinks
+      responses:
+        204:
+          description: No Content

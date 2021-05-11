@@ -1,0 +1,953 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2021-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  title: vCloud Director vRO Froms Overlay API
+  description: |
+    vCloud Director vRO Froms Overlay API
+  version: "1.0"
+
+paths:
+  workflow-forms:
+    get:
+      tags:
+        - vroFormsOverlay
+      summary: Forms API Execution
+      description: 'Retrieves a workflow schema and layout using vRO Forms API.'
+      operationId: getWorkflowFormsLayoutSchema
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: workflowId
+          in: path
+          description: workflowId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: '#/definitions/FormDefinition'
+
+  workflow-forms-eval-context:
+    get:
+      tags:
+        - vroFormsOverlay
+      summary: Forms API Execution
+      description: |
+        Retrieves a workflow evaluation context using vRO Forms API. Response type FormEvaluationContext.
+      operationId: getWorkflowFormsEvalContext
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      parameters:
+        - name: workflowId
+          in: path
+          description: workflowId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: The request is successful. Response type FormEvaluationContext.
+          schema:
+            type: string
+
+  workflow-forms-evaluations:
+    post:
+      tags:
+        - vroFormsOverlay
+      summary: Forms API Execution
+      description: |
+        Updates workflow evaluation context using vRO Forms API. Request body is from type BatchExecution.
+      operationId: updatesWorkflowFormsEvalContext
+      x-vcloud-added-in: 36.0
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: workflowId
+          in: path
+          description: workflowId
+          required: true
+          type: string
+        - name: evaluations
+          in: body
+          description: Request body is from type BatchExecution.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: '#/definitions/BatchExecutionResult'
+  
+  workflow-forms-executions:
+    post:
+      tags:
+        - vroFormsOverlay
+      summary: Forms API Execution
+      description: |
+        Executes workflow using vRO Forms API.
+        Request body is from type ExecutionContextForms and the response type is WsWorkflowExecutionForms.'
+      operationId: executeWorkflowFormsAPI
+      x-vcloud-added-in: 36.0
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: workflowId
+          in: path
+          description: workflowId
+          required: true
+          type: string
+        - name: executionContext
+          in: body
+          description: Request body is from type ExecutionContextForms.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request is successful. Response type WsWorkflowExecutionForms.
+          schema:
+            type: string
+        '201':
+          description: Created
+        '202':
+          description: The request is successful. Response type WsWorkflowExecutionForms.
+          schema:
+            type: string
+
+  parameter-types-forms:
+    get:
+      tags:
+        - vroFormsOverlay
+      summary: This endpoint will not produce results. It is a placeholder to enforce code generation of ParameterTypesForms.
+      description: This endpoint will not produce results. It is a placeholder to enforce code generation of ParameterTypesForms.
+      operationId: getParameterTypesForms
+      x-vcloud-added-in: 36.0
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: '#/definitions/ParameterTypesForms'
+        '401':
+          description: The user is not authorized
+        '403':
+          description: Forbidden
+
+definitions:
+  FormDefinition:
+    x-vcloud-added-in: 36.0
+    title: FormDefinition
+    type: object
+    properties:
+      itemId:
+        type: string
+      layout:
+        $ref: '#/definitions/Layout'
+      options:
+        $ref: '#/definitions/OptionsForms'
+      schema:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/FieldDefinition'
+      vroId:
+        type: string
+
+  Layout:
+    x-vcloud-added-in: 36.0
+    title: Layout
+    type: object
+    properties:
+      pages:
+        type: array
+        items:
+          $ref: '#/definitions/PageForms'
+
+  PageForms:
+    x-vcloud-added-in: 36.0
+    title: PageForms
+    type: object
+    properties:
+      id:
+        type: string
+      sections:
+        type: array
+        items:
+          $ref: '#/definitions/Section'
+      state:
+        type: object
+      title:
+        type: string
+
+  Section:
+    x-vcloud-added-in: 36.0
+    title: Section
+    type: object
+    properties:
+      fields:
+        type: array
+        items:
+          $ref: '#/definitions/FieldForms'
+      id:
+        type: string
+      state:
+        type: object
+
+  FieldForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      display:
+        type: string
+      id:
+        type: string
+      rootElements:
+        type: object
+      state:
+        type: object
+
+  OptionsForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      externalValidations:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalValidation'
+    title: OptionsForms
+
+  ExternalValidation:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      label:
+        type: string
+      source:
+        $ref: '#/definitions/DynamicValueDefinition'
+      target:
+        type: array
+        items:
+          type: string
+    title: ExternalValidation
+
+  DynamicValueDefinition:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+    title: DynamicValueDefinition
+
+  FieldDefinition:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      constraints:
+        type: object
+      default:
+        type: object
+      id:
+        type: string
+      label:
+        type: string
+      type:
+        $ref: '#/definitions/FieldType'
+      valueList:
+        type: object
+    title: FieldDefinition
+
+  FieldType:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      dataType:
+        type: string
+      fields:
+        type: array
+        items:
+          $ref: '#/definitions/FieldDefinition'
+      isMultiple:
+        type: boolean
+      referenceType:
+        type: string
+    title: FieldType
+
+  FormEvaluationContext:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      actions:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/ActionForms'
+      context:
+        type: array
+        items:
+          $ref: '#/definitions/RunContextValue'
+      parameters:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+      token:
+        type: string
+    title: FormEvaluationContext
+
+  ActionForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      bundleHasContent:
+        type: boolean
+      description:
+        type: string
+      entryPoint:
+        type: string
+      fqn:
+        type: string
+      href:
+        type: string
+      iconId:
+        type: string
+      id:
+        type: string
+      inputParameters:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+      module:
+        type: string
+      name:
+        type: string
+      outputParameterType:
+        type: string
+      relations:
+        $ref: '#/definitions/RelationsForms'
+      runtime:
+        type: string
+      runtimeMemoryLimit:
+        type: integer
+        format: int64
+      runtimeTimeout:
+        type: integer
+        format: int64
+      script:
+        type: string
+      version:
+        type: string
+    title: ActionForms
+
+  WsParameterForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      description:
+        type: string
+      encryptValue:
+        type: boolean
+      name:
+        type: string
+      scope:
+        type: string
+        enum:
+          - local
+          - token
+      type:
+        type: string
+      updated:
+        type: boolean
+      value:
+        $ref: '#/definitions/Value'
+    title: WsParameterForms
+
+  Value:
+    x-vcloud-added-in: 36.0
+    type: object
+    discriminator: objectType
+    properties:
+      objectType:
+        type: string
+    title: Value
+    description: |
+      Value can be one of the following types: SDKObjectForms, StringObject, SecureStringObject,
+      PropertiesObject, NumberObject, ArrayForms,
+      MimeAttachment, DateObject, BooleanObject,
+      RegExObject, CompositeObject, EncryptedStringObject, AttributeReference}.
+
+
+  SDKObjectForms:
+    x-vcloud-added-in: 36.0
+    title: SDKObjectForms
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          displayValue:
+            type: string
+          href:
+            type: string
+          id:
+            type: string
+          objectType:
+            type: string
+          type:
+            type: string
+        title: SDKObjectForms
+        description: SDKObjectForms
+    description: SDKObjectForms
+
+  StringObject:
+    x-vcloud-added-in: 36.0
+    title: StringObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          value:
+            type: string
+        title: StringObject
+        description: StringObject
+    description: StringObject
+
+  SecureStringObject:
+    x-vcloud-added-in: 36.0
+    title: SecureStringObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          plainText:
+            type: boolean
+          value:
+            type: string
+        title: SecureStringObject
+        description: Encoded string
+    description: Encoded string
+
+  PropertiesObject:
+    x-vcloud-added-in: 36.0
+    title: PropertiesObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          properties:
+            type: array
+            items:
+              $ref: '#/definitions/KeyValuePairForms'
+        title: PropertiesObject
+        description: PropertiesObject is a list of key value pairs.
+    description: PropertiesObject is a list of key value pairs.
+
+  KeyValuePairForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      key:
+        type: string
+        xml:
+          name: key
+          attribute: false
+          wrapped: false
+      value:
+        $ref: '#/definitions/Value'
+    title: KeyValuePairForms
+
+  NumberObject:
+    x-vcloud-added-in: 36.0
+    title: NumberObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          value:
+            type: number
+            format: double
+        title: NumberObject
+        description: NumberObject
+    description: NumberObject
+
+  ArrayForms:
+    x-vcloud-added-in: 36.0
+    title: ArrayForms
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          elements:
+            type: array
+            items:
+              $ref: '#/definitions/Value'
+          objectType:
+            type: string
+        title: ArrayForms
+        description: Array with Value type elements
+    description: Array with Value type elements
+
+  MimeAttachmentForms:
+    x-vcloud-added-in: 36.0
+    title: MimeAttachment
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          content:
+            type: string
+            format: byte
+          mimeType:
+            type: string
+          name:
+            type: string
+          objectType:
+            type: string
+        title: MimeAttachment
+        description: MimeAttachment Forms API
+    description: MimeAttachmentForms
+
+  DateObject:
+    x-vcloud-added-in: 36.0
+    title: DateObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          value:
+            type: string
+            format: date-time
+        title: DateObject
+        description: DateObject
+    description: DateObject
+
+  BooleanObject:
+    x-vcloud-added-in: 36.0
+    title: BooleanObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          value:
+            type: boolean
+        title: BooleanObject
+        description: BooleanObject
+    description: BooleanObject
+
+  RegExObject:
+    x-vcloud-added-in: 36.0
+    title: RegExObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          value:
+            type: string
+        title: RegExObject
+        description: RegExObject
+    description: RegExObject
+
+  CompositeObject:
+    x-vcloud-added-in: 36.0
+    title: CompositeObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          id:
+            type: string
+          objectType:
+            type: string
+          value:
+            $ref: '#/definitions/Value'
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/CompositeObject'
+        title: CompositeObject
+        description: CompositeObject
+    description: CompositeObject
+
+  EncryptedStringObject:
+    x-vcloud-added-in: 36.0
+    title: EncryptedStringObject
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          objectType:
+            type: string
+          value:
+            type: string
+        title: EncryptedStringObject
+        description: EncryptedStringObject
+    description: EncryptedStringObject
+
+  AttributeReference:
+    x-vcloud-added-in: 36.0
+    title: AttributeReference
+    allOf:
+      - $ref: '#/definitions/Value'
+      - type: object
+        properties:
+          configurationElementId:
+            type: string
+          configurationElementKey:
+            type: string
+          configurationElementName:
+            type: string
+          objectType:
+            type: string
+        title: AttributeReference
+        description: AttributeReference
+    description: AttributeReference
+
+  RelationsForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int32
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/LinkForms'
+      startIndex:
+        type: integer
+        format: int32
+    title: RelationsForms
+
+  LinkForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/WsAttributeForms'
+      href:
+        type: string
+      rel:
+        type: string
+      type:
+        type: string
+    title: LinkForms
+
+  WsAttributeForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      displayValue:
+        type: string
+      name:
+        type: string
+      value:
+        type: string
+    title: WsAttributeForms
+
+  RunContextValue:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        $ref: '#/definitions/FieldType'
+      value:
+        type: object
+    title: RunContextValue
+
+  WsWorkflowExecutionForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    description: |
+      State property could be one of the following values: canceled, completed, running, suspended, waiting
+      , waiting-signal, failed, initializing.
+    properties:
+      businessState:
+        type: string
+      contentException:
+        type: string
+      currentItemDisplayName:
+        type: string
+      currentItemForDisplay:
+        type: string
+      endDate:
+        type: string
+        format: date-time
+      executionStack:
+        type: array
+        items:
+          $ref: '#/definitions/WsWorkflowExecutionStackItem'
+      formInputs:
+        type: array
+        items:
+          type: object
+      href:
+        type: string
+      id:
+        type: string
+      inputParameters:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+      name:
+        type: string
+      outputParameters:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+      relations:
+        $ref: '#/definitions/RelationsForms'
+      runningInstanceId:
+        type: string
+      startDate:
+        type: string
+        format: date-time
+      startedBy:
+        type: string
+      state:
+        type: string
+      statistic:
+        $ref: '#/definitions/WsWorkflowExecutionStatistics'
+      workflowAttributes:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+    title: WsWorkflowExecutionForms
+
+  WsWorkflowExecutionStackItem:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+      displayName:
+        type: string
+      href:
+        type: string
+      name:
+        type: string
+      relations:
+        $ref: '#/definitions/RelationsForms'
+      workflowDisplayName:
+        type: string
+    title: WsWorkflowExecutionStackItem
+
+  WsWorkflowExecutionStatistics:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      activities:
+        type: array
+        items:
+          $ref: '#/definitions/WsActivityStatistics'
+      id:
+        type: string
+      numberOfTransitions:
+        type: integer
+        format: int64
+      plugins:
+        type: array
+        items:
+          $ref: '#/definitions/WsPluginStatistics'
+      tokenBlocked:
+        type: integer
+        format: int64
+      tokenSize:
+        type: integer
+        format: int64
+      tokenSystem:
+        type: integer
+        format: int64
+      tokenUser:
+        type: integer
+        format: int64
+      tokenWait:
+        type: integer
+        format: int64
+      totalNumberOfTransitions:
+        type: integer
+        format: int64
+      totalTime:
+        type: integer
+        format: int64
+    title: WsWorkflowExecutionStatistics
+
+  WsActivityStatistics:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      activities:
+        type: array
+        items:
+          $ref: '#/definitions/WsActivityStatistics'
+      id:
+        type: string
+      maxTime:
+        type: integer
+        format: int64
+      numberOfExecutions:
+        type: integer
+        format: int64
+      numberOfTransitions:
+        type: integer
+        format: int64
+      totalTime:
+        type: integer
+        format: int64
+    title: WsActivityStatistics
+
+  WsPluginStatistics:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      numberOfExecutions:
+        type: integer
+        format: int64
+      pluginName:
+        type: string
+      totalTime:
+        type: integer
+        format: int64
+    title: WsPluginStatistics
+
+  ExecutionContextForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      executionId:
+        type: string
+      parameters:
+        type: array
+        items:
+          $ref: '#/definitions/WsParameterForms'
+      profilerOptions:
+        $ref: '#/definitions/WsProfilerOptions'
+    title: ExecutionContextForms
+
+  WsProfilerOptions:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      debuggerEnabled:
+        type: boolean
+      enabled:
+        type: boolean
+      tokenReplayEnabled:
+        type: boolean
+    title: WsProfilerOptions
+
+  ParameterTypesForms:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      array:
+        $ref: '#/definitions/ArrayForms'
+      attributeReference:
+        $ref: '#/definitions/AttributeReference'
+      sdkObject:
+        $ref: '#/definitions/SDKObjectForms'
+      string:
+        $ref: '#/definitions/StringObject'
+      secureString:
+        $ref: '#/definitions/SecureStringObject'
+      number:
+        $ref: '#/definitions/NumberObject'
+      mimeAttachment:
+        $ref: '#/definitions/MimeAttachmentForms'
+      properties:
+        $ref: '#/definitions/PropertiesObject'
+      date:
+        $ref: '#/definitions/DateObject'
+      boolean:
+        $ref: '#/definitions/BooleanObject'
+      composite:
+        $ref: '#/definitions/CompositeObject'
+      regex:
+        $ref: '#/definitions/RegExObject'
+      encryptedString:
+        $ref: '#/definitions/EncryptedStringObject'
+      keyValuePairForms:
+        $ref: '#/definitions/KeyValuePairForms'
+      batchExecution:
+        $ref: '#/definitions/BatchExecution'
+      formEvaluationContext:
+        $ref: '#/definitions/FormEvaluationContext'
+      wsWorkflowExecutionForms:
+        $ref: '#/definitions/WsWorkflowExecutionForms'
+      executionContextForms:
+        $ref: '#/definitions/ExecutionContextForms'
+      formDefinition:
+        $reef: '#/definitions/FormDefinition'
+
+  BatchExecution:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      executions:
+        type: array
+        items:
+          $ref: '#/definitions/Execution'
+      token:
+        type: string
+    title: BatchExecution
+
+  Execution:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      actionId:
+        type: string
+      error:
+        type: string
+      inputs:
+        $ref: '#/definitions/ExecutionContextForms'
+    title: Execution
+
+  BatchExecutionResult:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/ScriptResult'
+    title: BatchExecutionResult
+
+  ScriptResult:
+    x-vcloud-added-in: 36.0
+    type: object
+    properties:
+      error:
+        type: string
+      result:
+        type: object
+    title: ScriptResult

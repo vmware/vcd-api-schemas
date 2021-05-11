@@ -1,0 +1,305 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The list of NSX-T resources such as Tier-0 routers that are accessible to an organization vDC
+    or all the overlay transport zones that are configured on a specific NSX-T manager.
+  version: "1.0"
+  title: NSX-T resources
+
+paths:
+
+  importableTier0Routers:
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - nsxTResources
+      summary: Get all importable Tier-0 routers that are accessible to an organization vDC.
+      description: |
+        Get all Tier-0 routers that are accessible to an organization vDC. Routers that are already associated with an External Network are filtered out.
+        The "_context" filter key must be set with the id of the NSX-T manager for which we want to get the Tier-0 routers for.
+      operationId: getImportableTier0Routers
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Tier0Routers'
+
+  importableTransportZones:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - nsxTResources
+      summary: Get all importable overlay transport zones that are configured on an NSX-T manager.
+      description: |
+        Get all importable overlay transport zones that are configured on an NSX-T manager.
+        Transport zones that are already associated with a network pool are filtered out.
+        The "_context" filter key must be set with the id of the NSX-T manager which we want to get the transport zones for.
+      operationId: getImportableTransportZones
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NsxTTransportZones'
+
+  edgeClusters:
+    get:
+      x-vcloud-added-in: 34.0
+      tags:
+        - nsxTResources
+      summary: Get all edge clusters that are configured on an NSX-T manager.
+      description: |
+        Returns all the configured NSX-T edge clusters for an Org vDC or a VDC Group or a Provider VDC.
+        Supported filters are:
+        <ul>
+        <li>orgVdcId - |
+        The filter orgVdcId must be set equal to the id of the NSX-T backed Org vDC for which we want to get the edge clusters.
+        Example: (orgVdcId==urn:vcloud:vdc:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+        <li>vdcGroupId - |
+        The filter vdcGroupId must be set equal to the id of the NSX-T VDC Group for which we want to get the edge clusters.
+        Example: (vdcGroupId==urn:vcloud:vdcGroup:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+        <li>pvdcId - |
+        The filter pvdcId must be set equal to the id of the NSX-T backed Provider VDC for which we want to get the edge clusters.
+        pvdcId filter is supported from version 35.2
+        Example: (pvdcId==urn:vcloud:providervdc:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+        </ul>
+        Use of "_context" filter has been deprecated. Please use supported filters.
+      operationId: getNsxTEdgeClusters
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/queryCursor"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NsxTEdgeClusters'
+
+definitions:
+
+  CommonNsxTRouterFields:
+    description: Common fields that all Tier-0 or Tier-1 routers have.
+    properties:
+      id:
+        type: string
+        description: The unique id of the router. Field is sortable.
+      description:
+        type: string
+        description: The description of the router.
+      displayName:
+        type: string
+        description: Name used in NSX-T's logs or GUI. Field is sortable.
+
+  Tier0Routers:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of NSX-T's Tier-0 routers.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/Tier0Router'
+
+  Tier0Router:
+    x-vcloud-added-in: 32.0
+    description: |
+      An NSX-T's Tier-0 router.
+    allOf:
+      - $ref: './networking/nsxTResources.yaml#/definitions/CommonNsxTRouterFields'
+      - type: object
+        properties:
+            parentTier0Id:
+              type: string
+              description: Id of parent Tier0 if this Tier0 Router is a VRF-Lite Tier0.
+    x-vcloud-property-annotations:
+      parentTier0Id:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NsxTTransportZone:
+    x-vcloud-added-in: 33.0
+    description: |
+      Information about a configured transport zone on an NSX-T manager.
+      NSX uses transport zones to provide connectivity between hypervisors.
+    properties:
+      id:
+        type: string
+        description: The unique id of the transport zone on the NSX-T manager.
+      name:
+        type: string
+        description: Name of Transport Zone in NSX-T Manager.
+      type:
+        $ref: '#/definitions/NsxTTransportZoneType'
+        description: Type of a transport zone.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NsxTTransportZoneType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Represents an NSX-T transport zone's traffic type.
+    type: object
+    enum:
+      - GENEVE
+
+  NsxTTransportZones:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of transport zones configured on an NSX-T manager.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/NsxTTransportZone'
+
+  NsxTEdgeCluster:
+    x-vcloud-added-in: 34.0
+    description: |
+      Information about a configured edge cluster on an NSX-T manager.
+      An Edge cluster is a group of edge transport nodes.
+    properties:
+      id:
+        type: string
+        description: The unique id of the edge cluster on the NSX-T manager.
+      name:
+        type: string
+        description: Name of edge cluster.
+      description:
+        type: string
+        description: Description of the edge cluster.
+      nodeCount:
+        type: integer
+        description: Number of edge transport nodes in the edge cluster.
+      nodeType:
+        $ref: '#/definitions/NsxTEdgeClusterNodeType'
+        description: |
+          Type of transport nodes in the edge cluster. All the nodes in the edge
+          cluster are of same type.
+      deploymentType:
+        $ref: '#/definitions/NsxTEdgeClusterDeploymentType'
+        description: |
+          Deployment type for transport nodes in the edge cluster. The nodes in the edge
+          cluster may have different deployment types.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      description:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      nodeCount:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      nodeType:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      deploymentType:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+    x-vcloud-cross-references:
+      - cross-reference:
+          referenced-type: "./networking/vdcs.yaml#/definitions/OrgVdc"
+          referenced-property: id
+          alias: orgVdcId
+      - cross-reference:
+          referenced-type: "./networking/vdcGroups.yaml#/definitions/VdcGroup"
+          referenced-property: id
+          alias: vdcGroupId
+      - cross-reference:
+          referenced-type: "./pvdc/pvdc.yaml#/definitions/ProviderVdc"
+          referenced-property: id
+          alias: pvdcId
+
+  NsxTEdgeClusterNodeType:
+    x-vcloud-added-in: 34.0
+    description: |
+      Represents the type of transport nodes in an edge cluster.
+      All of the transport nodes in an edge cluster must belong to the same type.
+    type: object
+    enum:
+      - EDGE_NODE
+      - PUBLIC_CLOUD_GATEWAY_NODE
+      - UNKNOWN
+
+  NsxTEdgeClusterDeploymentType:
+    x-vcloud-added-in: 34.0
+    description: |
+      Represents the deployment type for an edge cluster. This is derived
+      from the deplyment type of the nodes in an edge cluster. If all the edge
+      nodes are of same type then that type is returned, otherwise if the cluster
+      contains nodes with different deployment types then HYBRID is returned.
+    type: object
+    enum:
+      - VIRTUAL_MACHINE
+      - PHYSICAL_MACHINE
+      - HYBRID
+      - UNKNOWN
+
+  NsxTEdgeClusters:
+    x-vcloud-added-in: 34.0
+    description: |
+      List of edge clusters configured on an NSX-T manager.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/NsxTEdgeCluster'
+
+  ExternalNetwork:
+    $ref: "./networking/externalNetworks.yaml#/definitions/ExternalNetwork"
+
+

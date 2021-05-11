@@ -1,0 +1,553 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Defined Entity Types
+  description: Types for defined entities are used for classification and json schema definition.
+  version: "1.0"
+
+paths:
+  defined-entity-types:
+    get:
+      tags:
+        - definedEntityType
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      summary: Gets the collection of entity types defined in the vCD instance. Allows collection refinement through traditional FIQL-based filtering
+      description: Gets the collection of entity types defined in the vCD instance. Allows collection refinement through traditional FIQL-based filtering
+      operationId: getDefinedEntityTypes
+      produces:
+        - application/json
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: "#/definitions/DefinedEntityTypes"
+    post:
+      tags:
+        - definedEntityType
+      x-vcloud-added-in: 35.0
+      summary: Creates a defined entity type.
+      description: Creates a defined entity type.
+      operationId: createDefinedEntityType
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: definition
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DefinedEntityType"
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/DefinedEntityType"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  defined-entity-type:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        example: urn:vcloud:type:vmware:vspheresddc:1.0.0
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - definedEntityType
+      summary: Gets the entity type with the unique identifier (URN)
+      description: Gets the entity type with the unique identifier (URN)
+      operationId: getDefinedEntityType
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DefinedEntityType"
+    delete:
+      tags:
+        - definedEntityType
+      x-vcloud-added-in: 35.0
+      summary: Deletes the entity type with the unique identifier (URN)
+      description: Deletes the entity type with the unique identifier (URN)
+      operationId: deleteDefinedEntityType
+      responses:
+        204:
+          description: No Content
+    put:
+      tags:
+        - definedEntityType
+      x-vcloud-added-in: 35.0
+      summary: Updates the entity type with the unique identifier (URN)
+      description: Updates the entity type with the unique identifier (URN)
+      operationId: updateDefinedEntityType
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: definition
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DefinedEntityType"
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: "#/definitions/DefinedEntityType"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+    post:
+      tags:
+        - definedEntity
+      x-vcloud-added-in: 35.0
+      summary: Creates a defined entity based on the entity type (URN).
+      description: Creates a defined entity based on the entity type (URN).
+      operationId: createDefinedEntity
+      consumes:
+        - application/json
+      parameters:
+        - name: entity
+          in: body
+          required: true
+          schema:
+            $ref: "./extensibility/definedEntity.yaml#/definitions/DefinedEntity"
+        - name: invokeHooks
+          in: query
+          x-vcloud-added-in: 36.0
+          summary: Specify whether the update hooks of the Entity Type should be invoked
+          description: |
+            Only users with Admin FullControl access to the Entity Type can pass this parameter.
+            The default value is 'true'.
+          required: false
+          schema:
+            type: string
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  behaviors:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Get the Behaviors of the Defined Entity Type.
+      x-vcloud-added-in: 35.0
+      description: |
+        Retrieve the Behaviors of the specified Defined Entity Type.
+      operationId: getDefinedEntityTypeBehaviors
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behaviors'
+
+  behavior:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: behaviorId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Get a Behavior in the Defined Type
+      x-vcloud-added-in: 35.0
+      description: |
+        Retrieve a specific Behavior in the Defined Type.
+        The Behavior must be specified by ID.
+      operationId: getTypeBehavior
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+    put:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Update the execution of the specified Behavior in the Defined Entity Type
+      x-vcloud-added-in: 35.0
+      description: |
+        Override the execution of the specified Behavior in the Defined Entity Type.
+        The Behavior must be specified by ID.
+      operationId: updateTypeBehavior
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: behavior
+          in: body
+          required: true
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/Behavior'
+    delete:
+      tags:
+        - definedInterfaceBehaviors
+      summary: Remove a Behavior override from the Defined Entity Type.
+      x-vcloud-added-in: 35.0
+      description: |
+        Remove a Behavior override in the Defined Entity Type.
+        The Behavior must be specified by ID.
+      operationId: removeBehaviorOverride
+      responses:
+        204:
+          description: No Content
+
+  defined-entity-type-behavior-access:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        example: urn:vcloud:type:vmware:vspheresddc:1.0.0
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - definedInterfaceBehaviors
+      summary: Gets the access control configuration of the entity type's behaviors
+      description: Gets the access control configuration of the entity type's behaviors
+      operationId: getDefinedEntityTypeAccess
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      x-vcloud-default-sort:
+        default-sort-field: behaviorId
+        sort-ascending: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/BehaviorAccesses'
+    put:
+      tags:
+        - definedInterfaceBehaviors
+      x-vcloud-added-in: 35.0
+      summary: Sets the access control configuration of the entity type's behaviors
+      description: Sets the access control configuration of the entity type's behaviors
+      operationId: setDefinedEntityTypeAccess
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: definition
+          in: body
+          required: true
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/BehaviorAccesses'
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/BehaviorAccesses'
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+    post:
+      tags:
+        - definedInterfaceBehaviors
+      x-vcloud-added-in: 35.0
+      summary: Adds an access control configuration of an entity type's behavior
+      description: Adds an access control configuration of an entity type's behavior
+      operationId: addDefinedEntityTypeAccess
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: definition
+          in: body
+          required: true
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/BehaviorAccess'
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: './extensibility/behavior.yaml#/definitions/BehaviorAccess'
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  defined-entity-type-accessControls:
+    post:
+      tags:
+        - typeAccessControls
+      summary: Creates an access-control grant for an entity type
+      x-vcloud-added-in: 35.2
+      description: |
+        Creates an access-control grant, giving the user the level of access for the vCD entity type.
+      operationId: createEntityTypeAccessControlGrant
+      consumes:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+        - name: accessControlGrant
+          in: body
+          required: true
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+    get:
+      tags:
+        - typeAccessControls
+      summary: Get the access-control list for the specified vCD entity type.
+      x-vcloud-added-in: 35.2
+      description: |
+        Get the access-control list for the specified vCD entity type.
+      operationId: queryEntityTypeAccessControlGrants
+      produces:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrants'
+
+  defined-entity-type-accessControl:
+    get:
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+        - name: accessControlId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+      tags:
+        - typeAccessControls
+      summary: Get the specified access-control grant.
+      x-vcloud-added-in: 35.2
+      description: |
+        Get the specified access-control grant.
+      operationId: getEntityTypeAccessControlGrant
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+    put:
+      tags:
+        - typeAccessControls
+      summary: Updates the specified access-control grant.
+      x-vcloud-added-in: 35.2
+      description: |
+        Updates the specified access-control grant.
+      operationId: updateEntityTypeAccessControlGrant
+      consumes:
+        - application/json
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+        - name: accessControlId
+          in: path
+          required: true
+          type: string
+        - name: accessControlGrant
+          in: body
+          required: true
+          schema:
+            $ref: './access-control/accessControl.yaml#/definitions/AccessControlGrant'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./access-control/accessControl.yaml#/definitions/AccessControlGrant"
+    delete:
+      tags:
+        - typeAccessControls
+      summary: Removes the specified access-control grant from the vCD entity type access-control list.
+      x-vcloud-added-in: 35.2
+      description: |
+        Removes the specified access-control grant from the vCD entity type access-control list.
+      operationId: removeEntityTypeAccessControlGrant
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          type: string
+          readOnly: true
+        - name: accessControlId
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+
+definitions:
+  DefinedEntityType:
+    x-vcloud-added-in: 35.0
+    description: |
+      Describes what a defined entity type should look like.
+    type: object
+    properties:
+      id:
+        type: string
+        example: urn:vcloud:type:vmware:vspheresddc:1.0.0
+        description: |
+          The id of the defined entity type in URN format.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      name:
+        type: string
+        example: vspheresddc
+        description: |
+          The name of the defined entity type.
+      description:
+        type: string
+        description: |
+          Description of the defined entity type.
+      nss:
+        type: string
+        example: sddc
+        description: |
+          A unique namespace specific string. The combination of nss and version
+          must be unique.
+      version:
+        type: string
+        x-vcloud-constraints:
+          - constraint: Version
+        example: 1.0.0
+        description: |
+          The version of the defined entity type. The combination of nss and version
+          must be unique. The version string must follow semantic versioning rules.
+      externalId:
+        type: string
+        example: 123
+        description: |
+          An external entity's id that this definition may apply to.
+      schema:
+        type: object
+        example:
+          application/json: {"type": "object", "properties": {"rectangle": {"$ref": "#/definitions/Rectangle"}}, "definitions": {"size": {"type": "number", "minimum": 0}, "Rectangle": {"type": "object", "properties": {"a": {"$ref": "#/definitions/size"}, "b": {"$ref": "#/definitions/size"}}}}}
+        description: |
+          The JSON-Schema valid definition of the defined entity type.
+          If no JSON Schema version is specified, version 4 will be assumed.
+        additionalProperties:
+          type: object
+          example:
+            - prop1: value1
+            - prop2: value2
+      vendor:
+        type: string
+        description: |
+          The vendor name.
+        example: vmware
+      interfaces:
+        type: array
+        items:
+          type: string
+        minItems: 0
+        example:
+          - urn:vcloud:interface:vmware.sddc:1.0.0
+        description: |
+          List of interface ids that this defined entity type is referenced by.
+      hooks:
+        type: object
+        x-vcloud-added-in: 36.0
+        description: |
+          A mapping defining which behaviors should be invoked upon specific lifecycle events,
+          like PostCreate, PostUpdate, PreDelete. For example:
+          "hooks": { "PostCreate": "urn:vcloud:behavior-interface:postCreateHook:vendorA:containerCluster:1.0.0" }
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: NonSearchable
+        additionalProperties:
+          type: object
+      readonly:
+        type: boolean
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+        example: false
+        description: True if the entity type cannot be modified.
+      required:
+        - vendor
+        - version
+        - name
+        - nss
+        - schema
+
+  DefinedEntityTypes:
+    x-vcloud-added-in: 35.0
+    description: |
+      A list of defined entity types.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of defined entity types.
+            items:
+              $ref: '#/definitions/DefinedEntityType'
+
+# This is to test sdk pipeline
+

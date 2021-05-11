@@ -1,0 +1,38 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vDC Capabilities API allows for determining the capabilities of an Organization vDC.
+  version: "1.0"
+  title: VDC Capabilities API
+
+paths:
+  capabilities:
+
+    parameters:
+      - name: orgVdcId
+        in: path
+        required: true
+        type: string
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - capabilities
+      summary: Retrieves capabilities for the given Organization vDC.
+      operationId: getVdcCapabilities
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: './common/capability.yaml#/definitions/Capabilities'
+        204:
+          description: No Content
+

@@ -1,8 +1,9 @@
-# *************************************************************************
+# ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
-# *************************************************************************
+# ******************************************************************************
+
 swagger: "2.0"
 info:
   description: |
@@ -27,15 +28,62 @@ paths:
         - $ref: "./common/query.yaml#/parameters/queryFilter"
         - $ref: "./common/query.yaml#/parameters/querySortAsc"
         - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
       produces:
        - application/json
       responses:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/VroRemoteWorkflowItem'
+            $ref: "#/definitions/VroRemoteWorkflowItems"
+
+  pluginList:
+    parameters:
+      - name: vroId
+        description: The ID of the server to browse inventory items on
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - vrealizeBrowse
+      summary: Browse remote vRealize Orchestrator inventory
+      operationId: getPluginList
+      produces:
+       - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: '#/definitions/VroRemotePluginItems'
+        404:
+          description: Not Found
+
+  pluginTypeList:
+    parameters:
+      - name: vroId
+        description: The ID of the server to browse inventory items on
+        in: path
+        required: true
+        type: string
+      - name: pluginName
+        description: Inventory search path to identify the VRO inventory node to get contents of
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - vrealizeBrowse
+      summary: Browse remote vRealize Orchestrator inventory
+      operationId: getPluginTypeList
+      produces:
+       - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: '#/definitions/VroRemotePluginTypes'
         404:
           description: Not Found
 
@@ -66,10 +114,15 @@ paths:
         404:
           description: Not Found
 
-  vroCatalogBase:
+  vroSdkObjectsBase:
     parameters:
       - name: vroId
         description: The ID of the server to browse inventory items on
+        in: path
+        required: true
+        type: string
+      - name: target
+        description: The 'plugin[:type]' to serve as the starting point for the browsing
         in: path
         required: true
         type: string
@@ -77,32 +130,35 @@ paths:
       tags:
         - vrealizeBrowse
       summary: Browse remote vRealize Orchestrator inventory
-      operationId: getRemoteCatalog
+      operationId: searchSdkObjects
       parameters:
        - $ref: "./common/query.yaml#/parameters/queryFilter"
        - $ref: "./common/query.yaml#/parameters/querySortAsc"
        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-       - $ref: "./common/query.yaml#/parameters/queryPage"
-       - $ref: "./common/query.yaml#/parameters/queryPageSize"
       produces:
        - application/json
       responses:
         200:
           description: OK
           schema:
-              $ref: '#/definitions/VroRemoteInventoryItem'
+              $ref: '#/definitions/VroRemoteItems'
         404:
           description: Not Found
 
-  vroCatalogPlugin:
+  vroSdkObjectsBrowse:
     parameters:
       - name: vroId
         description: The ID of the server to browse inventory items on
         in: path
         required: true
         type: string
-      - name: plugin
-        description: The name of the plugin to search within the catalog
+      - name: target
+        description: The 'plugin[:type]' to serve as the starting point for the browsing
+        in: path
+        required: true
+        type: string
+      - name: browsePaths
+        description: Inventory search path to identify the VRO inventory node to get contents of
         in: path
         required: true
         type: string
@@ -110,103 +166,37 @@ paths:
       tags:
         - vrealizeBrowse
       summary: Browse remote vRealize Orchestrator inventory
-      operationId: getRemoteCatalogPlugin
-      parameters:
-       - $ref: "./common/query.yaml#/parameters/queryFilter"
-       - $ref: "./common/query.yaml#/parameters/querySortAsc"
-       - $ref: "./common/query.yaml#/parameters/querySortDesc"
-       - $ref: "./common/query.yaml#/parameters/queryPage"
-       - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      operationId: browseSdkObjects
       produces:
        - application/json
       responses:
         200:
           description: OK
           schema:
-              $ref: '#/definitions/VroRemoteInventoryItem'
+              $ref: '#/definitions/VroRemoteItems'
         404:
           description: Not Found
 
-  vroCatalogPluginType:
-    parameters:
-      - name: vroId
-        description: The ID of the server to browse inventory items on
-        in: path
-        required: true
-        type: string
-      - name: plugin
-        description: The name of the plugin to search within the catalog
-        in: path
-        required: true
-        type: string
-      - name: type
-        description: The datatype within the specified plugin
-        in: path
-        required: true
-        type: string
-    get:
+  discovery:
+    post:
       tags:
-        - vrealizeBrowse
-      summary: Browse remote vRealize Orchestrator inventory
-      operationId: getRemoteCatalogPluginType
-      parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
-      produces:
+        - vRealizeOrchestrators
+      x-vcloud-added-in: 35.0
+      summary: Discover vCenter to work with the provided vRealize Orchestrator service
+      operationId: discoverVroVcenter
+      consumes:
         - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-              $ref: './vro/vro-common.yaml#/definitions/Relations'
-        404:
-          description: Not Found
-
-  vroCatalogPluginTypeItem:
-    parameters:
-      - name: vroId
-        description: The ID of the server to browse inventory items on
-        in: path
-        required: true
-        type: string
-      - name: plugin
-        description: The name of the plugin to search within the catalog
-        in: path
-        required: true
-        type: string
-      - name: type
-        description: The datatype within the specified plugin
-        in: path
-        required: true
-        type: string
-      - name: itemId
-        description: Id of the specific item within the plugin's type catalog
-        in: path
-        required: true
-        type: string
-    get:
-      tags:
-        - vrealizeBrowse
-      summary: Browse remote vRealize Orchestrator inventory
-      operationId: getRemoteCatalogPluginTypeItem
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
+        - name: body
+          in: body
+          required: true
           schema:
-              $ref: '#/definitions/VroRemoteInventoryItem'
-        404:
-          description: Not Found
+            $ref: '#/definitions/VROServiceInfo'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
 
   vros:
     get:
@@ -352,6 +342,107 @@ definitions:
       vroServerId:
         type: string
 
+  VroRemoteWorkflowItems:
+    description: |
+      A list of remote VRO workflows.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of remove VRO workflows.
+            items:
+              $ref: '#/definitions/VroRemoteWorkflowItem'
+
+  VroRemoteItems:
+    description: |
+      A list of objects in vRealize orchestrator server
+    type: object
+    properties:
+      remoteItems:
+        type: array
+        items:
+          $ref: '#/definitions/VroRemoteItem'
+      resultTotal:
+        type: integer
+      pageCount:
+        type: integer
+
+  VroRemoteItem:
+    description: |
+      Information about various objects in vRealize Orchestrator server
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      vroServerId:
+        type: string
+      dunesId:
+        type: string
+      type:
+        type: string
+      selectable:
+        type: boolean
+      canHaveChildren:
+        type: boolean
+      href:
+        type: string
+      rel:
+        type: string
+
+  VroRemotePluginItems:
+    description: |
+      List of plugin namespaces
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/VroRemotePluginItem'
+
+  VroRemotePluginItem:
+    description: |
+      A plugin namespaces for whom type information can be retrieved
+    type: object
+    properties:
+      name:
+        type: string
+      typeHref:
+        type: string
+      selectable:
+        type: boolean
+      canHaveChildren:
+        type: boolean
+
+  VroRemotePluginTypes:
+    description: |
+      A list of defined types for a particular plugin namespace
+    type: object
+    properties:
+      types:
+        type: array
+        items:
+          $ref: '#/definitions/VroRemotePluginType'
+      namespace:
+        type: string
+
+  VroRemotePluginType:
+    description: |
+      Type definition for a plugin namespace
+    type: object
+    properties:
+      name:
+        type: string
+      selectable:
+        type: boolean
+      canHaveChildren:
+        type: boolean
+
   VroWorkflowServiceItem:
     allOf:
       - $ref: "./services/services.yaml#/definitions/ServiceItem"
@@ -365,6 +456,9 @@ definitions:
       - vroServerId
       - vroWorkflowId
       - serviceItemType
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
 
   VROServiceInfo:
     description: |
@@ -394,6 +488,16 @@ definitions:
       version:
         type: string
       trustAnchor:
-        description: |
-          SSL Certificate chain for the VRO endpoint
+        description: SSL Certificate chain for the VRO endpoint (deprecated)
         type: string
+      vcId:
+        $ref: '#/definitions/EntityReference'
+        description: Reference to the associated vCenter server.
+    x-vcloud-property-annotations:
+      trustAnchor:
+        x-vcloud-deprecated-in: 35.0
+        x-vcloud-deprecated-alternative: see /1.0.0/ssl/trustedCertificates API
+      vcId:
+        x-vcloud-added-in: 35.0
+        x-vcloud-constraints:
+          - constraint: NonSortable

@@ -1,0 +1,202 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2020-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    Provides APIs for managing external services.
+  title: ExternalServices
+
+paths:
+  external-services:
+    post:
+      tags:
+        - externalService
+      summary: Create external service.
+      operationId: createExternalService
+      x-vcloud-added-in: 35.0
+      description: |
+        Create an external service. Once created, the combination of vendor, name and
+        version cannot be modified and must be unique. Each extension will have its own MQTT topics.
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: service
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ExternalService"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalService'
+    get:
+      tags:
+        - externalService
+      summary: Query external services.
+      operationId: getExternalServices
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      description: |
+        Query all external services. Extensions, created from other APIs will not be
+        returned.
+      produces:
+        - application/json
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalServices'
+  external-service:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - externalService
+      summary: Retrieve an external service.
+      operationId: getExternalService
+      x-vcloud-added-in: 35.0
+      description: |
+        Extensions, created from other APIs will not be returned.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalService'
+    put:
+      tags:
+        - externalService
+      summary: Update an external service.
+      operationId: updateExternalService
+      x-vcloud-added-in: 35.0
+      description: |
+        Update an external service. Vendor, name and version cannot be updated.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: service
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ExternalService"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalService'
+    delete:
+      tags:
+        - externalService
+      summary: Delete an external service.
+      operationId: deleteExternalService
+      x-vcloud-added-in: 35.0
+      description: |
+        Delete an external service. The extension must be disabled or the deletion will fail.
+      responses:
+        204:
+          description: No content
+
+
+definitions:
+  ExternalService:
+    x-vcloud-added-in: 35.0
+    description: |
+      The central concept in vCD API extensibility framework. It serves as a namespace for all
+      other objects and holds top level settings like - enable/disable and API filters.
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of the external service.
+        x-vcloud-constraints:
+          - constraint: DefinedEntityString
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+        example: urn:vcloud:extension:VMware.Timer:1.0.0
+        description: The unique id of the external service.
+      version:
+        type: string
+        x-vcloud-constraints:
+          - constraint: Version
+        example: 1.0.0
+        description: |
+          The extension's version. The version should follow semantic versioning rules. The
+          combination of vendor-namespace-version must be unique.
+      vendor:
+        type: string
+        example: VMware
+        x-vcloud-constraints:
+          - constraint: DefinedEntityString
+        description: |
+          The vendor name. The combination of vendor-namespace-version must be unique.
+      priority:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 50
+        format: int32
+        description: |
+          Extension service priority. An integer between 0-100. A value of 50 denotes a neutral
+          priority.
+      enabled:
+        type: boolean
+        description: Whether the extension is enabled or not.
+      authorizationEnabled:
+        type: boolean
+        description: Whether authorization is enabled for the service.
+        default: false
+      description:
+        type: string
+      mqttTopics:
+        type: object
+        description: |
+          The map of MQTT topics this extension will communicate through.
+        x-vcloud-constraints:
+          - constraint: NonSortable
+          - constraint: ReadOnly
+        additionalProperties:
+          type: string
+    required:
+      - vendor
+      - version
+      - name
+      - enabled
+
+
+  ExternalServices:
+    x-vcloud-added-in: 35.0
+    description: |
+      A paginated list of external services.
+    allOf:
+      - $ref: './common/query.yaml#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: '#/definitions/ExternalService'
+
+
+

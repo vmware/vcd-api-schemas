@@ -1,0 +1,186 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for DNS configuration of an edge gateway.  VMs within a vApp that are connected to the network off of the
+    edge gateway can inherit this DNS configuration.
+  version: "1.0"
+  title: Edge Gateway DNS API
+
+paths:
+
+  dns:
+    parameters:
+      - name: gatewayId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: gateway
+
+    get:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeGatewayDns
+      summary: Retrieves DNS configuration of the edge gateway.
+      operationId: getEdgeGatewayDns
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EdgeDnsConfig'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeGatewayDns
+      summary: Updates DNS configuration of the edge gateway.
+      operationId: updateEdgeGatewayDns
+      consumes:
+        - application/json
+      parameters:
+        - name: dnsConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EdgeDnsConfig'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      x-vcloud-added-in: 32.0
+      tags:
+        - edgeGatewayDns
+      summary: Deletes DNS configuration of the edge gateway.
+      operationId: deleteEdgeGatewayDns
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EdgeDnsConfig:
+    x-vcloud-added-in: 32.0
+    description: Specifies the DNS forwarder configuration for an edge gateway backed by NSX-T.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: True means that the forwarder is enabled. False means it's disabled.
+        default: false
+      listenerIp:
+        type: string
+        description: The IP on which the DNS forwarder listens. If the Edge Gateway has a dedicated external network, this can be changed.
+      defaultForwarderZone:
+        $ref: '#/definitions/NsxtDnsForwarderZoneConfig'
+        description: The default forwarder zone to use if there's no matching domain in the conditional forwarder zone.
+      conditionalForwarderZones:
+        type: array
+        description: The list of forwarder zones with its matching DNS domains.
+        items:
+          $ref: '#/definitions/NsxtDnsForwarderZoneConfig'
+        minItems: 0
+        maxItems: 5
+      version:
+        $ref: '#/definitions/ObjectVersion'
+      snatRuleEnabled:
+        type: boolean
+        description: |
+          Whether there is an SNAT rule exists for the DNS forwarder or not. In NAT routed environments, an SNAT rule is required for the Edge DNS forwarder to send
+          traffic to an upstream server. In fully routed environments, this is not needed if the listener IP is on an advertised subnet. If the Edge Gateway has a
+          dedicated external network and the listener IP has been changed, there will not be an SNAT rule for the DNS forwarder. In all other cases the SNAT rule will
+          exist.
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      listenerIp:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: NetworkAddress
+            args:
+              - arg: IPV4_IP
+      defaultForwarderZone:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      conditionalForwarderZones:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      snatRuleEnabled:
+        x-vcloud-added-in: 34.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NsxtDnsForwarderZoneConfig:
+    x-vcloud-added-in: 32.0
+    description: Specifies the list of domains and the DNS servers that handle those domains.
+    type: object
+    properties:
+      id:
+        type: string
+        description: |
+          The unique id of the DNS forwarder zone. If value is unset, a new zone is created.
+          If value is set, an update is done on the zone.
+      displayName:
+        type: string
+        description: User friendly name for the zone.
+      dnsDomainNames:
+        type: array
+        description: |
+          List of domain names on which conditional forwarding is based. This field is required if the DNS Zone is
+          being used for a conditional forwarder. This field will also be used for conditional reverse lookup.
+          This field should not be set if the zone is used as default forwarder zone.
+        items:
+          type: string
+      upstreamServers:
+        type: array
+        description: DNS servers to which the DNS request needs to be forwarded.
+        items:
+          type: string
+        minItems: 0
+        maxItems: 3
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      displayName:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dnsDomainNames:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      upstreamServers:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  ObjectVersion:
+    $ref: './networking/commonObject.yaml#/definitions/ObjectVersion'
+

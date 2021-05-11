@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -155,6 +156,7 @@
                     </xs:element>
                     <xs:element name="RightReferences" type="RightReferencesType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 A container for references to Right objects in the system.
@@ -164,6 +166,7 @@
                     </xs:element>
                      <xs:element name="RoleReferences" type="RoleReferencesType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 A container for references to Role objects in the system.
@@ -301,8 +304,8 @@
                     <xs:element name="RoleReferences" type="OrganizationRolesType"
                         minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:documentation source="since">ORG_RIGHTS_ROLES
-                            </xs:documentation>
+                            <xs:documentation source="since">ORG_RIGHTS_ROLES</xs:documentation>
+                            <xs:documentation source="deprecated">31.0</xs:documentation>
                             <xs:documentation source="modifiable">none
                             </xs:documentation>
                             <xs:documentation xml:lang="en">
@@ -315,8 +318,8 @@
                     <xs:element name="RoleTemplateReferences" type="RoleReferencesType"
                         minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:documentation source="since">ORG_RIGHTS_ROLES
-                            </xs:documentation>
+                            <xs:documentation source="since">ORG_RIGHTS_ROLES</xs:documentation>
+                            <xs:documentation source="deprecated">31.0</xs:documentation>
                             <xs:documentation source="modifiable">none
                             </xs:documentation>
                             <xs:documentation xml:lang="en">
@@ -535,7 +538,34 @@
                     <xs:documentation source="required">true</xs:documentation>
                 </xs:annotation>
             </xs:element>
-        </xs:sequence>
+            <xs:element name="IsElastic" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:appinfo><meta:version added-in="35.0"/></xs:appinfo>
+                <xs:documentation source="added-in">35.0</xs:documentation>
+                <xs:documentation source="modifiable">always</xs:documentation>
+                <xs:documentation xml:lang="en">
+                  Set to true to indicate if the FLEX vDC is to
+                  be elastic. This field can only be set on input for FLEX vDC templates and Allocation VApp vDC templates.
+                  However, this field will be returned properly when read.
+                </xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="IncludeMemoryOverhead" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:appinfo><meta:version added-in="35.0"/></xs:appinfo>
+                <xs:documentation source="added-in">35.0</xs:documentation>
+                <xs:documentation source="modifiable">always</xs:documentation>
+                <xs:documentation xml:lang="en">
+                  Set to true to indicate if the FLEX vDC is to
+                  include memory overhead into its accounting for admission control.
+                  This field can only be set on input for FLEX vDC templates and Allocation VApp vDC templates.
+                  However, this field will be returned properly when read.
+                </xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
     </xs:group>
 
     <xs:group name="AllocationPoolVdcSpecificationGroup">
@@ -621,7 +651,17 @@
                     <xs:documentation source="added-in">5.7</xs:documentation>
                     <xs:documentation source="modifiable">none</xs:documentation>
                     <xs:documentation xml:lang="en">
-                        CPU allocation in Mhz
+                        vCPU speed in Mhz
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="CpuLimitMhz" type="xs:long" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation source="added-in">35.2</xs:documentation>
+                    <xs:documentation source="since">35.2</xs:documentation>
+                    <xs:documentation source="modifiable">none</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        CPU limit in Mhz
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -631,6 +671,16 @@
                     <xs:documentation source="modifiable">none</xs:documentation>
                     <xs:documentation xml:lang="en">
                         Memory allocation in MB
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="MemoryLimitMb" type="xs:long" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation source="added-in">35.2</xs:documentation>
+                    <xs:documentation source="since">35.2</xs:documentation>
+                    <xs:documentation source="modifiable">none</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        Memory limit in Mb
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -673,6 +723,16 @@
                     <xs:documentation source="modifiable">none</xs:documentation>
                     <xs:documentation xml:lang="en">
                         CPU allocation in Mhz
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="cpuLimitMhz" type="xs:long" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation source="added-in">35.2</xs:documentation>
+                    <xs:documentation source="since">35.2</xs:documentation>
+                    <xs:documentation source="modifiable">none</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        CPU limit in Mhz
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -719,6 +779,25 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="FlexVdcTemplateSpecificationType" abstract="false" >
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="35.0" />
+            </xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Specification for a VDC template using the Flex allocation model.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="VdcTemplateSpecificationType" >
+                <xs:sequence>
+                    <xs:group ref="AllocationVAppVdcSpecificationGroup" />
+                </xs:sequence>
+
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="AllocationVappVdcTemplateSpecificationType" abstract="false" >
         <xs:annotation>
             <xs:appinfo>
@@ -729,11 +808,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="VdcTemplateSpecificationType" >
-                <xs:sequence>
-                    <xs:group ref="AllocationVAppVdcSpecificationGroup" />
-                </xs:sequence>
-
+            <xs:extension base="FlexVdcTemplateSpecificationType" >
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1337,16 +1412,32 @@
                     <xs:element name="RoleAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation xml:lang="en">
                             <xs:appinfo>
-                                <meta:version added-in="7.0" />
+                                <meta:version added-in="7.0" removed-in="31.0" />
                             </xs:appinfo>
                             <xs:documentation source="modifiable">
                                 always
                             </xs:documentation>
                             <xs:documentation xml:lang="en">
-                                The name of the SAML attribute that returns the identifiers of all the
-                                groups of which the user is a member.
+                                The name of the SAML attribute that returns the identifiers of all
+                                roles of the user.
                             </xs:documentation>
                             <xs:documentation source="since">7.0</xs:documentation>
+                            <xs:documentation source="removed-in">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SamlAttributeMapping" type="SamlAttributeMappingType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="eng">
+                            <xs:documentation source="modifiable">
+                                none
+                            </xs:documentation>
+                            <xs:documentation xml:lang="eng">
+                                The names of SAML attributes used to populate user profiles.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -1363,6 +1454,136 @@
                                 The private key and the public key from the leaf certificate are used
                                 during SAML message processing. Not returned on GET
                             </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="SamlAttributeMapping" type="SamlAttributeMappingType">
+        <xs:annotation>
+            <xs:documentation source="since">31.0</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="SamlAttributeMappingType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.vcloud.admin.samlAttributeMappingType</meta:content-type>
+                <meta:version added-in="31.0" />
+            </xs:appinfo>
+            <xs:documentation source="since">31.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Contains the names of the SAML attributes that are used to populate the user profiles.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+                <xs:sequence>
+                    <xs:element name="EmailAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the email address of the user.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="UserNameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the user name.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="FirstNameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the first name of the user.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SurnameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the surname of the user.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="FullNameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the full name of the user.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="GroupAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the identifiers of all the
+                                groups of which the user is a member.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="RoleAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="modifiable">
+                                always
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the SAML attribute that returns the identifiers of all
+                                roles of the user.
+                            </xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -1436,6 +1657,19 @@
         <xs:complexContent>
             <xs:extension base="ResourceType">
                 <xs:sequence>
+                    <xs:element name="OrgRedirectUri" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                OAuth redirect URI for this org. This value is read only
+                            </xs:documentation>
+                            <xs:documentation source="since">36.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="36.0" />
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="IssuerId" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1465,6 +1699,244 @@
                             <xs:documentation xml:lang="en">
                                 True if the OAuth Identity Provider for this organization is enabled. Unset or empty defaults to true.
                             </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ClientId" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Client Id for vCD to use when talking to the Identity Provider.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ClientSecret" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Client Secret for vCD to use when talking to the Identity Provider.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="UserAuthorizationEndpoint" type="xs:anyURI" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Identity Provider's OpenId Connect user authorization endpoint.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AccessTokenEndpoint" type="xs:anyURI" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Identity Provider's OpenId Connect access token endpoint.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="UserInfoEndpoint" type="xs:anyURI" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Identity Provider's OpenId Connect user info endpoint.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ScimEndpoint" type="xs:anyURI" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Identity Provider's SCIM user information endpoint.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Scope" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Scope that vCD needs access to for authenticating the user.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="OIDCAttributeMapping" type="OIDCAttributeMappingType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:documentation source="modifiable">
+                                none
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Custom claim keys for the /userinfo endpoint
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MaxClockSkew" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation xml:lang="en">
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Allowed difference between token expiration and vCD system time in seconds.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OIDCAttributeMapping" type="OIDCAttributeMappingType">
+        <xs:annotation>
+            <xs:documentation source="since">31.0</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="OIDCAttributeMappingType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.vcloud.admin.oidcAttributeMappingType</meta:content-type>
+                <meta:version added-in="31.0" />
+            </xs:appinfo>
+            <xs:documentation source="since">31.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Contains custom claim keys for the /userinfo endpoint
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+                <xs:sequence>
+                    <xs:element name="SubjectAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the username from the IDP's userInfo
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="EmailAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the email from the IDP's userInfo
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="FullNameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the full name from the IDP's userInfo.
+                                The full name attribute overrides the use of the firstName and lastName attributes.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="FirstNameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the first name from the IDP's userInfo.
+                                This is only used if the Full Name key is not specified.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="LastNameAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the last name from the IDP's userInfo.
+                                This is only used if the Full Name key is not specified.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="GroupsAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the user's groups from the IDP's userInfo.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="RolesAttributeName" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The name of the OIDC attribute used to get the user's roles from the IDP's userInfo.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="31.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">31.0</xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -1561,6 +2033,87 @@
                                 Expiration date for this key. If specified, tokens signed with this key should be considered invalid after this time.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OpenIdProviderInfo" type="OpenIdProviderInfoType">
+        <xs:annotation>
+            <xs:documentation source="since">36.0</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="OpenIdProviderInfoType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.vcloud.admin.openIdProviderInfo</meta:content-type>
+                <meta:version added-in="36.0" />
+            </xs:appinfo>
+            <xs:documentation source="since">36.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Information about the openId connect provider for creating initial org oauth settings
+            </xs:documentation>
+        </xs:annotation>
+            <xs:complexContent>
+                <xs:extension base="ResourceType">
+                    <xs:sequence>
+                        <xs:element name="OpenIdProviderConfigurationEndpoint" type="xs:string" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                URL for the OAuth IDP well known openId connect configuration endpoint
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OpenIdProviderConfiguration" type="OpenIdProviderConfigurationType">
+        <xs:annotation>
+            <xs:documentation source="since">36.0</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="OpenIdProviderConfigurationType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.vcloud.admin.openIdProviderConfiguration</meta:content-type>
+                <meta:version added-in="36.0" />
+            </xs:appinfo>
+            <xs:documentation source="since">36.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Result from reading the IDP's openId provider config endpoint
+            </xs:documentation>
+        </xs:annotation>
+            <xs:complexContent>
+                <xs:extension base="ResourceType">
+                    <xs:sequence>
+                        <xs:element name="OrgOAuthSettings" type="OrgOAuthSettingsType" minOccurs="0" maxOccurs="1">
+                            <xs:annotation xml:lang="en">
+                                <xs:documentation source="modifiable">
+                                    none
+                                </xs:documentation>
+                                <xs:documentation xml:lang="en">
+                                    OrgOauthSettings object configured using information from the IDP
+                                </xs:documentation>
+                                <xs:appinfo>
+                                    <meta:version added-in="36.0" />
+                                </xs:appinfo>
+                                <xs:documentation source="since">36.0</xs:documentation>
+                                <xs:documentation source="required">false</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="ProviderConfigResponse" type="xs:string" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Raw response from the IDP's provider config endpoint
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>
@@ -1681,6 +2234,22 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="CustomTruststore" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="deprecated">34.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Optional Custom Truststore for the LDAP HostName. Until it is removed
+                                the certificate can still be set here, however this field will
+                                always be null on return. This field is under
+                                accelerated deprecation and will be removed more quickly than the
+                                normal deprecation cycle. In order to manage LDAP certificates, please
+                                instead use the Centralized SSL management API.
+                            </xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Realm" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1730,13 +2299,12 @@
                                 &lt;b&gt;SIMPLE&lt;/b&gt; (Simple
                                 authentication as specified in RFC 2251 and RFC
                                 2829.)&lt;br&gt;
-                                &lt;b&gt;KERBEROS&lt;/b&gt; (Kerberos
-                                authentication)&lt;br&gt;
                                 &lt;b&gt;MD5DIGEST&lt;/b&gt; (Digest MD5
                                 authentication as specified in RFC 2831.)
                                 &lt;br&gt;
                                 &lt;b&gt;NTLM&lt;/b&gt; (Windows NTLM
-                                authentication.)
+                                authentication.)&lt;br&gt;
+                                Kerberos support has been removed.&lt;/b&gt;
                            </xs:documentation>
                            <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1792,10 +2360,13 @@
                     </xs:element>
                     <xs:element name="UseExternalKerberos" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="5.1" removed-in="36.0"/></xs:appinfo>
+                            <xs:documentation source="deprecated">34.0</xs:documentation>
+                            <xs:documentation source="removed-in">36.0</xs:documentation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Set to true to use an external Kerberos service.
+                                Set to true to use an external Kerberos service. &lt;em&gt; Kerberos
+                                support has been removed.&lt;/em&gt;
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -2257,6 +2828,19 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="RemoteUriProbeResult" type="RemoteUriProbeResultType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0" removed-in="35.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Result of probing remote URL
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="since">31.0</xs:documentation>
+                            <xs:documentation source="deprecated">35.0</xs:documentation>
+                            <xs:documentation source="removed-in">35.0</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="PublishExternalCatalogParams" type="PublishExternalCatalogParamsType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="5.5"/></xs:appinfo>
@@ -2378,7 +2962,9 @@
                              <xs:appinfo><meta:version added-in="5.5"/></xs:appinfo>
                              <xs:documentation source="modifiable">always</xs:documentation>
                              <xs:documentation xml:lang="en">
-                                 Password required by the endpoint.
+                                 Password required when connecting to the endpoint.
+                                 Passing in six asterisks '******' indicates to keep current password.
+                                 Passing in null or empty string indicates to remove password.
                              </xs:documentation>
                              <xs:documentation source="required">false</xs:documentation>
                          </xs:annotation>
@@ -2407,6 +2993,102 @@
                               <xs:documentation source="required">false</xs:documentation>
                           </xs:annotation>
                       </xs:element>
+                      <xs:element name="LibraryId" type="xs:string" minOccurs="0" maxOccurs="1">
+                         <xs:annotation>
+                             <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                             <xs:documentation source="modifiable">always</xs:documentation>
+                             <xs:documentation xml:lang="en">
+                                  When library exists locally, include library id
+                              </xs:documentation>
+                              <xs:documentation source="required">false</xs:documentation>
+                          </xs:annotation>
+                      </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="RemoteUriProbeResultStatus">
+        <xs:annotation>
+            <xs:documentation source="internal" />
+            <xs:appinfo><meta:version added-in="31.0" removed-in="35.0" /></xs:appinfo>
+            <xs:documentation source="since">31.0</xs:documentation>
+            <xs:documentation source="deprecated">35.0</xs:documentation>
+            <xs:documentation source="removed-in">35.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                The enumerated status of the remote URI probe result
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUCCESS" />
+            <xs:enumeration value="INVALID_URL_OR_PASSWORD" />
+            <xs:enumeration value="TIMED_OUT" />
+            <xs:enumeration value="HOST_NOT_FOUND" />
+            <xs:enumeration value="RESOURCE_NOT_FOUND" />
+            <xs:enumeration value="CERTIFICATE_ERROR" />
+            <xs:enumeration value="UNKNOWN_ERROR" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="RemoteUriProbeResult" type="RemoteUriProbeResultType"/>
+    <xs:complexType name="RemoteUriProbeResultType">
+        <xs:annotation>
+            <xs:appinfo><meta:version added-in="31.0" removed-in="35.0"/></xs:appinfo>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.admin.remoteProbeResult</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">31.0</xs:documentation>
+            <xs:documentation source="deprecated">35.0</xs:documentation>
+            <xs:documentation source="removed-in">35.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Test the library subscription settings to make sure the remote endpoint exists, the password
+                matches (if set), and the SSL certificate is trusted (if necessary).
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="VCloudExtensibleType">
+                <xs:sequence>
+                    <xs:element name="Status" type="RemoteUriProbeResultStatus" minOccurs="0" maxOccurs="1">
+                         <xs:annotation>
+                             <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                             <xs:documentation source="modifiable">always</xs:documentation>
+                             <xs:documentation xml:lang="en">
+                                  Result status of the remote uri probe
+                              </xs:documentation>
+                              <xs:documentation source="required">true</xs:documentation>
+                          </xs:annotation>
+                      </xs:element>
+                     <xs:element name="ErrorMessage" type="xs:string" minOccurs="0" maxOccurs="1">
+                         <xs:annotation>
+                             <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                             <xs:documentation source="modifiable">always</xs:documentation>
+                             <xs:documentation xml:lang="en">
+                                 Error message returned from remote URL
+                             </xs:documentation>
+                             <xs:documentation source="required">false</xs:documentation>
+                         </xs:annotation>
+                     </xs:element>
+                    <xs:element name="SslThumbprint" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Thumbprint of SSL certificate
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                         </xs:annotation>
+                     </xs:element>
+                    <xs:element name="SslCertificateEncoded" type="xs:base64Binary" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                SSL Certificate, if required. XSD formats byte[] as base64binary
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                         </xs:annotation>
+                     </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2457,8 +3139,9 @@
                              <xs:appinfo><meta:version added-in="5.5"/></xs:appinfo>
                              <xs:documentation source="modifiable">always</xs:documentation>
                              <xs:documentation xml:lang="en">
-                                 Password required when connecting to the
-                                 endpoint.
+                                 Password required when connecting to the endpoint.
+                                 Passing in six asterisks '******' indicates to keep current password.
+                                 Passing in null or empty string indicates to remove password.
                              </xs:documentation>
                              <xs:documentation source="required">false</xs:documentation>
                          </xs:annotation>
@@ -2473,6 +3156,8 @@
                                 in transfer storage. If false, items are not
                                 placed in transfer storage until they are
                                 requested by a subscriber.
+                                Note that access to this attribute is reserved to users with role
+                                that includes the right 'Catalog: VCSP Publish Subscribe Caching'.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -2576,7 +3261,7 @@
         <xs:annotation>
             <xs:appinfo>
                 <meta:version added-in="5.1"/>
-                <meta:content-type>application/vnd.vmware.admin.operationLimitsSettings</meta:content-type>
+                <meta:content-type>application/vnd.vmware.admin.orgOperationLimitsSettings</meta:content-type>
             </xs:appinfo>
             <xs:documentation xml:lang="en">
                 Represents operation limits settings for an organization. An
@@ -2674,6 +3359,7 @@
 				<meta:content-type>application/vnd.vmware.admin.org.rights</meta:content-type>
 			</xs:appinfo>
 			<xs:documentation source="since">ORG_RIGHTS_ROLES</xs:documentation>
+			<xs:documentation source="deprecated">31.0</xs:documentation>
 			<xs:documentation xml:lang="en">
 				Represents all the rights that have been granted to an organization.
 			</xs:documentation>
@@ -2700,7 +3386,7 @@
         <xs:annotation>
             <xs:appinfo>
                 <meta:version added-in="ORG_RIGHTS_ROLES" />
-                <meta:content-type>application/vnd.vmware.admin.org.rights</meta:content-type>
+                <meta:content-type>application/vnd.vmware.admin.org.roles</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">ORG_RIGHTS_ROLES</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -2725,3 +3411,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+
