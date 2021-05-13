@@ -1,0 +1,226 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The SDDC Proxy API allows for management of proxies owned by software-defined data centers.
+  title: SDDC Proxy API
+
+paths:
+  pacFile:
+    get:
+      tags:
+        - sddcProxy
+      summary: Gets the .pac file for the user's accessible SDDC proxies.
+      x-vcloud-added-in: 32.0
+      description: |
+        Gets the .pac file for the user's accessible SDDC proxies.
+      operationId: getSddcProxiesPacFile
+      produces:
+        - application/x-ns-proxy-autoconfig
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The .pac file for the user's accessible SDDC proxies. Defaults to HTTPS proxying.
+            example: function FindProxyForURL(url, host) {
+                        var proxiedHosts = [];
+                        proxiedHosts.push("sampleVc.vmware.com");
+                        if (proxiedHosts.includes(host)) {
+                            return "HTTPS sampleVCDHost:8443";
+                        } else {
+                            return "DIRECT";
+                        }
+                    }
+
+  proxies:
+    get:
+      tags:
+        - sddcProxy
+      summary: Gets a paged list of SDDC proxies for a tenant.
+      x-vcloud-added-in: 32.0
+      description: |
+        Gets a paged list of SDDC proxies for a tenant.
+      operationId: getSddcProxies
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxies"
+    post:
+      tags:
+        - sddcProxy
+      summary: Creates an SDDC proxy.
+      x-vcloud-added-in: 32.0
+      description: |
+        Creates an SDDC proxy.
+      operationId: createSddcProxy
+      parameters:
+        - name: proxy
+          description: The new SDDC proxy model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+      consumes:
+        - application/json
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+  proxy:
+    parameters:
+      - name: id
+        description: SDDC Proxy ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcProxy
+      summary: Retrieves a specific SDDC proxy.
+      x-vcloud-added-in: 32.0
+      operationId: getSddcProxy
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+
+    put:
+      tags:
+        - sddcProxy
+      summary: Update a specific SDDC proxy.
+      x-vcloud-added-in: 32.0
+      operationId: updateSddcProxy
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedSddcProxy
+          description: The updated SDDC proxy model.
+          in: body
+          required: true
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./cpom/cpomObjects.yaml#/definitions/SddcProxy"
+
+    delete:
+      tags:
+        - sddcProxy
+      summary: Delete a specific SDDC proxy. Will not delete an enabled proxy unless force is specified.
+      x-vcloud-added-in: 32.0
+      operationId: deleteSddcProxy
+      parameters:
+        - name: "force"
+          in: "query"
+          description: "If true, will delete proxy regardless of proxy state."
+          required: false
+          type: boolean
+      responses:
+        204:
+          description: No Content
+
+  proxy-cert:
+    parameters:
+      - name: id
+        description: SDDC Proxy ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcProxy
+      summary: Retrieve a SDDC proxy SSL certificate chain in PEM format.
+      x-vcloud-added-in: 32.0
+      operationId: getSddcProxyCertificate
+      produces:
+        - application/x-pem-file
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The certificate chain in PEM format.
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+
+    put:
+      tags:
+        - sddcProxy
+      summary: Update a SDDC proxy certificate chain in PEM format.
+      x-vcloud-added-in: 32.0
+      operationId: updateSddcProxyCertificate
+      consumes:
+        - application/x-pem-file
+      produces:
+        - application/x-pem-file
+      parameters:
+        - name: proxyTrustAnchor
+          description: The updated SDDC proxy certificate chain in PEM format.
+          in: body
+          required: true
+          schema:
+            type: string
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+            x-vcloud-constraints:
+              - constraint: Certificate
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The certificate chain in PEM format.
+            example: -----BEGIN CERTIFICATE-----
+                     <sample certificate contents>
+                     -----END CERTIFICATE-----
+
+  proxy-thumbprint:
+    parameters:
+      - name: id
+        description: SDDC Proxy ID URN
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - sddcProxy
+      summary: Retrieve a SDDC Proxy SSL certificate thumbprint. The thumbprint is the SHA-1 hash of the DER encoding of the certificate.
+      x-vcloud-added-in: 32.0
+      operationId: getSddcProxyCertificateThumbprint
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            description: The SDDC Proxy SSL certificate thumbprint.
+            example: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+

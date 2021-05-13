@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -1352,7 +1353,7 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Encryption protocol to be used. One of:
-                                AES, AES256, TRIPLEDES
+                                AES, AES256, TRIPLEDES, AESGCM
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -2711,7 +2712,7 @@
                     </xs:element>
                     <xs:element name="AdvancedNetworkingEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="22.0"/></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="22.0" removed-in="31.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 True if Advanced Networking has been enabled.
@@ -3040,6 +3041,15 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="SubnetPrefixLength" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Network mask.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Dns1" type="IpAddressType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3256,10 +3266,8 @@
                         <xs:documentation source="modifiable">always
                         </xs:documentation>
                         <xs:documentation xml:lang="en">
-                            A reference to a VIRTUAL_WIRE object that
+                            A reference to the network backing object (logical switch, portgroup, etc.) that
                             exists on a vCenter server registered with the system.
-                            Required on Create when AdvancedNetworkingEnabled has a value of true.
-                            Ignored on update, or when AdvancedNetworkingEnabled has a value of false.
                         </xs:documentation>
                         <xs:documentation source="required">true
                         </xs:documentation>
@@ -3336,6 +3344,41 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="EdgeGatewayType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+            </xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Represents an EdgeGatewayType
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NSXV_BACKED">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NSXT_BACKED">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NSXT_IMPORTED">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+
     <xs:element name="EdgeGateway" type="GatewayType"/>
     <xs:complexType name="GatewayType">
         <xs:annotation>
@@ -3357,6 +3400,18 @@
                         <xs:documentation source="modifiable">always</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Provides information to access edge gateway via VC
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="EdgeGatewayType" type="EdgeGatewayType" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <meta:version added-in="NSXT_ROUTER_IMPORT"/>
+                        </xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Represents a gateway.
                         </xs:documentation>
                         <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
@@ -3793,7 +3848,7 @@
                         <xs:documentation source="required">true</xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element name="Netmask" type="IpAddressType" minOccurs="1" maxOccurs="1">
+                <xs:element name="Netmask" type="IpAddressType" minOccurs="0" maxOccurs="1">
                     <xs:annotation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">always</xs:documentation>
@@ -3801,6 +3856,18 @@
                             Nestmask for the subnet
                         </xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="SubnetPrefixLength" type="xs:int" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <meta:version added-in="31.0"/>
+                        </xs:appinfo>
+                        <xs:documentation source="modifiable">always</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Subnet prefix length for IPv6
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:element>
                 <xs:element name="IpAddress" type="IpAddressType"  minOccurs="0" maxOccurs="1">
@@ -3838,3 +3905,4 @@
     </xs:complexContent>
 </xs:complexType>
 </xs:schema>
+

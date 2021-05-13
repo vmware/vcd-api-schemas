@@ -1,0 +1,26 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: LDAP Sync Actions
+  version: "1.0"
+  title: LDAP Sync YAML
+
+paths:
+  sync:
+    post:
+      tags:
+        - LDAP
+      summary: Synchronize LDAP users/settings
+      description: |
+        Begins the LDAP sync task
+      operationId: syncLdap
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad request
