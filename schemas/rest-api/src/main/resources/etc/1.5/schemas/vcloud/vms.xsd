@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -209,6 +210,16 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="ReservedBusUnitNumber" type="BusUnitNumberType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="RESERVED_BUS_UNIT_NUMBER"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reserved combination of bus-number/unit-number.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
                 <xs:attribute name="id" type="xs:string" use="required">
                     <xs:annotation>
@@ -295,6 +306,33 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BusUnitNumberType">
+        <xs:annotation>
+            <xs:appinfo><meta:version added-in="RESERVED_BUS_UNIT_NUMBER"/></xs:appinfo>
+            <xs:documentation xml:lang="en">
+                A combination of bus and unit number.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="busNumber" type="xs:int" use="required">
+            <xs:annotation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation xml:lang="en">
+                    Bus Number.
+                </xs:documentation>
+                <xs:documentation source="required">true</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="unitNumber" type="xs:int" use="required">
+            <xs:annotation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation xml:lang="en">
+                    Unit Number.
+                </xs:documentation>
+                <xs:documentation source="required">true</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="NICBaseType" abstract="true" />
@@ -439,10 +477,22 @@
                     <xs:element name="Supported" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                            <xs:documentation source="deprecated">31.0</xs:documentation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                True if this operating system is supported for
                                use in this organization.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SupportLevel" type="xs:string" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                              One of the strings "Supported", "Legacy", "Deprecated", "Terminated", or "Unsupported".
+                              See https://kb.vmware.com/s/article/2015161
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -604,3 +654,4 @@
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
+

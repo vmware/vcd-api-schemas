@@ -1,0 +1,36 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Force delete parameter YAML
+  description: Common definitions for force deletion endpoints
+  version: "1.0"
+
+parameters:
+  recursiveDelete:
+    in: query
+    name: recursive
+    required: false
+    type: boolean
+    default: false
+    description: |
+      Value "true" means to remove an object that contains other objects as long as those objects are in a state that normally allows removal.
+      The default is "false", which means that an exception will be thrown if any of those objects are in a state that does not allow removal.
+      Invalid value (not true or false) are ignored.
+  forceDelete:
+    in: query
+    name: force
+    required: false
+    type: boolean
+    default: false
+    description: |
+      Value "true" means to forcefully delete the object that contains other objects even if those objects are in a state that does not allow removal.
+      The default is "false"; therefore, objects are not removed if they are not in a state that normally allows removal. Force also implies
+      recursive delete where other contained objects are removed. Errors may be ignored. Invalid value (not true or false) are ignored.
+
+
