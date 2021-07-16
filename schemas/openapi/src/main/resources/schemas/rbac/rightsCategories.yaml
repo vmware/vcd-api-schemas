@@ -1,0 +1,131 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: Rights Categories types
+  version: "1.0"
+  title: Rights Categories YAML
+
+paths:
+  rights-categories:
+    get:
+      tags:
+        - rightsCategories
+      summary: Get a list of Rights Categories visible to the logged in user
+      description: |
+        Get list of Rights Categories
+      operationId: queryRightsCategories
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RightsCategoryNodes'
+
+  rights-category:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsCategory
+
+    get:
+      tags:
+        - rightsCategories
+      summary: Retrieve an individual Right category.
+      description: Retrieves the requested Rights Category by id.
+      operationId: getRightsCategory
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RightsCategoryNode'
+
+definitions:
+  RightsCategoryNode:
+    description: |
+      RightsCategoryNode
+    type: object
+    properties:
+      name:
+        type: string
+        minLength: 1
+        maxLength: 128
+      id:
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsCategory
+          - constraint: ReadOnly
+      bundleKey:
+        type: string
+        minLength: 1
+        maxLength: 128
+      parent:
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsCategory
+      rightsCount:
+          $ref: '#/definitions/RightsCount'
+      subCategories:
+        type: array
+        items:
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: rightsCategory
+    required:
+      - name
+      - bundleKey
+
+  RightsCategoryNodes:
+    description: |
+      A list of rights category nodes.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of rights category nodes.
+            items:
+              $ref: '#/definitions/RightsCategoryNode'
+
+  RightsCount:
+    description: |
+      RightsCount - A count of rights in a given category by type
+    type: object
+    properties:
+      view:
+        type: integer
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      modify:
+        type: integer
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"

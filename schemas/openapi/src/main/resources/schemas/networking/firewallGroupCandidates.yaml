@@ -1,0 +1,136 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    An API for getting the list of candidates for the firewall group members.
+    Member candidates can be other groups, virtual machines, or organization vDC networks.
+  version: "1.0"
+  title: Firewall Group Members
+
+paths:
+
+  groups:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - firewallGroupCandidates
+      summary: Retrieves all groups that can be members of another group.
+      description: |
+        Retrieves all group candidates that can be members of another group.
+        The context is the id of the organization vDC, whose groups can be used for creating other groups.
+      operationId: getFirewallGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/GroupMembers'
+
+  vms:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - firewallGroupCandidates
+      summary: Retrieves all virtual machine candidates that can be members of a firewall group.
+      description: |
+        Retrieves all virtual machine candidates that can be members of a firewall group.
+        The "_context" filter key must be set to the id of the organization vDC for which candidates we want to retrieve.
+      operationId: getVirtualMachines
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VdcBackedGroupMembers'
+
+  networks:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - firewallGroupCandidates
+      summary: Retrieves all organization vDC network candidates that can be members of a firewall group.
+      description: |
+        Retrieves all organization vDC network candidates that can be members of a firewall group.
+        The "_context" filter key must be set to the id of the organization vDC for which candidates we want to retrieve.
+      operationId: getOrgVdcNetworks
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VdcBackedGroupMembers'
+
+definitions:
+
+  VdcBackedGroupMember:
+    x-vcloud-added-in: 33.0
+    description: |
+      A member of a firewall group. The member belongs to an organization vDC.
+    allOf:
+      - $ref: "./common/entity.yaml#/definitions/EntityReference"
+      - type: object
+        properties:
+          vdcRef:
+            description: The organization vDC that the member belongs to.
+            $ref: "#/definitions/EntityReference"
+    x-vcloud-property-annotations:
+      vdcRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  GroupMembers:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of members of a group.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: "#/definitions/EntityReference"
+
+  VdcBackedGroupMembers:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of members of a group. Each member belongs to a organization vDC.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './networking/firewallGroupCandidates.yaml#/definitions/VdcBackedGroupMember'
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+

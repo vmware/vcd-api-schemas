@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,18 +27,9 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0" jaxb:extensionBindingPrefixes="meta" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:meta="http://www.vmware.com/vcloud/meta"
-           jaxb:version="2.0"
-           jaxb:extensionBindingPrefixes="meta"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.vmware.com/vcloud/v1.5"
-           version="1.0">
-
-    <xs:include schemaLocation="common.xsd" />
+    <xs:include schemaLocation="common.xsd"/>
     <xs:annotation>
         <xs:documentation xml:lang="en">
             Schema for the vCloud
@@ -87,7 +78,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="QueryResultRecords" type="QueryResultRecordsType" />
+    <xs:element name="QueryResultRecords" type="QueryResultRecordsType"/>
     <xs:complexType name="QueryResultRecordsType">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
@@ -178,8 +169,7 @@
         <xs:anyAttribute processContents="lax"/>
     </xs:complexType>
 
-    <xs:element name="OrgRecord" type="QueryResultOrgRecordType"
-                substitutionGroup="Record">
+    <xs:element name="OrgRecord" type="QueryResultOrgRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -312,8 +302,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="OrgVdcRecord" type="QueryResultOrgVdcRecordType"
-                substitutionGroup="Record">
+    <xs:element name="OrgVdcRecord" type="QueryResultOrgVdcRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -348,7 +337,27 @@
                         <xs:appinfo><meta:version added-in="29.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="computeProviderScope" use="optional" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="networkProviderScope" use="optional" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -438,7 +447,8 @@
                 <xs:attribute name="storageAllocationMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
-                        <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+                        <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">30.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Storage allocation in MB
@@ -499,6 +509,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="numberOfUnmanagedVApps" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of Unmanaged vApps
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="numberOfMedia" type="xs:int">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -531,7 +551,8 @@
                 <xs:attribute name="isSystemVdc" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
-                        <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+                        <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">30.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             True if this VDC is used exclusively to support vShield Edge devices.
@@ -597,8 +618,8 @@
                 </xs:attribute>
                 <xs:attribute name="networkPoolUniversalId" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Associated universal network pool
@@ -615,12 +636,41 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="numberOfDeployedUnmanagedVApps" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of Deployed Unmanaged vApps
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isThinProvisioned" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if Thin provisioning is enabled
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isFastProvisioned" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if Fast Provisioning is Enabled
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="MediaRecord" type="QueryResultMediaRecordType"
-                substitutionGroup="Record">
+    <xs:element name="MediaRecord" type="QueryResultMediaRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -800,8 +850,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VAppTemplateRecord" type="QueryResultVAppTemplateRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VAppTemplateRecord" type="QueryResultVAppTemplateRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -992,8 +1041,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VAppRecord" type="QueryResultVAppRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VAppRecord" type="QueryResultVAppRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1132,12 +1180,31 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="snapshot" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if snapshot exists
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="snapshotCreated" type="xs:dateTime">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Snapshot creation date
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VMRecord" type="QueryResultVMRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VMRecord" type="QueryResultVMRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1210,6 +1277,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             VDC reference or id
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="vappScopedLocalId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            VM unique ID within vApp
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -1347,7 +1424,7 @@
                         <xs:appinfo><meta:version added-in="29.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -1377,6 +1454,26 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Storage profile name
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="snapshot" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="snapshotCreated" type="xs:dateTime">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -1416,7 +1513,7 @@
                         <xs:appinfo><meta:version added-in="29.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -1426,7 +1523,37 @@
                         <xs:appinfo><meta:version added-in="29.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isComputePolicyCompliant" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if VM is compliant with Compute Policy
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="vmSizingPolicyId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Vm Sizing Policy
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="vmPlacementPolicyId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Vm Placement Policy
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -1434,8 +1561,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="OrgNetworkRecord" type="QueryResultOrgNetworkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="OrgNetworkRecord" type="QueryResultOrgNetworkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1527,6 +1653,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="subnetPrefixLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Prefix length
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="dns1" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -1567,11 +1702,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminOrgNetworkRecord" type="QueryResultAdminOrgNetworkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminOrgNetworkRecord" type="QueryResultAdminOrgNetworkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:documentation source="removed-in">REMOVED_VERSION_15_51</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
             <xs:documentation xml:lang="en">
                 A single adminOrgNetwork query result in records format.
@@ -1582,7 +1715,8 @@
     <xs:complexType name="QueryResultAdminOrgNetworkRecordType">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+            <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+            <xs:documentation source="removed-in">30.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Type for a single adminOrgNetwork query result in records format.
             </xs:documentation>
@@ -1671,6 +1805,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="subnetPrefixLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Prefix length
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="dns1" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -1702,8 +1845,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VAppNetworkRecord" type="QueryResultVAppNetworkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VAppNetworkRecord" type="QueryResultVAppNetworkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1768,6 +1910,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="subnetPrefixLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Prefix length
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="dns1" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -1826,8 +1977,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="CatalogRecord" type="QueryResultCatalogRecordType"
-                substitutionGroup="Record">
+    <xs:element name="CatalogRecord" type="QueryResultCatalogRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -1871,7 +2021,7 @@
                         <xs:documentation source="added-in">1.5</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            True if this catalog is published.
+                            True if this catalog is shared to all organizations.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -1972,8 +2122,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminVdcRecord" type="QueryResultAdminVdcRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminVdcRecord" type="QueryResultAdminVdcRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2008,7 +2157,27 @@
                         <xs:appinfo><meta:version added-in="29.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="computeProviderScope" use="optional" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="networkProviderScope" use="optional" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2048,16 +2217,6 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="cpuOverheadMhz" type="xs:long">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            CPU overhead in Mhz
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
                 <xs:attribute name="memoryAllocationMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -2085,20 +2244,11 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="memoryOverheadMB" type="xs:long">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Memory overhead in MB
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
                 <xs:attribute name="storageAllocationMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
-                        <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+                        <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">30.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Storage allocation in MB
@@ -2120,16 +2270,6 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Storage used in MB
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="storageOverheadMB" type="xs:long">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Storage overhead in MB
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2171,11 +2311,10 @@
                 </xs:attribute>
                 <xs:attribute name="allocationModel" type="xs:int">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Resource allocation model for the VDC
+                            allocationModel
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2185,6 +2324,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Number of vApps
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="numberOfUnmanagedVApps" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of Unmanaged vApps
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2219,61 +2368,21 @@
                 </xs:attribute>
                 <xs:attribute name="vcName" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Name of Virtual Center associated with this VDC
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="isVCEnabled" type="xs:boolean">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Enabled status of the Virtual Center associated with this VDC
+                            vcName
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="isSystemVdc" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
-                        <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+                        <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">30.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             True if this VDC is used exclusively to support vShield Edge devices.
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="task" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Task reference or id
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="taskStatus" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Task status
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="taskStatusName" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Name of the task status
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2295,16 +2404,6 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="taskDetails" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            taskDetails
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
                 <xs:attribute name="networkPool" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -2314,20 +2413,9 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="vc" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Virtual center reference or id
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
                 <xs:attribute name="numberOfResourcePools" type="xs:int">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             numberOfResourcePools
@@ -2344,23 +2432,13 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="cpuReservedMhz" type="xs:long">
+                <xs:attribute name="usedNetworksInVdc" type="xs:int">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            CPU reserved in Mhz
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="memoryReservedMB" type="xs:long">
-                    <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
-                        <xs:documentation source="modifiable">none</xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            Memory reserved in MB
+                            Count of the used networks in the VDC
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2376,8 +2454,8 @@
                 </xs:attribute>
                 <xs:attribute name="networkPoolUniversalId" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Associated universal network pool
@@ -2404,12 +2482,51 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="numberOfDeployedUnmanagedVApps" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of Deployed Unmanaged vApps
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isThinProvisioned" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if Thin provisioning is enabled
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isFastProvisioned" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if Fast Provisioning is Enabled
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="networkProviderType" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The type of the network pool that backs this org vdc
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VMWProviderVdcRecord" type="QueryResultVMWProviderVdcRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VMWProviderVdcRecord" type="QueryResultVMWProviderVdcRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2460,6 +2577,8 @@
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
                         <xs:documentation source="deprecated">5.5</xs:documentation>
+                        <xs:appinfo><meta:version removed-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">31.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             vCpu rating in Mhz
@@ -2583,6 +2702,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="numberOfResourcePools" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="numberOfStorageProfiles" type="xs:int">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
@@ -2597,8 +2725,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="NetworkRecord" type="QueryResultNetworkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="NetworkRecord" type="QueryResultNetworkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2654,6 +2781,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="subnetPrefixLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Prefix length for the network
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="dns1" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -2694,8 +2830,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="GroupRecord" type="QueryResultGroupRecordType"
-                substitutionGroup="Record">
+    <xs:element name="GroupRecord" type="QueryResultGroupRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2721,6 +2856,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             The name of this group.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -2756,8 +2901,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="UserRecord" type="QueryResultUserRecordType"
-                substitutionGroup="Record">
+    <xs:element name="UserRecord" type="QueryResultUserRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2859,12 +3003,31 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="isLocked" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if user account is locked
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="roleNames" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            User role names
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="StrandedUserRecord" type="QueryResultStrandedUserRecordType"
-                substitutionGroup="Record">
+    <xs:element name="StrandedUserRecord" type="QueryResultStrandedUserRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2943,8 +3106,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="RoleRecord" type="QueryResultRoleRecordType"
-                substitutionGroup="Record">
+    <xs:element name="RoleRecord" type="QueryResultRoleRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2973,6 +3135,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The description of this role.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="isReadOnly" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -2986,11 +3158,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AllocatedExternalAddressRecord" type="QueryResultAllocatedExternalAddressRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AllocatedExternalAddressRecord" type="QueryResultAllocatedExternalAddressRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:documentation source="removed-in">REMOVED_VERSION_15_51</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
             <xs:documentation xml:lang="en">
                 A single allocatedExternalAddress query result in records format.
@@ -3001,7 +3171,8 @@
     <xs:complexType name="QueryResultAllocatedExternalAddressRecordType">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+            <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+            <xs:documentation source="removed-in">30.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Type for a single allocatedExternalAddress query result in records format.
             </xs:documentation>
@@ -3040,8 +3211,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="EventRecord" type="QueryResultEventRecordType"
-                substitutionGroup="Record">
+    <xs:element name="EventRecord" type="QueryResultEventRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3061,6 +3231,16 @@
 
         <xs:complexContent>
             <xs:extension base="QueryResultRecordType">
+                <xs:attribute name="eventId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Event Id
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="eventType" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -3124,6 +3304,26 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Description
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="details" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Details
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="serviceNamespace" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
@@ -3147,8 +3347,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ResourcePoolRecord" type="QueryResultResourcePoolRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ResourcePoolRecord" type="QueryResultResourcePoolRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3213,12 +3412,61 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="providerVdc" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Provider VDC reference or id
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="providerName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Provider VDC name
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isEnabled" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if this entity is enabled
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isPrimary" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if this is the primary resource pool for this Provider VDC.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="clusterMoref" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Cluster managed object reference
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="DatastoreRecord" type="QueryResultDatastoreRecordType"
-                substitutionGroup="Record">
+    <xs:element name="DatastoreRecord" type="QueryResultDatastoreRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3370,8 +3618,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="NetworkPoolRecord" type="QueryResultNetworkPoolRecordType"
-                substitutionGroup="Record">
+    <xs:element name="NetworkPoolRecord" type="QueryResultNetworkPoolRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3409,6 +3656,34 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="vcName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            vcName
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Description of the network pool
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isVCEnabled" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            isVCEnabled
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="isBusy" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -3418,10 +3693,20 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="dvSwitchNameList" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="universalId" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             cross-vc unique id for universal transport zone
@@ -3432,8 +3717,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="PortgroupRecord" type="QueryResultPortgroupRecordType"
-                substitutionGroup="Record">
+    <xs:element name="PortgroupRecord" type="QueryResultPortgroupRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3538,8 +3822,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="DvSwitchRecord" type="QueryResultDvSwitchRecordType"
-                substitutionGroup="Record">
+    <xs:element name="DvSwitchRecord" type="QueryResultDvSwitchRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3608,8 +3891,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="CellRecord" type="QueryResultCellRecordType"
-                substitutionGroup="Record">
+    <xs:element name="CellRecord" type="QueryResultCellRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3687,8 +3969,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VirtualCenterRecord" type="QueryResultVirtualCenterRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VirtualCenterRecord" type="QueryResultVirtualCenterRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3771,6 +4052,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="vcproxy" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            vcproxy
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="isBusy" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -3809,12 +4099,161 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="isTenantScoped" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if this entity is tenant scoped.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isProviderScoped" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if this entity is provider scoped.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="clusterHealthStatus" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The overall health status of clusters in this vCenter. One of {GRAY, RED, YELLOW, GREEN}.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="clustersCount" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The number of clusters in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="totalVmCount" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The number of VMs in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="poweredOnVmCount" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The number of powered-on VMs in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="totalMemMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The total memory (in Mb) in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="reservedMemMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The reserved memory (in Mb) in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="demandedMemMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The demanded memory (in Mb) in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="totalCpuMhz" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The total CPU (in Mhz) in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="reservedCpuMhz" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The reserved CPU (in Mhz) in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="demandedCpuMhz" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The demanded CPU (in Mhz) in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="diskSizeBytes" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The disk size (in bytes) of all datastores in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="diskFreeBytes" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The free disk space (in bytes) on all datastores in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="diskUncommittedBytes" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The uncommitted disk space (in bytes) on all datastores in this vCenter.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="HostRecord" type="QueryResultHostRecordType"
-                substitutionGroup="Record">
+    <xs:element name="HostRecord" type="QueryResultHostRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -3846,6 +4285,8 @@
                 <xs:attribute name="isEnabled" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:appinfo><meta:version removed-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">31.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             True if this entity is enabled
@@ -3873,6 +4314,8 @@
                 <xs:attribute name="isPrepared" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:appinfo><meta:version removed-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">31.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             True if this host is prepared
@@ -3900,6 +4343,8 @@
                 <xs:attribute name="isPendingUpgrade" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:appinfo><meta:version removed-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">31.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             True if this host has an upgrade pending.
@@ -3927,6 +4372,8 @@
                 <xs:attribute name="isCrossHostEnabled" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:appinfo><meta:version removed-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">31.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             True if this host is cross-host enabled.
@@ -3973,8 +4420,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminVAppRecord" type="QueryResultAdminVAppRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminVAppRecord" type="QueryResultAdminVAppRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -4105,7 +4551,8 @@
                 <xs:attribute name="cpuAllocationMhz" type="xs:int">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
-                        <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+                        <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">30.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             CPU allocation in Mhz
@@ -4163,8 +4610,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="RightRecord" type="QueryResultRightRecordType"
-                substitutionGroup="Record">
+    <xs:element name="RightRecord" type="QueryResultRightRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -4206,8 +4652,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminVMRecord" type="QueryResultAdminVMRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminVMRecord" type="QueryResultAdminVMRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -4242,6 +4687,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             The name of the containing vApp or vApp template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="vappScopedLocalId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            VM unique ID within vApp
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -4455,15 +4910,53 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="isComputePolicyCompliant" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            True if VM is compliant with Compute Policy
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="vmSizingPolicyId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Vm Sizing Policy
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="vmPlacementPolicyId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Vm Placement Policy
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="ipAddress" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            If configured, the IP Address of the VM on the primary network, otherwise empty.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminAllocatedExternalAddressRecord" type="QueryResultAdminAllocatedExternalAddressRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminAllocatedExternalAddressRecord" type="QueryResultAdminAllocatedExternalAddressRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:documentation source="removed-in">REMOVED_VERSION_15_51</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
             <xs:documentation xml:lang="en">
                 A single adminAllocatedExternalAddress query result in records format.
@@ -4474,7 +4967,8 @@
     <xs:complexType name="QueryResultAdminAllocatedExternalAddressRecordType">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+            <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+            <xs:documentation source="removed-in">30.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Type for a single adminAllocatedExternalAddress query result in records format.
             </xs:documentation>
@@ -4522,11 +5016,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VAppOrgNetworkRelationRecord" type="QueryResultVAppOrgNetworkRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VAppOrgNetworkRelationRecord" type="QueryResultVAppOrgNetworkRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:documentation source="removed-in">REMOVED_VERSION_15_51</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
             <xs:documentation xml:lang="en">
                 A single vAppOrgNetworkRelation query result in records format.
@@ -4537,7 +5029,8 @@
     <xs:complexType name="QueryResultVAppOrgNetworkRelationRecordType">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
-            <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+            <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+            <xs:documentation source="removed-in">30.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Type for a single vAppOrgNetworkRelation query result in records format.
             </xs:documentation>
@@ -4612,8 +5105,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="OrgVdcResourcePoolRelationRecord" type="QueryResultOrgVdcResourcePoolRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="OrgVdcResourcePoolRelationRecord" type="QueryResultOrgVdcResourcePoolRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -4660,14 +5152,34 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="vcName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Virtual center name
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="resourcePoolName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Resource pool name
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ProviderVdcResourcePoolRelationRecord" type="QueryResultProviderVdcResourcePoolRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ProviderVdcResourcePoolRelationRecord" type="QueryResultProviderVdcResourcePoolRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
+            <xs:documentation source="deprecated">32.0</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
             <xs:documentation xml:lang="en">
                 A single providerVdcResourcePoolRelation query result in records format.
@@ -4678,6 +5190,7 @@
     <xs:complexType name="QueryResultProviderVdcResourcePoolRelationRecordType">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
+            <xs:documentation source="deprecated">32.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Type for a single providerVdcResourcePoolRelation query result in records format.
             </xs:documentation>
@@ -4797,8 +5310,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="DatastoreProviderVdcRelationRecord" type="QueryResultDatastoreProviderVdcRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="DatastoreProviderVdcRelationRecord" type="QueryResultDatastoreProviderVdcRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -4939,8 +5451,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminUserRecord" type="QueryResultAdminUserRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminUserRecord" type="QueryResultAdminUserRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5073,8 +5584,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminGroupRecord" type="QueryResultAdminGroupRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminGroupRecord" type="QueryResultAdminGroupRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5144,8 +5654,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminVAppNetworkRecord" type="QueryResultAdminVAppNetworkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminVAppNetworkRecord" type="QueryResultAdminVAppNetworkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5210,6 +5719,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="subnetPrefixLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">1.5</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Prefix length
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="dns1" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -5268,8 +5786,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminCatalogRecord" type="QueryResultAdminCatalogRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminCatalogRecord" type="QueryResultAdminCatalogRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5383,8 +5900,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminCatalogItemRecord" type="QueryResultAdminCatalogItemRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminCatalogItemRecord" type="QueryResultAdminCatalogItemRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5552,8 +6068,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="CatalogItemRecord" type="QueryResultCatalogItemRecordType"
-                substitutionGroup="Record">
+    <xs:element name="CatalogItemRecord" type="QueryResultCatalogItemRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5712,8 +6227,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminMediaRecord" type="QueryResultAdminMediaRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminMediaRecord" type="QueryResultAdminMediaRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -5882,8 +6396,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminVAppTemplateRecord" type="QueryResultAdminVAppTemplateRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminVAppTemplateRecord" type="QueryResultAdminVAppTemplateRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6079,8 +6592,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminShadowVMRecord" type="QueryResultAdminShadowVMRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminShadowVMRecord" type="QueryResultAdminShadowVMRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6130,7 +6642,8 @@
                 <xs:attribute name="shadowVApp" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
-                        <xs:appinfo><meta:version removed-in="REMOVED_VERSION_15_51"/></xs:appinfo>
+                        <xs:appinfo><meta:version removed-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">30.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Shadow vApp reference or id
@@ -6240,8 +6753,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="TaskRecord" type="QueryResultTaskRecordType"
-                substitutionGroup="Record">
+    <xs:element name="TaskRecord" type="QueryResultTaskRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6285,6 +6797,26 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             The name of this task.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="operationFull" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">30.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The full human readable name of this task.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="message" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            message
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -6375,8 +6907,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminTaskRecord" type="QueryResultAdminTaskRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminTaskRecord" type="QueryResultAdminTaskRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6420,6 +6951,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             The name of this task.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="operationFull" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">30.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The full human readable name of this task.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -6538,8 +7079,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="BlockingTaskRecord" type="QueryResultBlockingTaskRecordType"
-                substitutionGroup="Record">
+    <xs:element name="BlockingTaskRecord" type="QueryResultBlockingTaskRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">1.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6649,6 +7189,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Description of the blocking task.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="jobStatus" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">1.5</xs:documentation>
@@ -6672,8 +7222,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="DiskRecord" type="QueryResultDiskRecordType"
-                substitutionGroup="Record">
+    <xs:element name="DiskRecord" type="QueryResultDiskRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6687,7 +7236,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single disk query result in records format.
             </xs:documentation>
@@ -6715,13 +7263,35 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="sizeB" type="xs:long">
+                <xs:attribute name="description" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sizeB" use="optional" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">5.1</xs:documentation>
+                        <xs:documentation source="deprecated">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="5.1" removed-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">33.0</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
                             Size of the disk in bytes
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sizeMb" use="optional" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Size of the disk in MB
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -6835,6 +7405,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="attachedVmCount" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">5.1</xs:documentation>
+                        <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of VMs the disk is attached to
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="isAttached" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
@@ -6849,8 +7429,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VmDiskRelationRecord" type="QueryResultVmDiskRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VmDiskRelationRecord" type="QueryResultVmDiskRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6864,7 +7443,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single vmDiskRelation query result in records format.
             </xs:documentation>
@@ -6906,8 +7484,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminDiskRecord" type="QueryResultAdminDiskRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminDiskRecord" type="QueryResultAdminDiskRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -6921,7 +7498,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminDisk query result in records format.
             </xs:documentation>
@@ -6935,7 +7511,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -6949,13 +7525,35 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="sizeB" type="xs:long">
+                <xs:attribute name="description" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Size of disk in bytes
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sizeB" use="optional" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">5.1</xs:documentation>
+                        <xs:documentation source="deprecated">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="5.1" removed-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="removed-in">33.0</xs:documentation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Size of the disk in bytes
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sizeMb" use="optional" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Size of the disk in MB
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -7089,6 +7687,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="attachedVmCount" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">5.1</xs:documentation>
+                        <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of VMs the disk is attached to
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="isAttached" type="xs:boolean">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
@@ -7103,8 +7711,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminVmDiskRelationRecord" type="QueryResultAdminVmDiskRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminVmDiskRelationRecord" type="QueryResultAdminVmDiskRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7118,7 +7725,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminVMDiskRelation query result in records format.
             </xs:documentation>
@@ -7160,8 +7766,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ConditionRecord" type="QueryResultConditionRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ConditionRecord" type="QueryResultConditionRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7175,7 +7780,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single condition query result in records format.
             </xs:documentation>
@@ -7247,8 +7851,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminEventRecord" type="QueryResultAdminEventRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminEventRecord" type="QueryResultAdminEventRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7262,7 +7865,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminEvent query result in records format.
             </xs:documentation>
@@ -7350,6 +7952,26 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Description
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="details" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Details
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="serviceNamespace" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
@@ -7394,8 +8016,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="StrandedItemRecord" type="QueryResultStrandedItemRecordType"
-                substitutionGroup="Record">
+    <xs:element name="StrandedItemRecord" type="QueryResultStrandedItemRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7409,7 +8030,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single strandedItem query result in records format.
             </xs:documentation>
@@ -7424,6 +8044,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             The name of this stranded item.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Description for the stranded item.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -7457,6 +8087,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="message" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">5.1</xs:documentation>
+                        <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            message
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="parent" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
@@ -7481,8 +8121,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminServiceRecord" type="QueryResultAdminServiceRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminServiceRecord" type="QueryResultAdminServiceRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7496,7 +8135,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminService query result in records format.
             </xs:documentation>
@@ -7588,8 +8226,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ServiceRecord" type="QueryResultServiceRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ServiceRecord" type="QueryResultServiceRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7603,7 +8240,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single service query result in records format.
             </xs:documentation>
@@ -7645,8 +8281,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ServiceLinkRecord" type="QueryResultServiceLinkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ServiceLinkRecord" type="QueryResultServiceLinkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7660,7 +8295,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single serviceLink query result in records format.
             </xs:documentation>
@@ -7732,8 +8366,112 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="OrgVdcStorageProfileRecord" type="QueryResultOrgVdcStorageProfileRecordType"
-                substitutionGroup="Record">
+    <xs:element name="StorageProfileRecord" type="QueryResultStorageProfileRecordType" substitutionGroup="Record">
+        <xs:annotation>
+            <xs:documentation source="added-in">32.0</xs:documentation>
+            <xs:documentation source="modifiable">always</xs:documentation>
+            <xs:documentation xml:lang="en">
+                A single storageProfile query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="QueryResultStorageProfileRecordType">
+        <xs:annotation>
+            <xs:documentation source="added-in">32.0</xs:documentation>
+            <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Type for a single storageProfile query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="QueryResultRecordType">
+                <xs:attribute name="name" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Name of the storage profile
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="numberOfProviderVdcs" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of provider VDCs that have access to this profile
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="numberOfOrgVdcs" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of Organization VDCs that have access to this profile
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="numberOfDatastores" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Number of datastores associated with this profile
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="requestedMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Storage requested by all vms for this storage profile in mega bytes
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="totalMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Total storage for this storage profile in mega bytes
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="usedMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Storage used by entities associated with this storage profile in mega bytes
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="provisionedMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Provisioned storage for this storage profile in mega bytes
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OrgVdcStorageProfileRecord" type="QueryResultOrgVdcStorageProfileRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7747,7 +8485,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single orgVdcStorageProfile query result in records format.
             </xs:documentation>
@@ -7785,7 +8522,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="storageUsedMB" type="xs:int">
+                <xs:attribute name="storageUsedMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
@@ -7795,7 +8532,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="storageLimitMB" type="xs:int">
+                <xs:attribute name="storageLimitMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
@@ -7869,8 +8606,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminOrgVdcStorageProfileRecord" type="QueryResultAdminOrgVdcStorageProfileRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminOrgVdcStorageProfileRecord" type="QueryResultAdminOrgVdcStorageProfileRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -7884,7 +8620,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminOrgVdcStorageProfile query result in records format.
             </xs:documentation>
@@ -7922,7 +8657,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="storageUsedMB" type="xs:int">
+                <xs:attribute name="storageUsedMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
@@ -7932,7 +8667,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="storageLimitMB" type="xs:int">
+                <xs:attribute name="storageLimitMB" type="xs:long">
                     <xs:annotation>
                         <xs:documentation source="added-in">5.1</xs:documentation>
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
@@ -8026,8 +8761,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ProviderVdcStorageProfileRecord" type="QueryResultProviderVdcStorageProfileRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ProviderVdcStorageProfileRecord" type="QueryResultProviderVdcStorageProfileRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8041,7 +8775,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single providerVdcStorageProfile query result in records format.
             </xs:documentation>
@@ -8085,7 +8818,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -8095,7 +8828,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -8105,7 +8838,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -8173,8 +8906,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ApiFilterRecord" type="QueryResultApiFilterRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ApiFilterRecord" type="QueryResultApiFilterRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8188,7 +8920,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single apiFilter query result in records format.
             </xs:documentation>
@@ -8220,8 +8951,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminApiDefinitionRecord" type="QueryResultAdminApiDefinitionRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminApiDefinitionRecord" type="QueryResultAdminApiDefinitionRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8235,7 +8965,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminApiDefinition query result in records format.
             </xs:documentation>
@@ -8327,8 +9056,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ApiDefinitionRecord" type="QueryResultApiDefinitionRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ApiDefinitionRecord" type="QueryResultApiDefinitionRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8342,7 +9070,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single apiDefinition query result in records format.
             </xs:documentation>
@@ -8434,8 +9161,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminFileDescriptorRecord" type="QueryResultAdminFileDescriptorRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminFileDescriptorRecord" type="QueryResultAdminFileDescriptorRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8449,7 +9175,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminFileDescriptor query result in records format.
             </xs:documentation>
@@ -8571,8 +9296,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="FileDescriptorRecord" type="QueryResultFileDescriptorRecordType"
-                substitutionGroup="Record">
+    <xs:element name="FileDescriptorRecord" type="QueryResultFileDescriptorRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8586,7 +9310,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single fileDescriptor query result in records format.
             </xs:documentation>
@@ -8708,8 +9431,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ResourceClassActionRecord" type="QueryResultResourceClassActionRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ResourceClassActionRecord" type="QueryResultResourceClassActionRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8723,7 +9445,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single resourceClassAction query result in records format.
             </xs:documentation>
@@ -8775,8 +9496,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AclRuleRecord" type="QueryResultAclRuleRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AclRuleRecord" type="QueryResultAclRuleRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8790,7 +9510,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single aclRule query result in records format.
             </xs:documentation>
@@ -8892,8 +9611,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ResourceClassRecord" type="QueryResultResourceClassRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ResourceClassRecord" type="QueryResultResourceClassRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8907,7 +9625,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single resourceClass query result in records format.
             </xs:documentation>
@@ -8979,8 +9696,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ServiceResourceRecord" type="QueryResultServiceResourceRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ServiceResourceRecord" type="QueryResultServiceResourceRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -8994,7 +9710,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single serviceResource query result in records format.
             </xs:documentation>
@@ -9046,8 +9761,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="EdgeGatewayRecord" type="QueryResultEdgeGatewayRecordType"
-                substitutionGroup="Record">
+    <xs:element name="EdgeGatewayRecord" type="QueryResultEdgeGatewayRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9061,7 +9775,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single edgeGateway query result in records format.
             </xs:documentation>
@@ -9119,13 +9832,33 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="edgeGatewayType" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="orgVdcName" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">29.0</xs:documentation>
                         <xs:appinfo><meta:version added-in="29.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="orgName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Organization name
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9145,7 +9878,7 @@
                         <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9179,12 +9912,21 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="egressPointId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Id of the egress point using this gateway
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="OrgVdcNetworkRecord" type="QueryResultOrgVdcNetworkRecordType"
-                substitutionGroup="Record">
+    <xs:element name="OrgVdcNetworkRecord" type="QueryResultOrgVdcNetworkRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9198,7 +9940,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single orgVdcNetwork query result in records format.
             </xs:documentation>
@@ -9233,6 +9974,16 @@
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Netmask
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="subnetPrefixLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">5.1</xs:documentation>
+                        <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Prefix length
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9368,21 +10119,31 @@
                 </xs:attribute>
                 <xs:attribute name="crossVdcNetworkId" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
                             Owner cross-vdc network Id
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="crossVdcNetworkSiteId" type="xs:string">
+                <xs:attribute name="vdcGroupId" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation source="added-in">30.0</xs:documentation>
-                        <xs:appinfo><meta:version added-in="30.0"/></xs:appinfo>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Site Id of owning cross-vdc network
+                            vDC Group Id of owning cross-vdc network
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="crossVdcNetworkLocationId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Org and Site Ids of cross-vdc network
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9390,8 +10151,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VAppOrgVdcNetworkRelationRecord" type="QueryResultVAppOrgVdcNetworkRelationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VAppOrgVdcNetworkRelationRecord" type="QueryResultVAppOrgVdcNetworkRelationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9405,7 +10165,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single vAppOrgVdcNetworkRelation query result in records format.
             </xs:documentation>
@@ -9487,8 +10246,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ExternalLocalizationRecord" type="QueryResultExternalLocalizationRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ExternalLocalizationRecord" type="QueryResultExternalLocalizationRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9502,7 +10260,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single externalLocalization query result in records format.
             </xs:documentation>
@@ -9554,8 +10311,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ResourcePoolVMRecord" type="QueryResultResourcePoolVMRecordType"
-                substitutionGroup="Record">
+    <xs:element name="ResourcePoolVMRecord" type="QueryResultResourcePoolVMRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9569,7 +10325,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single resourcePoolVmList query result in records format.
             </xs:documentation>
@@ -9651,8 +10406,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VmGroupVmsRecord" type="QueryResultVmGroupVmsRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VmGroupVmsRecord" type="QueryResultVmGroupVmsRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9666,7 +10420,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">5.5</xs:documentation>
             <xs:appinfo><meta:version added-in="5.5"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single vmGroupVms query result in records format.
             </xs:documentation>
@@ -9788,8 +10541,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="VmGroupsRecord" type="QueryResultVmGroupsRecordType"
-                substitutionGroup="Record">
+    <xs:element name="VmGroupsRecord" type="QueryResultVmGroupsRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">27.0</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9803,7 +10555,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">27.0</xs:documentation>
             <xs:appinfo><meta:version added-in="27.0"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single vmGroups query result in records format.
             </xs:documentation>
@@ -9841,6 +10592,16 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="clusterName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The name of the cluster containing the VM group.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="vcId" type="xs:string">
                     <xs:annotation>
                         <xs:documentation source="added-in">27.0</xs:documentation>
@@ -9851,12 +10612,21 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="namedVmGroupId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">33.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The ID of the NamedVMGroup for this vmGroup.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AdminRoleRecord" type="QueryResultAdminRoleRecordType"
-                substitutionGroup="Record">
+    <xs:element name="AdminRoleRecord" type="QueryResultAdminRoleRecordType" substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">27.0</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -9870,7 +10640,6 @@
         <xs:annotation>
             <xs:documentation source="added-in">27.0</xs:documentation>
             <xs:appinfo><meta:version added-in="27.0"/></xs:appinfo>
-
             <xs:documentation xml:lang="en">
                 Type for a single adminRole query result in records format.
             </xs:documentation>
@@ -9884,7 +10653,7 @@
                         <xs:appinfo><meta:version added-in="27.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9894,7 +10663,7 @@
                         <xs:appinfo><meta:version added-in="27.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9904,7 +10673,7 @@
                         <xs:appinfo><meta:version added-in="27.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-
+                            
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9914,7 +10683,235 @@
                         <xs:appinfo><meta:version added-in="27.0"/></xs:appinfo>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
+    <xs:element name="NsxTManagerRecord" type="QueryResultNsxTManagerRecordType" substitutionGroup="Record">
+        <xs:annotation>
+            <xs:documentation source="added-in">31.0</xs:documentation>
+            <xs:documentation source="modifiable">always</xs:documentation>
+            <xs:documentation xml:lang="en">
+                A single nsxTManager query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="QueryResultNsxTManagerRecordType">
+        <xs:annotation>
+            <xs:documentation source="added-in">31.0</xs:documentation>
+            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Type for a single nsxTManager query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="QueryResultRecordType">
+                <xs:attribute name="name" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The name of this manager.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="url" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Url
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="AdminOrgVdcTemplateRecord" type="QueryResultAdminOrgVdcTemplateRecordType" substitutionGroup="Record">
+        <xs:annotation>
+            <xs:documentation source="added-in">1.5</xs:documentation>
+            <xs:documentation source="modifiable">always</xs:documentation>
+            <xs:documentation xml:lang="en">
+                A single adminOrgVdcTemplate query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="QueryResultAdminOrgVdcTemplateRecordType">
+        <xs:annotation>
+            <xs:documentation source="added-in">1.5</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Type for a single adminOrgVdcTemplate query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="QueryResultRecordType">
+                <xs:attribute name="name" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The name of this template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The description of this template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="tenantVisibleName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The tenant-visible name of this template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="tenantVisibleDescription" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The tenant-visible description of this template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OrgVdcTemplateRecord" type="QueryResultOrgVdcTemplateRecordType" substitutionGroup="Record">
+        <xs:annotation>
+            <xs:documentation source="added-in">1.5</xs:documentation>
+            <xs:documentation source="modifiable">always</xs:documentation>
+            <xs:documentation xml:lang="en">
+                A single orgVdcTemplate query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="QueryResultOrgVdcTemplateRecordType">
+        <xs:annotation>
+            <xs:documentation source="added-in">1.5</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Type for a single orgVdcTemplate query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="QueryResultRecordType">
+                <xs:attribute name="name" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The name of this template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            The description of this template.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="org" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">31.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="GatewayUplinksRecord" type="QueryResultGatewayUplinksRecordType" substitutionGroup="Record">
+        <xs:annotation>
+            <xs:documentation source="added-in">32.0</xs:documentation>
+            <xs:documentation source="modifiable">always</xs:documentation>
+            <xs:documentation xml:lang="en">
+                A single gatewayUplinks query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="QueryResultGatewayUplinksRecordType">
+        <xs:annotation>
+            <xs:documentation source="added-in">32.0</xs:documentation>
+            <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Type for a single gatewayUplinks query result in records format.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="QueryResultRecordType">
+                <xs:attribute name="ipAddress" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            IP address
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="gatewayId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            ID of the gateway that has consumed the ipAddress
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="networkName" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            name of the network from which the ipAddress is consumed
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="category" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation source="added-in">32.0</xs:documentation>
+                        <xs:appinfo><meta:version added-in="32.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Category under which the ipAddress is consumed
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -9923,3 +10920,4 @@
     </xs:complexType>
 
 </xs:schema>
+

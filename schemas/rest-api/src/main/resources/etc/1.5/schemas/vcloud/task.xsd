@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -136,6 +137,17 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="VcTaskList" type="VcTaskListType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                List of Virtual Center tasks related to this vCD task.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="Result" type="ResultType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="13.0"/></xs:appinfo>
@@ -162,8 +174,6 @@
                             success.)&lt;br&gt;
                             &lt;b&gt;error&lt;/b&gt; (The task encountered an error while
                             running.)&lt;br&gt;
-                            &lt;b&gt;canceled&lt;/b&gt; (The task was canceled by the owner or an
-                            administrator.)&lt;br&gt;
                             &lt;b&gt;aborted&lt;/b&gt; (The task was aborted by an administrative
                             action.)
                         </xs:documentation>
@@ -253,34 +263,92 @@
             <xs:appinfo>
                 <meta:content-type>application/vnd.vmware.admin.taskOperationList</meta:content-type>
             </xs:appinfo>
-             <xs:documentation xml:lang="en">
-                 List of operation names.
-             </xs:documentation>
-             <xs:documentation source="since">1.5</xs:documentation>
+            <xs:documentation xml:lang="en">
+                List of operation names.
+            </xs:documentation>
+            <xs:documentation source="since">1.5</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="ResourceType">
                 <xs:sequence>
                     <xs:element name="Operation" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-                       <xs:annotation>
-                          <xs:documentation source="since">1.5</xs:documentation>
-                          <xs:documentation>
-                             An operation that will be enabled as a blocking
-                             task. See the vCloud API Programming Guide for
-                             the operation names.
-                          </xs:documentation>
-                          <xs:documentation source="required">false</xs:documentation>
-                       </xs:annotation>
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version removed-in="33.0" />
+                            </xs:appinfo>
+                            <xs:documentation source="since">1.5</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                An operation that will be enabled as a blocking
+                                task. See the vCloud API Programming Guide for
+                                the operation names.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element type="TaskOperationType" name="TaskOperationType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="33.0"/>
+                            </xs:appinfo>
+                            <xs:documentation source="since">9.8</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                An operation, along with its category,
+                                that will be enabled as a blocking task.
+                                See the vCloud API Programming Guide for
+                                the operation names.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                        </xs:annotation>
                     </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="TaskOperationType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:content-type>application/vnd.vmware.admin.taskOperation</meta:content-type>
+                <meta:version added-in="33.0"/>
+            </xs:appinfo>
+            <xs:documentation xml:lang="en">
+                A task operation with it's associated category.
+            </xs:documentation>
+            <xs:documentation source="since">33.0</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="Category" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation source="since">33.0</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        A category to which an operation is assigned.
+                    </xs:documentation>
+                    <xs:documentation source="required">false</xs:documentation>
+                    <xs:documentation source="modifiable">none</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Operation" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation source="since">33.0</xs:documentation>
+                    <xs:documentation xml:lang="en">
+                        An operation that will be enabled, each operation name
+                        must be unique.
+                        See the vCloud API Programming Guide for
+                        the operation names.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                    <xs:documentation source="modifiable">none</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:element name="TaskPrototype" type="TaskPrototypeType" />
 
     <xs:complexType name="TaskPrototypeType">
-    <xs:annotation>
+        <xs:annotation>
             <xs:appinfo>
                 <meta:content-type>application/vnd.vmware.vcloud.taskPrototype</meta:content-type>
             </xs:appinfo>
@@ -324,4 +392,127 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
+
+    <xs:complexType name="VcTaskListType">
+        <xs:annotation>
+            <xs:documentation source="since">33.0</xs:documentation>
+            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Container for Virtual Center tasks.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="VCloudExtensibleType">
+                <xs:sequence>
+                    <xs:element name="VcTask" type="VcTaskType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="since">33.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="VcTaskType">
+        <xs:annotation>
+            <xs:documentation source="since">33.0</xs:documentation>
+            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+            <xs:documentation xml:lang="en">
+                Virtual Center task.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="moref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="status" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="description" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="errorMessage" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="objectName" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="objectType" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="objectMoref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="virtualCenterID" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="startTime" type="xs:dateTime" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="endTime" type="xs:dateTime" use="optional">
+            <xs:annotation>
+                <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                <xs:documentation source="since">33.0</xs:documentation>
+                <xs:documentation source="modifiable">none</xs:documentation>
+                <xs:documentation source="required">false</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
 </xs:schema>
+
