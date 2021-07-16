@@ -1,29 +1,129 @@
 # ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2011-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017 -2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
 # ******************************************************************************
+
 swagger: "2.0"
 
 info:
-  title: Umbrella vcloud YAML
-  description: Top level YAML file to contain all vcloud openapi schemas
-  version: "1.0"
+  title: vCloud Director OpenAPI
+  version: "33.0"
+  # When editing this description, be careful about how it renders in the docs
+  description: |
+    vCloud Director OpenAPI is a new vCloud Director API that is defined using the OpenAPI standards.<br/>
+    This ReSTful API borrows some elements of the legacy vCloud Director API and establishes new patterns for use
+    as described below.
+    <h4>Authentication</h4>
+    Authentication and Authorization schemes are the same as those for the legacy APIs. You can authenticate
+    using the JWT token via the <code>Authorization</code> header or specifying a session using
+    <code>x-vcloud-authorization</code> (The latter form is deprecated).
+    <h4>Operation Patterns</h4>
+    This API follows the following general guidelines to establish a consistent CRUD pattern:
+    <table>
+    <tr>
+      <th>Operation</th><th>Description</th><th>Response Code</th><th>Response Content</th>
+    </tr><tr>
+      <td>GET /items<td>Returns a paginated list of items<td>200<td>Response will include Navigational links to the items in the list.
+    </tr><tr>
+      <td>POST /items<td>Returns newly created item<td>201<td>Content-Location header links to the newly created item
+    </tr><tr>
+      <td>GET /items/urn<td>Returns an individual item<td>200<td>A single item using same data type as that included in list above
+    </tr><tr>
+      <td>PUT /items/urn<td>Updates an individual item<td>200<td>Updated view of the item is returned
+    </tr><tr>
+      <td>DELETE /items/urn<td>Deletes the item<td>204<td>No content is returned.
+    </tr>
+    </table>
+    <h5>Asynchronous operations</h5>
+    Asynchronous operations are determined by the server. In those cases, instead of responding as described above,
+    the server responds with an HTTP Response code 202 and an empty body. The tracking task (which is the same task as
+    all legacy vCD operations use) is linked via the URI provided in the <code>Location</code> header.<br/>
+    All API calls can choose to service a request asynchronously or synchronously as determined by the server upon
+    interpreting the request. Operations that choose to exhibit this dual behavior will have both options documented by
+    specifying both response code(s) below. The caller must be prepared to handle responses to such API calls by
+    inspecting the HTTP Response code.
+    <h5>Error Conditions</h5>
+    <b>All</b> operations report errors using the following vCD error reporting rules:
+    <ul>
+      <li>400: Bad Request - In event of bad request due to incorrect data or other user error</li>
+      <li>401: Bad Request - If user is unauthenticated or their session has expired</li>
+      <li>403: Forbidden - If the user is not authorized or the entity does not exist</li>
+    </ul>
+    <h4>OpenAPI Design Concepts and Principles</h4>
+    <ul>
+      <li>IDs are full Uniform Resource Names (URNs).</li>
+      <li>vCloud OpenAPI's <code>Content-Type</code> is always <code>application/json</code></li>
+      <li>REST links are in the Link header.</li>
+      <ul>
+        <li>Multiple relationships for any link are represented by multiple values in a space-separated list.</li>
+        <li>Links have a custom vCloud Director-specific &quot;model&quot; attribute that hints at the applicable data
+            type for the links.</li>
+        <li>title + rel + model attributes evaluates to a unique link.</li>
+        <li>Links follow Hypermedia as the Engine of Application State (HATEOAS) principles. Links are present if
+            certain operations are present and permitted for the user&quot;s current role and the state of the
+            referred entities.</li>
+      </ul>
+      <li>APIs follow a flat structure relying on cross-referencing other entities instead of the navigational style
+          used by the legacy vCloud APIs.</li>
+      <li>Most endpoints that return a list support filtering and sorting similar to the query service in the legacy
+          vCloud APIs.</li>
+      <li>Accept header must be included to specify the API version for the request similar to calls to existing legacy
+          vCloud APIs.</li>
+      <li>Each feature has a version in the path element present in its URL.<br/>
+          <b>Note</b> API URL's without a version in their paths must be considered experimental.</li>
+    </ul>
 
 basePath: /cloudapi
-
 schemes:
   - https
+produces:
+  - '*/*'
 
 paths:
+
+  /:
+    get:
+      tags:
+        - cloudApiBase
+      summary: Get base navigation links
+      description: Retrieves links to start navigation
+      operationId: getBaseLinks
+      responses:
+        '204':
+          description: Base links successfully retrieved
+        '401':
+          description: The user is not authorized to retrieve base links
+
   /branding:
     $ref: "./branding/branding.yaml#/paths/branding"
 
   /branding/logo:
     $ref: "./branding/branding.yaml#/paths/logo"
 
+  /branding/icon:
+    $ref: "./branding/branding.yaml#/paths/icon"
+
+  /branding/tenant/{org}:
+    $ref: "./branding/branding.yaml#/paths/org-branding"
+
+  /branding/tenant/{org}/logo:
+    $ref: "./branding/branding.yaml#/paths/org-logo"
+
+  /branding/tenant/{org}/icon:
+    $ref: "./branding/branding.yaml#/paths/org-icon"
+
   /branding/themes:
     $ref: "./branding/branding.yaml#/paths/themes"
+
+  /branding/themes/{name}:
+    $ref: "./branding/branding.yaml#/paths/theme-name"
+
+  /branding/themes/{name}/css:
+    $ref: "./branding/branding.yaml#/paths/theme-name-css"
+
+  /branding/themes/{name}/contents:
+    $ref: "./branding/branding.yaml#/paths/theme-name-contents"
 
   /extensions/ui:
     $ref: "./extensions/extensions.yaml#/paths/extensions-ui"
@@ -48,6 +148,9 @@ paths:
 
   /extensions/ui/{id}/tenants/unpublishAll:
     $ref: "./extensions/extensions.yaml#/paths/extensions-ui-id-plugin-tenants-unpublish-all"
+
+  /extensions/ui/extensionPoints:
+    $ref: "./extensions/extensions.yaml#/paths/extensions-ui-extension-point-summary"
 
   /serviceItem:
     $ref: "./services/services.yaml#/paths/service-items"
@@ -96,7 +199,10 @@ paths:
   #enforce generation of referred constraints
   /workflows/constraints:
     $ref: "./vro/workflowExecution.yaml#/paths/supported-constraints"
-  #END temporary codegen placeholder
+
+  #enforce generation of common Page type to be used for paged lists
+  /query/page:
+    $ref: "./common/query.yaml#/paths/page-placeholder"
 
   /vro/servers:
     $ref: "./vro/vro.yaml#/paths/vros"
@@ -104,23 +210,35 @@ paths:
   /vro/servers/{id}:
     $ref: "./vro/vro.yaml#/paths/vro"
 
+  /vro/servers/{vroId}/sdkObjects/{target}:
+    $ref: "./vro/vro.yaml#/paths/vroSdkObjectsBase"
+
+  /vro/servers/{vroId}/sdkObjects/{target}/{browsePaths:.+}:
+    $ref: "./vro/vro.yaml#/paths/vroSdkObjectsBrowse"
+
+  /vro/servers/{vroId}/entityTypes:
+    $ref: "./vro/vro.yaml#/paths/pluginList"
+
+  /vro/servers/{vroId}/entityTypes/{pluginName}:
+    $ref: "./vro/vro.yaml#/paths/pluginTypeList"
+
+########################################################
+#
+# These API's will be deleted after transitioning to above APIs
+#
+########################################################
+
   /vro/servers/{vroServerId}/workflows:
     $ref: "./vro/vro.yaml#/paths/queryWorkflows"
 
   /vro/servers/{vroId}/inventory{any:.*}:
     $ref: "./vro/vro.yaml#/paths/vroInventory"
 
-  /vro/servers/{vroId}/catalog:
-    $ref: "./vro/vro.yaml#/paths/vroCatalogBase"
-
-  /vro/servers/{vroId}/catalog/{plugin}:
-    $ref: "./vro/vro.yaml#/paths/vroCatalogPlugin"
-
-  /vro/servers/{vroId}/catalog/{plugin}/{type}:
-    $ref: "./vro/vro.yaml#/paths/vroCatalogPluginType"
-
-  /vro/servers/{vroId}/catalog/{plugin}/{type}/{itemId}:
-    $ref: "./vro/vro.yaml#/paths/vroCatalogPluginTypeItem"
+########################################################
+#
+# Above API's will be deleted after transitioning to above APIs
+#
+########################################################
 
   /workflows/{workflowId}/executions:
     $ref: "./vro/workflowExecution.yaml#/paths/workflow-executions"
@@ -140,6 +258,11 @@ paths:
   /workflows/{workflowId}/presentation/instances/{presentationExecutionId}:
     $ref: "./vro/workflowExecution.yaml#/paths/workflow-presentation-instance"
 
+### Entity Resolver endpoint below ###
+
+  /1.0.0/entity/{id}:
+    $ref: "./entity-resolver/entityResolver.yaml#/paths/entity-resolver"
+
 ### Custom Entities endpoints below ###
 
   /customEntityTypes:
@@ -147,6 +270,21 @@ paths:
 
   /customEntityTypes/{customEntityTypeId}:
     $ref: "./vro/customEntities.yaml#/paths/custom-entity-type"
+
+  /customEntityTypes/{customEntityTypeId}/tenants:
+    $ref: "./vro/customEntities.yaml#/paths/custom-entity-type-tenants"
+
+  /customEntityTypes/{customEntityTypeId}/tenants/publish:
+    $ref: "./vro/customEntities.yaml#/paths/custom-entity-type-tenants-publish"
+
+  /customEntityTypes/{customEntityTypeId}/tenants/unpublish:
+    $ref: "./vro/customEntities.yaml#/paths/custom-entity-type-tenants-unpublish"
+
+  /customEntityTypes/{customEntityTypeId}/tenants/publishAll:
+    $ref: "./vro/customEntities.yaml#/paths/custom-entity-type-tenants-publish-all"
+
+  /customEntityTypes/{customEntityTypeId}/tenants/unpublishAll:
+    $ref: "./vro/customEntities.yaml#/paths/custom-entity-type-tenants-unpublish-all"
 
   /customEntityTypes/{customEntityTypeId}/actions:
     $ref: "./vro/customEntities.yaml#/paths/custom-entity-type-actions"
@@ -163,7 +301,490 @@ paths:
   /customEntities/{customEntityId}/sdkObject:
     $ref: "./vro/customEntities.yaml#/paths/custom-entity-sdk-object"
 
+ ### RBAC 2.0 endpoints below ###
+  /1.0.0/rights:
+    $ref: "./rbac/rights.yaml#/paths/rights"
+
+  /1.0.0/rights/{id}:
+    $ref: "./rbac/rights.yaml#/paths/rights-id"
+
+  /1.0.0/rightsCategories:
+    $ref: "./rbac/rightsCategories.yaml#/paths/rights-categories"
+
+  /1.0.0/rightsCategories/{id}:
+    $ref: "./rbac/rightsCategories.yaml#/paths/rights-category"
+
+  /1.0.0/rightsBundles:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundles"
+
+  /1.0.0/rightsBundles/{id}:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle"
+
+  /1.0.0/rightsBundles/{id}/rights:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle-rights"
+
+  /1.0.0/rightsBundles/{id}/tenants:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle-tenants"
+
+  /1.0.0/rightsBundles/{id}/tenants/publish:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle-tenants-publish"
+
+  /1.0.0/rightsBundles/{id}/tenants/unpublish:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle-tenants-unpublish"
+
+  /1.0.0/rightsBundles/{id}/tenants/publishAll:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle-tenants-publish-all"
+
+  /1.0.0/rightsBundles/{id}/tenants/unpublishAll:
+    $ref: "./rbac/rightsBundles.yaml#/paths/rights-bundle-tenants-unpublish-all"
+
+  /1.0.0/globalRoles:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-roles"
+
+  /1.0.0/globalRoles/{id}:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role"
+
+  /1.0.0/globalRoles/{id}/rights:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role-rights"
+
+  /1.0.0/globalRoles/{id}/tenants:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role-tenants"
+
+  /1.0.0/globalRoles/{id}/tenants/publish:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role-tenants-publish"
+
+  /1.0.0/globalRoles/{id}/tenants/unpublish:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role-tenants-unpublish"
+
+  /1.0.0/globalRoles/{id}/tenants/publishAll:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role-tenants-publish-all"
+
+  /1.0.0/globalRoles/{id}/tenants/unpublishAll:
+    $ref: "./rbac/globalRoles.yaml#/paths/global-role-tenants-unpublish-all"
+
+  /1.0.0/roles:
+    $ref: "./rbac/roles.yaml#/paths/roles"
+
+  /1.0.0/roles/{id}:
+    $ref: "./rbac/roles.yaml#/paths/role"
+
+  /1.0.0/roles/{id}/rights:
+    $ref: "./rbac/roles.yaml#/paths/role-rights"
+
+#### Compute policies API below ####
+
+  /1.0.0/pvdcComputePolicies:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/pvdc-compute-policies"
+
+  /1.0.0/pvdcComputePolicies/{pvdcComputePolicyId}:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/pvdc-compute-policy"
+
+  /1.0.0/pvdcComputePolicies/{pvdcComputePolicyId}/vms:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/pvdc-compute-policy-vm-refs"
+
+  /1.0.0/vdcComputePolicies:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/vdc-compute-policies"
+
+  /1.0.0/vdcComputePolicies/{vdcComputePolicyId}:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/vdc-compute-policy"
+
+  /1.0.0/vdcComputePolicies/{vdcComputePolicyId}/vms:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/vdc-compute-policy-vm-refs"
+
+  /1.0.0/vdcComputePolicies/{vdcComputePolicyId}/vdcs:
+    $ref: "./compute-policy/compute-policy.yaml#/paths/vdc-refs"
+
+#### Logical Vm Group API below ####
+
+  /1.0.0/logicalVmGroups:
+    $ref: "./compute-policy/logical-vm-group.yaml#/paths/logical-vm-groups"
+
+  /1.0.0/logicalVmGroups/{logicalVmGroupId}:
+    $ref: "./compute-policy/logical-vm-group.yaml#/paths/logical-vm-group"
+
+  /1.0.0/logicalVmGroups/{logicalVmGroupId}/namedVmGroups:
+    $ref: "./compute-policy/logical-vm-group.yaml#/paths/logical-vm-group-named-vm-group-refs"
+
+  /1.0.0/logicalVmGroups/{logicalVmGroupId}/pvdcPolicies:
+    $ref: "./compute-policy/logical-vm-group.yaml#/paths/logical-vm-group-pvdc-policy-refs"
+
+### Custom LDAP Endpoints Below ###
+
+  /1.0.0/ldap/test:
+    $ref: "./ldap/testLdap.yaml#/paths/test"
+
+  /1.0.0/ldap/sync:
+    $ref: "./ldap/syncLdap.yaml#/paths/sync"
+
+  /1.0.0/ldap/search/user:
+    $ref: "./ldap/searchLdap.yaml#/paths/searchUsers"
+
+  /1.0.0/ldap/search/group:
+    $ref: "./ldap/searchLdap.yaml#/paths/searchGroups"
+
+#### Email Settings test API below ####
+
+  /1.0.0/smtp/test:
+    $ref: "./email-settings/testEmailSettings.yaml#/paths/testEmailSettings"
+
+#### vDC Groups API below ####
+
+  /1.0.0/vdcGroups:
+    $ref: "./vdcGroups/vdcGroups.yaml#/paths/vdcGroups"
+
+  /1.0.0/vdcGroups/{vdcGroupId}:
+    $ref: "./vdcGroups/vdcGroups.yaml#/paths/vdcGroup"
+
+  /1.0.0/vdcGroups/{vdcGroupId}/sync:
+    $ref: "./vdcGroups/vdcGroups.yaml#/paths/sync"
+
+  /1.0.0/vdcGroups/{vdcGroupId}/universalRouters:
+    $ref: "./networking/universalRouters.yaml#/paths/universalRoutersForVdcGroup"
+
+  /1.0.0/vdcGroups/{vdcGroupId}/crossVdcNetworks:
+    $ref: "./networking/crossVdcNetworks.yaml#/paths/crossVdcNetworksForVdcGroup"
+
+#### Cross vDC networks ####
+
+  /1.0.0/crossVdcNetworks:
+    $ref: "./networking/crossVdcNetworks.yaml#/paths/crossVdcNetworks"
+
+  /1.0.0/crossVdcNetworks/{crossVdcNetworkId}:
+    $ref: "./networking/crossVdcNetworks.yaml#/paths/crossVdcNetwork"
+
+  /1.0.0/crossVdcNetworks/{crossVdcNetworkId}/sync:
+    $ref: "./networking/crossVdcNetworks.yaml#/paths/sync"
+
+### Edge Gateways ####
+
+  /1.0.0/edgeGateways:
+    $ref: "./networking/edgeGateways.yaml#/paths/edgeGateways"
+
+  /1.0.0/edgeGateways/{gatewayId}:
+    $ref: "./networking/edgeGateways.yaml#/paths/edgeGateway"
+
+  /1.0.0/edgeGateways/{gatewayId}/usedIpAddresses:
+    $ref: "./networking/edgeGateways.yaml#/paths/usedIpAddresses"
+
+  /1.0.0/edgeGateways/{gatewayId}/dns:
+    $ref: "./networking/edgeGatewayDns.yaml#/paths/dns"
+
+  /1.0.0/edgeGateways/{gatewayId}/nat/rules:
+    $ref: "./networking/edgeGatewayNat.yaml#/paths/natRules"
+
+  /1.0.0/edgeGateways/{gatewayId}/nat/rules/{ruleId}:
+    $ref: "./networking/edgeGatewayNat.yaml#/paths/natRule"
+
+  /1.0.0/edgeGateways/{gatewayId}/firewall/rules:
+    $ref: "./networking/edgeGatewayFirewall.yaml#/paths/rules"
+
+  /1.0.0/edgeGateways/{gatewayId}/firewall/rules/{ruleId}:
+    $ref: "./networking/edgeGatewayFirewall.yaml#/paths/rule"
+
+  /1.0.0/edgeGateways/{gatewayId}/ipsec/tunnels:
+    $ref: "./networking/edgeGatewayIpsec.yaml#/paths/ipsecVpnTunnels"
+
+  /1.0.0/edgeGateways/{gatewayId}/ipsec/tunnels/{tunnelId}:
+    $ref: "./networking/edgeGatewayIpsec.yaml#/paths/ipsecVpnTunnel"
+
+  /1.0.0/edgeGateways/{gatewayId}/ipsec/tunnels/defaultConnectionProperties:
+    $ref: "./networking/edgeGatewayIpsec.yaml#/paths/defaultConnectionProperties"
+
+  /1.0.0/edgeGateways/{gatewayId}/ipsec/tunnels/{tunnelId}/connectionProperties:
+    $ref: "./networking/edgeGatewayIpsec.yaml#/paths/ipsecVpnTunnelConnectionProperties"
+
+  /1.0.0/edgeGateways/{gatewayId}/ipsec/tunnels/{tunnelId}/status:
+    $ref: "./networking/edgeGatewayIpsec.yaml#/paths/ipsecVpnTunnelStatus"
+
+  /1.0.0/edgeGateways/{gatewayId}/ipsec/tunnels/{tunnelId}/statistics:
+    $ref: "./networking/edgeGatewayIpsec.yaml#/paths/ipsecVpnTunnelStatistics"
+
+### Edge Clusters ###
+  /1.0.0/edgeClusters:
+    $ref: "./networking/edgeClusters.yaml#/paths/edgeClusters"
+
+  /1.0.0/edgeClusters/{edgeClusterId}:
+    $ref: "./networking/edgeClusters.yaml#/paths/edgeCluster"
+
+#### Universal Routers, Egress Points, and Routing ####
+
+  /1.0.0/universalRouters:
+    $ref: "./networking/universalRouters.yaml#/paths/universalRouters"
+
+  /1.0.0/universalRouters/{universalRouterId}:
+    $ref: "./networking/universalRouters.yaml#/paths/universalRouter"
+
+  /1.0.0/universalRouters/{universalRouterId}/sync:
+    $ref: "./networking/universalRouters.yaml#/paths/sync"
+
+  /1.0.0/universalRouters/{universalRouterId}/dns:
+    $ref: "./networking/universalRouters.yaml#/paths/dns"
+
+  /1.0.0/universalRouters/{universalRouterId}/dhcp:
+    $ref: "./networking/universalRouters.yaml#/paths/dhcp"
+
+  /1.0.0/universalRouters/{universalRouterId}/health:
+    $ref: "./networking/universalRouters.yaml#/paths/health"
+
+  /1.0.0/universalRouters/{universalRouterId}/routing:
+    $ref: "./networking/universalRouting.yaml#/paths/universalEgressRouting"
+
+  /1.0.0/universalRouters/{universalRouterId}/routing/routes:
+    $ref: "./networking/universalRouting.yaml#/paths/universalRouting"
+
+  /1.0.0/universalRouters/{universalRouterId}/routing/routes/sync:
+    $ref: "./networking/universalRouting.yaml#/paths/universalRoutingSync"
+
+  /1.0.0/universalRouters/{universalRouterId}/routing/egressPoints:
+    $ref: "./networking/universalEgressPoints.yaml#/paths/egressPoints"
+
+  /1.0.0/universalRouters/{universalRouterId}/routing/egressPoints/{egressPointId}:
+    $ref: "./networking/universalEgressPoints.yaml#/paths/egressPoint"
+
+  /1.0.0/universalRouters/{universalRouterId}/routing/egressPoints/{egressPointId}/sync:
+    $ref: "./networking/universalEgressPoints.yaml#/paths/sync"
+
+#### Organization vDC networks ####
+  /1.0.0/orgVdcNetworks:
+    $ref: "./networking/orgVdcNetworks.yaml#/paths/orgVdcNetworks"
+
+  /1.0.0/orgVdcNetworks/{vdcNetworkId}:
+    $ref: "./networking/orgVdcNetworks.yaml#/paths/orgVdcNetwork"
+
+  /1.0.0/orgVdcNetworks/{vdcNetworkId}/reset:
+    $ref: "./networking/orgVdcNetworks.yaml#/paths/reset"
+
+  /1.0.0/orgVdcNetworks/{vdcNetworkId}/syncSyslog:
+    $ref: "./networking/orgVdcNetworks.yaml#/paths/syncSyslog"
+
+  /1.0.0/orgVdcNetworks/{vdcNetworkId}/dhcp:
+    $ref: "./networking/orgVdcNetworks.yaml#/paths/dhcp"
+
+  /1.0.0/orgVdcNetworks/{vdcNetworkId}/allocatedIpAddresses:
+    $ref: "./networking/orgVdcNetworks.yaml#/paths/allocatedIpAddresses"
+
+#### Nsx-T resources APIs ####
+  /1.0.0/nsxTResources/importableTier0Routers:
+    $ref: "./networking/nsxTResources.yaml#/paths/importableTier0Routers"
+
+  /1.0.0/nsxTResources/importableTransportZones:
+    $ref: "./networking/nsxTResources.yaml#/paths/importableTransportZones"
+
+#### Nsx-V resources APIs ####
+  /1.0.0/nsxVResources/importableTransportZones:
+    $ref: "./networking/nsxVResources.yaml#/paths/importableTransportZones"
+
+#### User Preferences ####
+  /1.0.0/definitions/preferences:
+    $ref: "./preferences/user-preferences.yaml#/paths/preference-definitions"
+
+  /1.0.0/definitions/preferences/{preferenceDefinitionId}:
+    $ref: "./preferences/user-preferences.yaml#/paths/preference-definition"
+
+  /1.0.0/preferences:
+    $ref: "./preferences/user-preferences.yaml#/paths/preferences"
+
+  /1.0.0/preferences/{classifier}:
+    $ref: "./preferences/user-preferences.yaml#/paths/preference"
+
+#### CPOM endpoints ####
+  /1.0.0/sddcProxiesPac/{id}:
+    $ref: "./cpom/proxy.yaml#/paths/anonymousPacFile"
+
+  /1.0.0/sddcs:
+    $ref: "./cpom/sddc.yaml#/paths/sddcs"
+
+  /1.0.0/sddcs/{id}:
+    $ref: "./cpom/sddc.yaml#/paths/sddc"
+
+  /1.0.0/sddcs/{id}/proxies:
+    $ref: "./cpom/sddc.yaml#/paths/sddc-proxies"
+
+  /1.0.0/sddcs/{id}/owner:
+    $ref: "./cpom/sddc.yaml#/paths/sddc-owner"
+
+  /1.0.0/sddcs/{id}/tenants:
+    $ref: "./cpom/sddc.yaml#/paths/sddc-tenants"
+
+  /1.0.0/sddcs/{id}/tenants/publish:
+    $ref: "./cpom/sddc.yaml#/paths/sddc-tenants-publish"
+
+  /1.0.0/sddcs/{id}/tenants/unpublish:
+    $ref: "./cpom/sddc.yaml#/paths/sddc-tenants-unpublish"
+
+  /1.0.0/sddcProxiesPac:
+    $ref: "./cpom/proxy.yaml#/paths/pacFile"
+
+  /1.0.0/proxies:
+    $ref: "./cpom/proxy.yaml#/paths/proxies"
+
+  /1.0.0/proxies/{id}:
+    $ref: "./cpom/proxy.yaml#/paths/proxy"
+
+  /1.0.0/proxies/{id}/cert:
+    $ref: "./cpom/proxy.yaml#/paths/proxy-cert"
+
+  /1.0.0/proxies/{id}/crl:
+    $ref: "./cpom/proxy.yaml#/paths/proxy-crl"
+
+  /1.0.0/proxies/{id}/thumbprint:
+    $ref: "./cpom/proxy.yaml#/paths/proxy-thumbprint"
+
+  /1.0.0/sddcProxies:
+    $ref: "./cpom/proxy.yaml#/paths/sddcProxies"
+
+  /1.0.0/sddcProxies/{id}:
+    $ref: "./cpom/proxy.yaml#/paths/sddcProxy"
+
+  /1.0.0/sddcProxies/{id}/cert:
+    $ref: "./cpom/proxy.yaml#/paths/sddc-proxy-cert"
+
+  /1.0.0/sddcProxies/{id}/crl:
+    $ref: "./cpom/proxy.yaml#/paths/sddc-proxy-crl"
+
+  /1.0.0/sddcProxies/{id}/thumbprint:
+    $ref: "./cpom/proxy.yaml#/paths/sddc-proxy-thumbprint"
+
+  /1.0.0/tokens:
+    $ref: "./cpom/proxy.yaml#/paths/tokens"
+
+  /1.0.0/tokens/{id}:
+    $ref: "./cpom/proxy.yaml#/paths/token"
+
+  #### Service Application endpoints ####
+  /1.0.0/serviceApps:
+    $ref: "./service-apps/serviceApps.yaml#/paths/serviceApps"
+
+  /1.0.0/serviceApps/{serviceAppId}:
+    $ref: "./service-apps/serviceApps.yaml#/paths/serviceApp"
+
+  /1.0.0/serviceApps/{serviceAppId}/sddcs:
+    $ref: "./service-apps/serviceApps.yaml#/paths/sddcs"
+
+#### External Network endpoints ####
+  /1.0.0/externalNetworks:
+    $ref: "./networking/externalNetworks.yaml#/paths/externalNetworks"
+
+  /1.0.0/externalNetworks/{externalNetworkId}:
+    $ref: "./networking/externalNetworks.yaml#/paths/externalNetwork"
+
+  /1.0.0/externalNetworks/{externalNetworkId}/usedIpAddresses:
+    $ref: "./networking/externalNetworks.yaml#/paths/usedIpAddresses"
+
+  /1.0.0/externalNetworks/{externalNetworkId}/availableIpAddresses:
+    $ref: "./networking/externalNetworks.yaml#/paths/availableIpAddresses"
+
+#### Network Pool endpoints ####
+  /1.0.0/networkPools:
+    $ref: "./networking/networkPools.yaml#/paths/networkPools"
+
+  /1.0.0/networkPools/networkPoolSummaries:
+    $ref: "./networking/networkPools.yaml#/paths/networkPoolSummaries"
+
+  /1.0.0/networkPools/{networkPoolId}:
+    $ref: "./networking/networkPools.yaml#/paths/networkPool"
+
+  /1.0.0/networkPools/{networkPoolId}/sync:
+    $ref: "./networking/networkPools.yaml#/paths/sync"
+
+#### Application Port Profile endpoints ####
+  /1.0.0/applicationPortProfiles:
+    $ref: "./networking/applicationPortProfiles.yaml#/paths/applicationPortProfiles"
+
+  /1.0.0/applicationPortProfiles/{applicationPortProfileId}:
+    $ref: "./networking/applicationPortProfiles.yaml#/paths/applicationPortProfile"
+
+  /1.0.0/applicationPortProfiles/sync:
+    $ref: "./networking/applicationPortProfiles.yaml#/paths/sync"
+
+#### Firewall Group endpoints ####
+  /1.0.0/firewallGroups/summaries:
+    $ref: "./networking/firewallGroups.yaml#/paths/firewallGroupSummaries"
+
+  /1.0.0/firewallGroups:
+    $ref: "./networking/firewallGroups.yaml#/paths/firewallGroups"
+
+  /1.0.0/firewallGroups/{firewallGroupId}:
+    $ref: "./networking/firewallGroups.yaml#/paths/firewallGroup"
+
+#### Provider VDC ####
+  /1.0.0/providerVdcs:
+    $ref: "./pvdc/pvdc.yaml#/paths/providerVdcs"
+
+  /1.0.0/providerVdcs/{pvdcUrn}/infra/resourcePools/browse/:
+    $ref: "./pvdc/pvdc.yaml#/paths/rootResourcePools"
+
+  /1.0.0/providerVdcs/{pvdcUrn}/infra/resourcePools/browse/{moref}:
+    $ref: "./pvdc/pvdc.yaml#/paths/childResourcePools"
+
+### Virtual Centers ###
+  /1.0.0/virtualCenters/{vcUrn}/resourcePools/browse:
+    $ref: "./vc/virtualCenter.yaml#/paths/rootResourcePools"
+
+  /1.0.0/virtualCenters/{vcUrn}/resourcePools/browse/{moref}:
+    $ref: "./vc/virtualCenter.yaml#/paths/childResourcePools"
+
+  /1.0.0/virtualCenters/{vcUrn}/resourcePools/{moref}/hwv:
+    $ref: "./vc/virtualCenter.yaml#/paths/supportedHardwareVersions"
+
+  /1.0.0/virtualCenters/{vcUrn}/storageProfiles:
+    $ref: "./vc/virtualCenter.yaml#/paths/storageProfiles"
+
+  #### vCenter resources APIs ####
+  /1.0.0/virtualCenters/resources/importableDvpgs:
+    $ref: "./networking/vCenterResources.yaml#/paths/importableDistributedPortgroups"
+
+  /1.0.0/virtualCenters/resources/importablePortgroups:
+    $ref: "./networking/vCenterResources.yaml#/paths/importablePortgroups"
+
+  /1.0.0/virtualCenters/resources/dvSwitches:
+    $ref: "./networking/vCenterResources.yaml#/paths/dvSwitches"
+
+#### Org vDC ####
+  /1.0.0/vdcs/{orgVdcId}/maxComputePolicy:
+    $ref: "./vdc/vdcs.yaml#/paths/vdc-max-compute-policy"
+
+  /1.0.0/vdcs/{orgVdcId}/networkProfile:
+    $ref: "./networking/vdcNetworkProfiles.yaml#/paths/vdcNetworkProfile"
+
+  /1.0.0/vdcs/{orgVdcId}/capabilities:
+    $ref: "./vdc/vdcCapabilities.yaml#/paths/capabilities"
+
+  /1.0.0/vdcs/{orgVdcId}/computePolicies:
+    $ref: "./vdc/vdcs.yaml#/paths/computePolicies"
+
+#### Audit Trail endpoints ####
+  /1.0.0/auditTrail:
+    $ref: "./audit-trail/audit-trail.yaml#/paths/auditTrail"
+
+#### Auth endpoints ####
+  /1.0.0/sessions:
+    $ref: "./auth/sessions.yaml#/paths/sessions"
+  /1.0.0/sessions/{id:((?!provider).)*}:
+    $ref: "./auth/sessions.yaml#/paths/session"
+  /1.0.0/sessions/{id:((?!provider).)*}/accessibleLocations:
+    $ref: "./auth/sessions.yaml#/paths/accessibleLocations"
+  /1.0.0/sessions/{id:((?!provider).)*}/token:
+    $ref: "./auth/sessions.yaml#/paths/token"
+  /1.0.0/sessions/provider:
+    $ref: "./auth/sessions.yaml#/paths/provider"
+
+#### Cell ####
+  /1.0.0/cells:
+    $ref: "./cell/cell.yaml#/paths/cells"
+
+  /1.0.0/cells/{cellUrn}:
+    $ref: "./cell/cell.yaml#/paths/cell"
+
 definitions:
   # Common ErrorType definition for exceptions emerging from openapi endpoints.
   Error:
     $ref: "./common/error.yaml#/definitions/Error"
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+security:
+  - ApiKeyAuth: []
+

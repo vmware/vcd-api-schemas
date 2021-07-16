@@ -1,0 +1,208 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Virtual Center API allows for basic CRUD operations of a VC.
+  title: Virtual Center API
+
+paths:
+  rootResourcePools:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get resource pools of a VC
+      description: |
+        Get a list of all root resource pools.
+        If a resource pool is ineligible, but is in the response,
+        this means it has children, which are eligible.
+        A resource pool will be ineligible,
+        unless the cluster has an ESXi host on it.
+        The list will be sorted by name, case insensitive.
+      operationId: getRootResourcePools
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ResourcePools"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  childResourcePools:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get resource pools of a VC
+      description: |
+        Get list of child resource pools of the specified parent.
+        If a resource pool is ineligible, but is in the response,
+        this means it has children, which are eligible.
+        A resource pool will be ineligible,
+        unless the cluster has an ESXi host on it.
+        The list will be sorted by name, case insensitive.
+      operationId: getChildResourcePools
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: moref
+          in: path
+          required: true
+          type: string
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ResourcePools"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  storageProfiles:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get storage profiles of a VC
+      description: |
+        Get a list of all storage profiles for a VC.
+        Supported contexts are:
+        Resource Pool Moref (_context==moref) - |
+        Returns all the storage profiles which are related to a specific Resoure Pool.
+        Example: /cloudapi/{ver}/virtualCenters/{urn}/storageProfiles?filter=_context==resgroup-N
+      operationId: getStorageProfiles
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/StorageProfiles"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  supportedHardwareVersions:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - VirtualCenter
+      summary: Get supported hardware versions of a resource pool
+      description: |
+        Get a set of all supported hardware versions by the esxi hosts in the resource pool.
+      operationId: getSupportedHardwareVersions
+      parameters:
+        - name: vcUrn
+          in: path
+          required: true
+          type: string
+          x-vcloud-constraints:
+            - constraint: Urn
+              args:
+                - arg: vimserver
+        - name: moref
+          in: path
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/HardwareVersions"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  ResourcePools:
+    description: |
+      A list of Resource Pools
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: "./vc/resourcePool.yaml#/definitions/ResourcePool"
+
+  StorageProfiles:
+    description: |
+      A list of Storage Profiles
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: "./vc/virtualCenter.yaml#/definitions/StorageProfile"
+
+  StorageProfile:
+    description: |
+      A Storage Profile.
+    type: object
+    properties:
+      moref:
+        type: string
+        description: The Moref of the Storage Profile.
+      name:
+        type: string
+        description: The name of the Storage Profile.
+
+  HardwareVersions:
+    x-vcloud-added-in: 33.0
+    description: Set of supported ESXi virtual hardware versions.
+    type: object
+    properties:
+      versions:
+        type: array
+        items:
+          type: string
+

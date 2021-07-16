@@ -1,0 +1,43 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Test Email Settings YAML
+  description: API Access to Test Email Settings in VCD
+  version: "1.0"
+
+paths:
+  testEmailSettings:
+    post:
+      tags:
+        - EmailSettings
+      summary: Tests Email Settings and Connection
+      description: |
+        Tests that Email SMTP Settings are valid
+      operationId: testEmailSettings
+      parameters:
+        - in: body
+          name: testEmailRequest
+          description: Email Settings and destination email address for Email Test call
+          required: true
+          schema:
+            $ref: "#/definitions/TestEmailRequest"
+      consumes:
+        - application/json
+      responses:
+        204:
+          description: OK
+
+definitions:
+  TestEmailRequest:
+    type: object
+    properties:
+      emailSettings:
+        $ref: "./emailSettings.yaml#/definitions/EmailSettings"
+      destination:
+        type: string

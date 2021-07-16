@@ -1,0 +1,304 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director vDC groups API allows for management of vDC groups.
+    Once a VDC group is created, user can create universal routers that span those vDCs.
+  version: "1.0"
+  title: vDC Groups API
+
+paths:
+
+  vdcGroups:
+    get:
+      x-vcloud-multisite: true
+      tags:
+        - vdcGroups
+      summary: Get a list of vDC Groups.
+      operationId: getVdcGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VdcGroups"
+    post:
+      tags:
+        - vdcGroups
+      summary: Creates a vDC Group.
+      operationId: createVdcGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcGroup
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcGroup'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  vdcGroup:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+
+    get:
+      tags:
+        - vdcGroup
+      summary: Retrieves a specific vDC Group.
+      operationId: getVdcGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/VdcGroup'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      tags:
+        - vdcGroup
+      summary: Updates a specific vDC Group.  Example is to add/remove a participarting vDC.
+      operationId: updateVdcGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: vdcGroup
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VdcGroup'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - vdcGroup
+      summary: Deletes a vDC Group
+      operationId: deleteVdcGroup
+      parameters:
+        - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  sync:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+
+    post:
+      tags:
+        - vdcGroup
+      summary: |
+        Sync/repair the vDC group. An example usage is to detect if a vDC still exists/is valid.
+        If an Org vDC referenced by the VDC group is deleted or if it is not participating in universal networking,
+        it's status will be updated to OBJECT_NOT_FOUND and the vdc group will be marked as NOT_REALIZED.
+        If the vDC group has universalNetworkingEnabled set to true, this will also initiate a sync of associated router, if any.
+        The router entities like egress points and universal routes will also be marked as NOT_REALIZED
+        if they reference the removed Org vDC.
+      operationId: syncVdcGroup
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  VdcGroup:
+    description: |
+      A vCD Group.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique ID for the vDC Group (read-only).
+      orgId:
+        type: string
+        description: The organization that this group belongs to.
+      name:
+        type: string
+        description: The name of this group. The name must be unique.
+      description:
+        type: string
+        description: The description of this group.
+      participatingOrgVdcs:
+        type: array
+        description: The list of organization vDCs that are participating in this group.
+        items:
+          $ref: "#/definitions/ParticipatingVdcReference"
+      universalNetworkingEnabled:
+        type: boolean
+        description: True means that universal routers can be created. This field cannot be updated.
+      networkPoolUniversalId:
+        type: string
+        description: |
+          The universal network pool that is common to all the participating vDCs. This field is read-only and
+          is derived from the list of participating vDCs.
+      status:
+        $ref: '#/definitions/VdcGroupEntityStatus'
+        description: The status that the group can be in.
+      errorMessage:
+        type: string
+        description: If the group has an error status, a more detailed error message is set here.
+    required:
+      - participatingOrgVdcs
+      - name
+      - orgId
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      orgId:
+        x-vcloud-constraints:
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      participatingOrgVdcs:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      universalNetworkingEnabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      networkPoolUniversalId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      errorMessage:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  ParticipatingVdcReference:
+    description: |
+        A participating vDC
+    type: object
+    properties:
+      vdcRef:
+        $ref: '#/definitions/EntityReference'
+        description: The reference to the vDC that is part of this a vDC group.
+      orgRef:
+        $ref: '#/definitions/EntityReference'
+        description: Read-only field that specifies what organization this vDC is in.
+      siteRef:
+        $ref: '#/definitions/EntityReference'
+        description: The site ID that this vDC belongs to.
+      networkProviderScope:
+        type: string
+        description: Read-only field that specifies the network provider scope of the vDC.
+      remoteOrg:
+        type: boolean
+        description: Read-only field that specifies whether the vDC is local to this VCD cell cluster.
+      status:
+        $ref: '#/definitions/VdcGroupEntityStatus'
+        description: The status that the vDC can be in. An example is if the vDC has been deleted from the system but is still part of the group.
+    required:
+      - vdcRef
+      - siteRef
+    x-vcloud-property-annotations:
+      vdcRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      siteRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      remoteOrg:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  VdcGroups:
+      description: |
+        List of vDC Groups.
+      allOf:
+        - $ref: "./common/query.yaml#/definitions/Page"
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/definitions/VdcGroup'
+
+  VdcGroupEntityStatus:
+    description: |
+      Represents status of vDC group components such as participating vdc's
+      configured routing, egress points, etc.
+    type: object
+    enum:
+      - SAVING
+      - SAVED
+      - CONFIGURING
+      - REALIZED
+      - REALIZATION_FAILED
+      - DELETING
+      - DELETE_FAILED
+      - OBJECT_NOT_FOUND
+      - UNCONFIGURED
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

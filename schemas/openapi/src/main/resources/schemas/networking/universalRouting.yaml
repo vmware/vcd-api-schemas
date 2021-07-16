@@ -1,0 +1,258 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Universal Routing API allows for routing configuration/management for a Universal Router and its associated Egress Points.
+  version: "1.0"
+  title: Universal Routing API
+
+paths:
+
+  universalEgressRouting:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    get:
+      tags:
+        - universalRouting
+      summary: Retrieves Universal Egress Points and routing configuration for a Universal Router.
+      operationId: getUniversalEgressRouting
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UniversalEgressRoutes'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      tags:
+        - universalRouting
+      summary: |
+        Updates the routing configuration using the specified egress points in the universal routes. Any egress point that does not exist will be
+        created before updating routing. Any egress point that currently exists and is not in use by any of the specified routes will be deleted. If the new
+        egress points for routing fail to create, routing will not be updated.
+      operationId: updateUniversalEgressRouting
+      consumes:
+        - application/json
+      parameters:
+        - name: universalEgressRoutes
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UniversalEgressRoutes'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  universalRouting:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    get:
+      tags:
+        - universalRouting
+      summary: Retrieves routing configuration for a Universal Router.
+      operationId: getUniversalRoutes
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UniversalRoutes'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      tags:
+        - universalRouting
+      summary: Updates routing configuration for a Universal Router.
+      operationId: updateUniversalRoutes
+      consumes:
+        - application/json
+      parameters:
+        - name: routes
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UniversalRoutes'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  universalRoutingSync:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    post:
+      tags:
+        - universalRouting
+      summary: Sync/repair the routing configuration for a Universal Router.
+      description: |
+        Sync/repair the universal routes
+      operationId: syncUniversalRoutes
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  UniversalRoutes:
+    description: |
+      List of routes associated with a Universal Router.
+    type: object
+    properties:
+      keepAliveTimer:
+        type: integer
+        description: The Keep Alive Timer is the frequency (in seconds) at which the Universal Router seeds Keep Alive messages to its egress peers.
+      values:
+        type: array
+        description: The list of Universal Routes.
+        items:
+          $ref: '#/definitions/UniversalRoute'
+      providerScopesToForceUnconfigure:
+        type: array
+        description: |
+          The list network provider scopes whose route will be unconfigure forcefully. This means that a route that is in state that normally shouldn't be
+          unconfigurable (i.e. NSX or remote vCD site is down) will still be unconfigured. Errors may be ignored. Note that this force option also affects any route
+          update where a network provider's egress point is modified/changed. vCD will first unconfigure any existing egress point before configuring the new egress
+          point.
+        items:
+          type: string
+    x-vcloud-property-annotations:
+      keepAliveTimer:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      providerScopesToForceUnconfigure:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  UniversalRoute:
+    description: |
+      A Route for a Universal Router.
+    type: object
+    properties:
+      defaultEgress:
+        $ref: '#/definitions/EgressPointReference'
+        description: For a given route, routing by default will go through the default egress point. Every valid/configured route will have a default egress point.
+      standbyEgress:
+        $ref: '#/definitions/EgressPointReference'
+        description: A standby egress point can be configured for failover of routes in case there is an issue routign to the default egress point.
+      networkProviderScope:
+        type: string
+        description: The network provider scope for the given route. There can only be one route per fault domain for a Universal Route.
+      status:
+        $ref: '#/definitions/UniversalRoutingStatus'
+        description: The status of the route (whether it's realized, failed, etc.).
+      errorMessage:
+        type: string
+    required:
+      - networkProviderScope
+    x-vcloud-property-annotations:
+      defaultEgress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      standbyEgress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      errorMessage:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  UniversalEgressRoutes:
+    description: |
+      Object consisting of Egress Points and Universal Routes for a Universal Router.
+    type: object
+    properties:
+      egressPoints:
+        $ref: '#/definitions/EgressPoints'
+        description: The list of Egress Points for routing configuration. This is read-only.
+      universalRoutes:
+        $ref: '#/definitions/UniversalRoutes'
+        description: |
+          The list of Universal Routes for routing configuration.
+    x-vcloud-property-annotations:
+      egressPoints:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      universalRoutes:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  UniversalRoutingStatus:
+    description: |
+      Represents status of given routing configuration, such as realized, universal router routing configuration failed, egress routing configuration failed, etc.
+    type: object
+    enum:
+      - SAVING
+      - SAVED
+      - CONFIGURING
+      - REALIZED
+      - REALIZATION_FAILED
+      - CONFIGURATION_FAILED_UNIVERSAL_ROUTER
+      - CONFIGURATION_FAILED_UNIVERSAL_EGRESS_POINT
+      - UNCONFIGURED
+      - DELETING
+      - DELETION_FAILED_UNIVERSAL_ROUTER
+      - DELETION_FAILED_UNIVERSAL_EGRESS_POINT
+
+  EgressPoints:
+    $ref: "./networking/universalEgressPoints.yaml#/definitions/EgressPoints"
+
+  EgressPointReference:
+    $ref: "./networking/universalEgressPoints.yaml#/definitions/EgressPointReference"

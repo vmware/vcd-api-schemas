@@ -1,0 +1,488 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    API for Universal Routers
+  version: "1.0"
+  title: Universal Routers API
+
+paths:
+
+  universalRouters:
+
+    post:
+      tags:
+        - universalRouters
+      summary: Create a new universal router
+      description: |
+        Create a new universal router for a vDC group
+      operationId: createUniversalRouter
+      consumes:
+        - application/json
+      parameters:
+        - name: universalRouter
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UniversalRouter'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  universalRoutersForVdcGroup:
+    parameters:
+      - name: vdcGroupId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: vdcGroup
+
+    get:
+      tags:
+        - universalRouters
+      summary: Get all the universal routers defined for a vDC group
+      description: |
+        Get all the universal routers defined for a vDC group in the system.
+      operationId: getAllUniversalRoutersForVdcGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UniversalRouters'
+
+  universalRouter:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    get:
+      tags:
+        - universalRouter
+      summary: Retrieves a specific Universal Router
+      operationId: getUniversalRouter
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UniversalRouter'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      tags:
+        - universalRouter
+      summary: Updates a specific Universal Router
+      operationId: updateUniversalRouter
+      consumes:
+        - application/json
+      parameters:
+        - name: router
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UniversalRouter'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - universalRouter
+      summary: Deletes a specific Universal Router
+      operationId: deleteUniversalRouter
+      parameters:
+        - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  sync:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    post:
+      tags:
+        - universalRouter
+      summary: Sync/repair the Universal Router
+      description: |
+        Sync/repair the Universal Router
+      operationId: syncUniversalRouter
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  dns:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+
+    get:
+      tags:
+        - universalRouterDns
+      summary: Retrieves dns configuration of a universal router
+      operationId: getDnsConfigForRouter
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RouterDnsConfig'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      tags:
+        - universalRouterDns
+      summary: Updates dns configuration of a universal Router
+      operationId: updateDnsConfigForRouter
+      consumes:
+        - application/json
+      parameters:
+        - name: dnsConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RouterDnsConfig'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - universalRouterDns
+      summary: Deletes dns configuration of a universal router
+      operationId: deleteDnsConfigForRouter
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  dhcp:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    get:
+      tags:
+        - universalRouterDhcp
+      summary: Retrieves Dhcp configuration of a specific Universal Router
+      operationId: getDhcpConfigForUniversalRouter
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UniversalRouterDhcpConfig'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      tags:
+        - universalRouterDhcp
+      summary: Updates Dhcp configuration for a specific Universal Router
+      operationId: updateDhcpConfigForUniversalRouter
+      consumes:
+        - application/json
+      parameters:
+        - name: dhcpConfig
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UniversalRouterDhcpConfig'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - universalRouterDhcp
+      summary: Deletes Dhcp configuration of a specific Universal Router
+      operationId: deleteDhcpConfigForUniversalRouter
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  health:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    get:
+      tags:
+        - universalRouterHealth
+      summary: Get Health information of a universal router
+      description: |
+        Get Health information of a universal router and its associated entities such as egress points
+        and routing. It includes information about reachability status of all the participating vDC's of
+        referenced vDC group and it also includes information about all the nsx managers covered by this universal router
+        along with associated nsx controller cluster.
+      operationId: getUniversalRouterHealth
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RouterHealthReport'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  UniversalRouters:
+    description: |
+      List of Universal Routers
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/UniversalRouter'
+
+  UniversalRouter:
+    description: |
+      A UniversalRouter object
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      vdcGroupRef:
+        $ref: '#/definitions/EntityReference'
+      localEgress:
+        type: boolean
+      status:
+        $ref: '#/definitions/VdcGroupEntityStatus'
+      errorMessage:
+        type: string
+    required:
+      - vdcGroupRef
+      - name
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vdcGroupRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      localEgress:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      status:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      errorMessage:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  RouterDnsConfig:
+    description: |
+      A RouterDnsConfig object
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      nameServers:
+        type: array
+        items:
+          type: string
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      nameServers:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  UniversalRouterDhcpConfig:
+    description: |
+      A UniversalRouterDhcpConfig object.
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      servers:
+        type: array
+        items:
+          $ref: '#/definitions/UniversalRouterDhcpServer'
+    x-vcloud-property-annotations:
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      servers:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  UniversalRouterDhcpServer:
+    description: |
+      List of Dhcp servers for universal router.
+      Either egressRef or serverAddress is required to identify Dhcp server.
+    type: object
+    properties:
+      egressRef:
+        $ref: '#/definitions/EntityReference'
+      serverAddress:
+        type: string
+
+  RouterHealthReport:
+    description: |
+      Health Report of a Router
+    type: object
+    properties:
+      nsxManagersHealth:
+        description: |
+          Status of all the nsx managers spanned by the universal router.
+        type: array
+        items:
+          $ref: '#/definitions/RouterComponentHealth'
+      controlVmHealth:
+        description: |
+          Status of all the universal router control VMs within each network provider scope.
+          This also includes status of egress points and routes configured for the universal router.
+        type: array
+        items:
+          $ref: '#/definitions/RouterComponentHealth'
+      controlPlaneHealth:
+        description: |
+          Status of the nsx controller cluster associated with the nsx managers.
+        $ref: '#/definitions/RouterComponentHealth'
+      vdcReachabilityStatus:
+        description: |
+          Reachability status for local and remote participating vDC's of referenced vDC group.
+          States whether a vDC is reachable from this local site.
+        type: array
+        items:
+          $ref: '#/definitions/RouterComponentHealth'
+    x-vcloud-property-annotations:
+      nsxManagersHealth:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      controlVmHealth:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      controlPlaneHealth:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      vdcReachabilityStatus:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  RouterComponentHealth:
+    description: |
+      A ComponentHealth object
+    type: object
+    properties:
+      component:
+        type: string
+      status:
+        $ref: '#/definitions/RouterComponentStatus'
+      message:
+        type: string
+      action:
+        type: string
+      code:
+        type: integer
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  VdcGroupEntityStatus:
+    $ref: "./vdcGroups/vdcGroups.yaml#/definitions/VdcGroupEntityStatus"
+
+  RouterComponentStatus:
+    description: |
+      Status of a router component.
+    type: object
+    enum:
+      - UP
+      - DOWN
+

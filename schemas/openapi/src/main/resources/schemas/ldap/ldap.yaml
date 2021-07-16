@@ -1,0 +1,205 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  title: LDAP YAML
+  description: Base definitions for LDAP endpoints
+  version: "1.0"
+
+parameters:
+  testSearchUsername:
+    name: username
+    in: query
+    description: Username to use when testing LDAP search
+    required: false
+    type: string
+
+definitions:
+  LdapSettings:
+    description: |
+      LDAP Settings Specification
+    type:
+      object
+    properties:
+      hostName:
+        type:
+          string
+      port:
+        type:
+          integer
+      isSsl:
+        type:
+          boolean
+      isSslAcceptAll:
+        type:
+          boolean
+      realm:
+        type:
+          string
+      pagedSearchDisabled:
+        type:
+          boolean
+      pageSize:
+        type:
+          integer
+      maxResults:
+        type:
+          integer
+      maxUserGroups:
+        type:
+          integer
+      searchBase:
+        type:
+          string
+      userName:
+        type:
+          string
+      password:
+        type:
+          string
+      authenticationMechanism:
+        type:
+          string
+        enum: [SIMPLE, KERBEROS, M5DIGEST, NTLM]
+      groupSearchBase:
+        type:
+          string
+      isGroupSearchBaseEnabled:
+        type:
+          boolean
+      connectorType:
+        type:
+          string
+        enum: [ACTIVE_DIRECTORY, OPEN_LDAP]
+      userAttributes:
+        $ref: "#/definitions/LdapUserAttributesType"
+      groupAttributes:
+        $ref: "#/definitions/LdapGroupAttributesType"
+      useExternalKerberos:
+        type:
+          boolean
+
+  LdapUserAttributesType:
+    description: |
+      Defines how LDAP attributes are used when importing a user.
+    type:
+      object
+    properties:
+      objectClass:
+        type:
+          string
+      objectIdentifier:
+        type:
+          string
+      userName:
+        type:
+          string
+      email:
+        type:
+          string
+      fullName:
+        type:
+          string
+      givenName:
+        type:
+          string
+      surname:
+        type:
+          string
+      telephone:
+        type:
+          string
+      groupMembershipIdentifier:
+        type:
+          string
+      groupBackLinkIdentifier:
+        type:
+          string
+
+  LdapGroupAttributesType:
+    description: |
+      Defines how a group is imported from LDAP.
+    type:
+      object
+    properties:
+      objectClass:
+        type:
+          string
+      objectIdentifier:
+        type:
+          string
+      groupName:
+        type:
+          string
+      membership:
+        type:
+          string
+      membershipIdentifier:
+        type:
+          string
+      backLinkIdentifier:
+        type:
+          string
+
+  LdapTestResult:
+    description: |
+      Provides LDAP connection and settings test results
+    type:
+      object
+    properties:
+      connectionTest:
+        $ref: "#/definitions/LdapConnectionTestResult"
+      settingsTest:
+        type: array
+        items:
+          $ref: "#/definitions/LdapSettingsTestResult"
+
+  LdapConnectionTestResult:
+    description: |
+      Provides LDAP connection test results
+    type:
+      object
+    properties:
+      successful:
+        type:
+          boolean
+        description:
+          Flag for whether connection test was successful
+      error:
+        $ref: "../common/error.yaml#/definitions/Error"
+    required:
+      - successful
+
+  LdapSettingsTestResult:
+    description: |
+      Provides test attribute, result, and success boolean
+    type:
+      object
+    properties:
+      attribute:
+        type:
+          string
+        enum: [USER_OBJECT_IDENTIFIER, USERNAME, USER_EMAIL, USER_DISPLAY_NAME, USER_GIVEN_NAME, USER_SURNAME, USER_TELEPHONE, GROUP_NAME, GROUP_OBJECT_IDENTIFIER]
+        description:
+          LDAP attribute being tested
+      attributeValue:
+        type:
+          string
+        description:
+          Value of LDAP user attribute being tested
+      result:
+        type:
+          string
+        description:
+          Result of LADP user attribute being tested (what LDAP server returned)
+      successful:
+        type:
+          boolean
+        description:
+          Flag to indicate if the attribute is successful or not
+    required:
+      - successful

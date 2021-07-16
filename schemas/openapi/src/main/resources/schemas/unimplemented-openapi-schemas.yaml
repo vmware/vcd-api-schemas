@@ -1,0 +1,43 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Unimplemented vCloud Director OpenAPI
+  description: |
+    API here is meant to allow code generation to occur so that API implementation can be started without releasing the API.
+    A typical flow is that if the API is not ready for release after stabilization branching:
+    * Move the API definition from vcloud-openapi-schemas.yaml to this file.
+    * Remove the API handler from the main-rest-api-application-context.xml
+    * Remove all links to the API from other API handlers
+    * Mark the tests as UNIMPLEMENTED/BROKEN so that it can be skipped
+  version: "fake"
+
+paths:
+
+### Add unimplmented path below.  An example: ###
+#  /1.0.0/edgeGateways/{gatewayId}/dns:
+#    $ref: "./networking/edgeGatewayDns.yaml#/paths/dns"
+
+# Please keep path below in order to support empty path list (i.e. when we have no API to hide)
+  /some/fake/path:
+
+#### Networking endpoints ####
+
+  /1.0.0/firewallGroups/candidates/groups:
+    $ref: "./networking/firewallGroupCandidates.yaml#/paths/groups"
+
+  /1.0.0/firewallGroups/candidates/vms:
+    $ref: "./networking/firewallGroupCandidates.yaml#/paths/vms"
+
+  /1.0.0/firewallGroups/candidates/networks:
+    $ref: "./networking/firewallGroupCandidates.yaml#/paths/networks"
+
+  /1.0.0/nsxTResources/importableTier1Routers:
+    $ref: "./networking/nsxTResourcesDisabled.yaml#/paths/importableTier1Routers"
+
+

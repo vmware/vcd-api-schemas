@@ -1,0 +1,231 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The Firewall Group API allows for management of an Edge's Firewall Groups.
+    Firewall Groups are a grouping construct currently used for firewall rules.
+    A firewall group can contain a list of ip addresses.
+  version: "1.0"
+  title: vDC Firewall Group API
+
+paths:
+
+  firewallGroupSummaries:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroups
+      summary: Retrieves the Firewall Groups.
+      description: |
+        Get all firewall groups. Results can be filtered by name and context (_context).
+        Supported contexts are:
+        Edge Gateway ID (_context==edgeGatewayId) - |
+        Returns all the firewall groups which are available to the specific edge gateway.
+        Network provider ID (_context==networkProviderId) - |
+        Returns all the firewall groups which are available under a specific network provider. This context requires system admin privilege.
+      operationId: getFirewallGroups
+      parameters:
+      - $ref: "./common/query.yaml#/parameters/queryFilter"
+      - $ref: "./common/query.yaml#/parameters/querySortAsc"
+      - $ref: "./common/query.yaml#/parameters/querySortDesc"
+      - $ref: "./common/query.yaml#/parameters/queryPage"
+      - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/FirewallGroups'
+
+  firewallGroups:
+    post:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroups
+      summary: Create a firewall group
+      description: |
+        Create a firewall group.
+      operationId: createFirewallGroup
+      consumes:
+      - application/json
+      parameters:
+      - name: firewallGroup
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/FirewallGroupDetails'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  firewallGroup:
+    parameters:
+    - name: firewallGroupId
+      in: path
+      required: true
+      type: string
+      x-vcloud-constraints:
+        - constraint: Urn
+          args:
+            - arg: firewallGroup
+
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroup
+      summary: Retrieves a specific firewall group.
+      operationId: getFirewallGroup
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/FirewallGroupDetails'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    put:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroup
+      summary: Updates the Firewall Group.
+      operationId: updateFirewallGroup
+      consumes:
+      - application/json
+      parameters:
+      - name: firewallGroup
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/FirewallGroupDetails'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+    delete:
+      x-vcloud-added-in: 33.0
+      tags:
+      - firewallGroup
+      summary: Deletes a Firewall Group.
+      operationId: deleteFirewallGroup
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+
+definitions:
+
+  FirewallGroups:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of Firewall Groups
+    allOf:
+    - $ref: "./common/query.yaml#/definitions/Page"
+    - type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/definitions/FirewallGroupSummary'
+
+  FirewallGroupSummary:
+    x-vcloud-added-in: 33.0
+    description: |
+      A Firewall Group object.
+    type: object
+    allOf:
+      - properties:
+          id:
+            type: string
+            description: The id of the firewall group.
+          name:
+            type: string
+            description: The name of the firewall group.
+          description:
+            type: string
+            description: The description of the firewall group.
+      - $ref: "./networking/firewallGroups.yaml#/definitions/FirewallGroupScope"
+      - $ref: './networking/commonObject.yaml#/definitions/NetworkingObjectStatus'
+    required:
+     - name
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: firewallGroup
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  FirewallGroupDetails:
+    x-vcloud-added-in: 33.0
+    description: |
+      A Firewall Group object.
+    allOf:
+      - $ref: "./networking/firewallGroups.yaml#/definitions/FirewallGroupSummary"
+      - type: object
+        properties:
+          ipAddresses:
+            type: array
+            description: Ip Addresses included in the group. This can support IPv4 and IPv6 addresses in single, range, and CIDR formats.
+            items:
+              type: string
+        x-vcloud-property-annotations:
+          ipAddresses:
+            x-vcloud-constraints:
+            - constraint: NonSearchable
+            - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  FirewallGroupScope:
+    description:
+      Describes the scope and relationship that this firewall group has with other VCD entities.
+    type: object
+    properties:
+      orgRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The organization that this firewall group belongs to. This property is read-only and cannot be updated.
+      edgeGatewayRef:
+        $ref: "#/definitions/EntityReference"
+        description: |
+          The edge gateway that this firewall group is scoped to. This means that this firewall group can be used when configuring firewall rules for the edge gateway.
+          This property is required and cannot be updated.
+      networkProviderScope:
+        type: string
+        description: |
+          The network provider scope that this object belongs to. This is a read-only property and is determined by the input context entity ID during object creation.
+    x-vcloud-property-annotations:
+      orgRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      edgeGatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      contextEntityId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+

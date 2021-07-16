@@ -1,14 +1,31 @@
 # ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
 # ******************************************************************************
+
 swagger: "2.0"
 
 info:
   title: Query YAML
   description: Base definitions for query endpoints
   version: "1.0"
+
+paths:
+  page-placeholder:
+    get:
+      tags:
+        - codegenPlaceholder
+      summary:  This endpoint will not produce results. It is a placeholder to enforce code generation of Page.
+      description: This endpoint will not produce results. It is a placeholder to enforce code generation of Page.
+      operationId: getQueryResult
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: The request is successful
+          schema:
+            $ref: '#/definitions/Page'
 
 parameters:
   queryFilter:
@@ -36,6 +53,7 @@ parameters:
     in: query
     name: page
     required: true
+    minimum: 1
     default: 1
     type: integer
     description: Page to fetch, zero offset.
@@ -43,57 +61,58 @@ parameters:
     in: query
     name: pageSize
     required: true
-    default: 10
+    minimum: 0
+    maximum: 128
+    default: 25
     type: integer
     description: Results per page to fetch.
+  queryCursor:
+    in: query
+    name: cursor
+    required: false
+    type: string
+    description: |
+      Field used for getting next page of records. The value is supplied by the current result page. If not set, the first page is retrieved.
+      If cursor is set, then all other pagination query parameters such as pageSize, sortDesc, sortAsc, queryFilter are ignored.
 
 definitions:
-  QueryDetails:
+  Page:
     description: |
-      Details about a query that was executed.
+      Collection of paging-related metadata to be included by composition via allOf. This type
+      should be included in pageable responses to avoid duplicating these common properties. It
+      is intended to be included by composition rather than inheritance. Because of this, it has
+      no discriminator and should be embedded via allOf. See QueryResults for a reference usage.
     type: object
     properties:
-      filter:
-        type: string
-        description: The filter used for this query.  FIQL format.
-      sortAsc:
-        type: string
-        description: Field used for ascending sort.
-      sortDesc:
-        type: string
-        description: Field used for descending sort.
-      page:
-        type: integer
-        description: The page that was fetched, zero-indexed.
-      pageSize:
-        type: integer
-        description: Result count per page that was fetched.
-  QueryResult:
-    description: |
-      Base query result, just providing a type discriminator.
-    discriminator: resultType
-    properties:
-      resultType:
-        type: string
-        description: The type of this result.
-      value:
-        type: object
-        description: A single matching result of the query
-  QueryResults:
-    description: |
-      Base query results, encapsulating page information and the query.
-    type: object
-    properties:
-      query:
-        $ref: "#/definitions/QueryDetails"
-      results:
-        type: array
-        description: The returned objects from this query.
-        items:
-           $ref: "#/definitions/QueryResult"
       resultTotal:
         type: integer
         description: How many results there are in total (i.e., considering all pages).
       pageCount:
         type: integer
         description: How many pages there are in total.
+      page:
+        type: integer
+        description: The page that was fetched, 1-indexed.
+      pageSize:
+        type: integer
+        description: Result count for page that was fetched.
+      associations:
+        x-vcloud-added-in: 33.0
+        type: array
+        required: false
+        description: Association info for each result.
+        items:
+          $ref: '#/definitions/Association'
+
+  Association:
+    description: |
+      Site association information for an entity
+    type: object
+    properties:
+      entityId:
+        type: string
+        description: ID of the entity.
+      associationId:
+        type: string
+        description: ID of the association.
+

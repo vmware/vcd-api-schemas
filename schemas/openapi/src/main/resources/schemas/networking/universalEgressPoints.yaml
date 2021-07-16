@@ -1,0 +1,244 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2011-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Universal Egress Points API allows for management of egress points that belong to a universal router.
+    The egress points can be used for routing in a vDC Group.
+  version: "1.0"
+  title: Egress Points API
+
+paths:
+
+  egressPoints:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+
+    get:
+      tags:
+        - egressPoints
+      summary: Get a list of Universal Egress Points for a Universal Router.
+      operationId: getEgressPoints
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EgressPoints'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    post:
+      tags:
+        - egressPoints
+      summary: Creates a new Universal Egress Point from a specified Edge Gateway and Org vDC.
+      operationId: createEgressPoint
+      consumes:
+        - application/json
+      parameters:
+        - name: egressPoint
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EgressPoint'
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        400:
+          $ref: "./common/response.yaml#/components/responses/BadRequest"
+
+  egressPoint:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+      - name: egressPointId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalEgressPoint
+
+    get:
+      tags:
+        - egressPoint
+      summary: Retrieves a specific Universal Egress Point.
+      operationId: getEgressPoint
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EgressPoint'
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - egressPoint
+      summary: Deletes a specific Universal Egress Point.
+      operationId: deleteEgressPoint
+      parameters:
+        - $ref: "./common/delete.yaml#/parameters/forceDelete"
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+  sync:
+    parameters:
+      - name: universalRouterId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalRouter
+      - name: egressPointId
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalEgressPoint
+
+    post:
+      tags:
+        - egressPoint
+      summary: Sync/repair the egress point.
+      operationId: syncEgressPoint
+      responses:
+        202:
+          $ref: "./common/response.yaml#/components/responses/Accepted"
+        404:
+          $ref: "./common/response.yaml#/components/responses/NotFound"
+
+definitions:
+
+  EgressPoints:
+    description: |
+      List of Egress Points.
+    type: object
+    properties:
+      values:
+        type: array
+        description: The list of Universal Egress Points.
+        items:
+          $ref: '#/definitions/EgressPoint'
+
+  EgressPoint:
+    description: |
+      An Egress Point.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique ID for the Universal Egress Point (read-only).
+      vdcRef:
+        $ref: '#/definitions/EntityReference'
+        description: The Org vDC the Universal Egress Point belongs to.
+      gatewayRef:
+        $ref: '#/definitions/EntityReference'
+        description: The Edge Gateway the Egress Point is referring to.
+      networkProviderScope:
+        type: string
+        description: Read-only field that specifies the network provider scope of the Universal Egress Point (inherited from the Org vDC).
+      isUsedForRouting:
+        type: boolean
+        description: Specifies whether the egress point is being used for Universal Routing. This is a read-only field.
+      status:
+        $ref: '#/definitions/VdcGroupEntityStatus'
+        description: The status of the Universal Egress Point.
+      errorMessage:
+        type: string
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: universalEgressPoint
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+      vdcRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      gatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      networkProviderScope:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      isUsedForRouting:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+          - constraint: ReadOnly
+      status:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      errorMessage:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EgressPointReference:
+    description: |
+        An EgressPoint reference object for use in universal routing.
+    type: object
+    properties:
+      egressPointId:
+        type: string
+        description: The id of the Universal Egress Point reference.
+      vdcRef:
+        $ref: '#/definitions/EntityReference'
+        description: The Org vDC of the Universal Egress Point reference.
+      gatewayRef:
+        $ref: '#/definitions/EntityReference'
+        description: The Edge Gateway of the Universal Egress Point reference.
+    x-vcloud-property-annotations:
+      vdcRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      gatewayRef:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      egressPointId:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  VdcGroupEntityStatus:
+    $ref: "./vdcGroups/vdcGroups.yaml#/definitions/VdcGroupEntityStatus"

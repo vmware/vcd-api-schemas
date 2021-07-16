@@ -1,8 +1,9 @@
-# *************************************************************************
+# ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
-# *************************************************************************
+# ******************************************************************************
+
 swagger: "2.0"
 info:
   title: vCloud Director Workflow Execution API
@@ -205,8 +206,8 @@ paths:
     get:
       tags:
         - vroWorkflowExecution
-      summary: Get a list of supported parameter types
-      description: Retrieves the list of supported parameter types
+      summary:  This endpoint will not produce results. It is a placeholder to enforce code generation of ParameterTypes.
+      description: This endpoint will not produce results. It is a placeholder to enforce code generation of ParameterTypes.
       operationId: getParameterTypes
       produces:
         - application/json
@@ -224,8 +225,8 @@ paths:
     get:
       tags:
         - vroWorkflowExecution
-      summary: Get a list of supported presentation elements
-      description: Retrieves the list of supported presentation elements
+      summary:  This endpoint will not produce results. It is a placeholder to enforce code generation of SupportedPresentationElements.
+      description:  This endpoint will not produce results. It is a placeholder to enforce code generation of SupportedPresentationElements.
       operationId: getSupportedPresentationElements
       produces:
         - application/json
@@ -243,8 +244,8 @@ paths:
     get:
       tags:
         - vroWorkflowExecution
-      summary: Get a list of supported decorators
-      description: Retrieves the list of supported decorators
+      summary:  This endpoint will not produce results. It is a placeholder to enforce code generation of SupportedDecorators.
+      description:  This endpoint will not produce results. It is a placeholder to enforce code generation of SupportedDecorators.
       operationId: getSupportedDecorators
       produces:
         - application/json
@@ -262,8 +263,8 @@ paths:
     get:
       tags:
         - vroWorkflowExecution
-      summary: Get a list of supported constraints
-      description: Retrieves the list of supported constraints
+      summary:  This endpoint will not produce results. It is a placeholder to enforce code generation of SupportedConstraints.
+      description: This endpoint will not produce results. It is a placeholder to enforce code generation of SupportedConstraints.
       operationId: getSupportedconstraints
       produces:
         - application/json
@@ -475,7 +476,7 @@ definitions:
       - running
       - suspended
       - waiting
-      - waitingSignal
+      - waiting-signal
       - failed
       - initializing
 
@@ -803,6 +804,8 @@ definitions:
       description:
         type: string
       id:
+        type: string
+      vroId:
         type: string
       inputParameters:
         type: array

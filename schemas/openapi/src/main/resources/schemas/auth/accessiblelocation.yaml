@@ -1,0 +1,44 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Accessible Location YAML
+  description: Accesible Location Object in VCD
+  version: "1.0"
+
+definitions:
+  AccessibleLocation:
+    description: |
+      A location accessible to this session.
+    type: object
+    x-vcloud-added-in: 33.0
+    properties:
+      locationId:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      site:
+        $ref: '#/definitions/EntityReference'
+      org:
+        $ref: '#/definitions/EntityReference'
+      restApiEndpoint:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      uiEndpoint:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+      apiVersion:
+        type: string
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  EntityReference:
+    $ref: './common/entity.yaml#/definitions/EntityReference'
+

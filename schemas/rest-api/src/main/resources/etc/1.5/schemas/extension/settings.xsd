@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/extension/v1.5"
            xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
@@ -177,6 +178,16 @@
                             <xs:documentation source="since">20.0</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Global Tenant Throttling limits
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CpomSettings" type="CpomSettingsType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="since">32.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                CPoM Settings.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -650,7 +661,6 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-
                     <xs:element name="MaxVdcQuota" type="xs:int" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="6.0"/></xs:appinfo>
@@ -1039,6 +1049,16 @@
                                 True if the LDAP service accepts all SSL certificates.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CustomTruststore" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Optional Custom Trustsore for the LDAP HostName.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="Realm" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -1820,12 +1840,14 @@
                     </xs:element>
                     <xs:element name="ssl" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
+                            <xs:appinfo><meta:version removed-in="API_VERSION_POST9_1_UPDATE" /></xs:appinfo>
                             <xs:documentation xml:lang="en">
                                 True if the SMTP server requires an SSL
                                 connection.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                             <xs:documentation source="deprecated">11.0</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="SmtpSecureMode" type="vcloud:SmtpSecureModeType" minOccurs="0" maxOccurs="1">
@@ -2005,9 +2027,10 @@
                 <xs:sequence>
                     <xs:element name="VCDUrl" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="5.1" removed-in="API_VERSION_POST9_1_UPDATE"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation source="deprecated">5.6</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                             <xs:documentation xml:lang="en">
                                The vCloud Director public login URL. This
                                element is deprecated and should be left empty
@@ -2145,6 +2168,16 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="NextSyncDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Date and Time at which the next synchronization will start.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="RefreshInterval" type="xs:long" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -2245,4 +2278,76 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:element name="CpomSettings" type="CpomSettingsType"/>
+    <xs:complexType name="CpomSettingsType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="CPOM"/>
+                <meta:content-type>application/vnd.vmware.admin.cpomSettings</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">32.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Specifies default CPoM settings for all organizations in the system.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="vcloud:ResourceType">
+                <xs:sequence>
+                    <xs:element name="MaxActiveSddcProxyQuota" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Maximum number of active SDDC proxies allowed for the system. A value of -1 means there is no maximum. A value of 0 means the system cannot enable any SDDC proxies.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MaxActiveSddcProxyPerUserQuota" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Maximum number of active SDDC proxies per user allowed for the system. A value of -1 means there is no maximum. A value of 0 means the system cannot enable any SDDC proxies.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SddcProxiedHostConnectionTimeoutSeconds" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Timeout value for connecting to an SDDC proxied host (in seconds). Any value less than 1 is invalid.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AllowVcTenantAndProviderScoped" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                          <xs:appinfo><meta:version added-in="CPOM" removed-in="33.0"/></xs:appinfo>
+                          <xs:documentation source="removed-in">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True to allow VCs to be both provider scoped (used to back a PVDC), and tenant scoped (encapsulated within an SDDC).
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AllowInsecureSddcProxying" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True to allow proxying over insecure HTTP in addition to HTTPS. It is recommended that insecure proxying be left disabled.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>
+

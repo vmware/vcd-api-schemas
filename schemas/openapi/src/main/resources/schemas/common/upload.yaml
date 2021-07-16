@@ -1,0 +1,53 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    Collection of common API components for uploading content to vCloud Director
+  version: "1.0"
+  title: Upload API Enablement
+
+definitions:
+  UploadMetadataResponse:
+    type: object
+    description: |
+      Description of an upload (in progress or complete)
+    allOf:
+      - type: object
+        properties:
+          id:
+            type: string
+          plugin_status:
+            type: string
+            enum:
+              - unavailable
+              - ready
+          resourcePath:
+            type: string
+
+  UploadSpec:
+    type: object
+    description: |
+      Information about upload
+    properties:
+      fileName:
+        type: string
+      size:
+        type: integer
+        format: int64
+      checksum:
+        type: string
+      checksumAlgo:
+        type: string
+        default: sha1
+        enum:
+        - sha1
+        - sha256
+    required:
+      - fileName
+      - size
+

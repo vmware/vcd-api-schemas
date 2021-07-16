@@ -1,0 +1,224 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Roles API
+  version: "1.0"
+  title: vCloud Director Roles API
+
+paths:
+  roles:
+    get:
+      tags:
+        - roles
+      summary: Get list of roles for a tenant
+      x-vcloud-added-in: 31.0
+      x-vcloud-multisite: true
+      description: |
+        Get list of roles for a tenant
+      operationId: queryTenantRoles
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Roles'
+
+    post:
+      tags:
+        - roles
+      summary: Creates a new role
+      description: |
+        Creates a new role
+      operationId: createRole
+      consumes:
+        - application/json
+      parameters:
+        - name: newRole
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Role"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Role"
+
+  role:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: role
+    get:
+      tags:
+        - roles
+      summary: Get specified role
+      operationId: getRole
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Role"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - roles
+      summary: Update specified role
+      operationId: updateRole
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedRole
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Role"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Role"
+    delete:
+      tags:
+        - roles
+      summary: Delete specified role
+      operationId: deleteRole
+      responses:
+        204:
+          description: No Content
+
+  role-rights:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: role
+    get:
+      tags:
+        - roles
+      summary: Gets a paged list of rights (as references) contained by a particular role
+      description: |
+        Get list of rights (as references) contained by a particular role
+      operationId: queryRoleRights
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+    post:
+      tags:
+        - roles
+      summary: Adds the specified rights to a role.
+      description: |
+        Adds the list of rights (passed as references) to a role.
+      operationId: addRightsToRole
+      parameters:
+        - name: rightsReferencesBody
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EntityReferences"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityReferences"
+    put:
+      tags:
+        - roles
+      summary: Replaces the existing set of rights in role with the rights (as references) supplied.
+      description: |
+        Replaces the existing set of rights in role with the rights (as references) supplied.
+      operationId: replaceRightsInRole
+      parameters:
+        - name: rightsReferencesBody
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EntityReferences"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EntityReferences"
+
+definitions:
+  Roles:
+    description: |
+      A list of roles.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of roles.
+            items:
+              $ref: '#/definitions/Role'
+  Role:
+    type: object
+    allOf:
+      - $ref: "./rbac/rights.yaml#/definitions/RightsMapping"
+      - type: object
+        properties:
+          id:
+            type: string
+            maxLength: 128
+            x-vcloud-constraints:
+              - constraint: Urn
+                args:
+                  - arg: role
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"
+

@@ -1,0 +1,87 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The list of NSX-V resources such all the transport zones that are configured on a specific NSX-V manager.
+  version: "1.0"
+  title: NSX-V resources
+
+paths:
+
+  importableTransportZones:
+    get:
+      x-vcloud-added-in: 33.0
+      tags:
+        - nsxVResources
+      summary: Get all importable vxlan transport zones that are configured on a vCenter backed by a NSX-V manager.
+      description: |
+        Get all importable transport zones that are configured on a vCenter backed by a NSX-V manager.
+        Transport zones that are already associated with a network pool are filtered out. Only "_context" filter is
+        supported and "_context" filter key must be set with the id of the vCenter which we want to get the transport zones for.
+      operationId: getImportableTransportZones
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/NsxVTransportZones'
+
+definitions:
+
+  NsxVTransportZone:
+    x-vcloud-added-in: 33.0
+    description: |
+      Information about a configured transport zone on an NSX-V manager.
+      NSX uses transport zones to provide connectivity between hypervisors.
+    properties:
+      id:
+        type: string
+        description: The unique id of the transport zone on the NSX manager.
+      name:
+        type: string
+        description: Name of Transport Zone in NSX Manager.
+      type:
+        $ref: '#/definitions/NsxVTransportZoneType'
+        description: Type of a transport zone.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      name:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      type:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NsxVTransportZoneType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Represents an NSX-V transport zone's traffic type.
+    type: object
+    enum:
+      - VXLAN
+      - UNIVERSAL_VXLAN
+
+  NsxVTransportZones:
+    x-vcloud-added-in: 33.0
+    description: |
+      List of transport zones configured on an NSX-V manager.
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/NsxVTransportZone'

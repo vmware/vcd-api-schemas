@@ -1,0 +1,39 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2019-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Entity Resolver API
+  description: Entity Resolver API for resolving entities by URN
+  version: "1.0"
+
+
+paths:
+  entity-resolver:
+    get:
+      tags:
+        - entity
+      summary: Get specified entity object
+      operationId: resolveEntity
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: the URN of the entity to be resolved
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        303:
+          description: See Other
+        403:
+          description: Not Authorized
+        400:
+          description: Bad Request

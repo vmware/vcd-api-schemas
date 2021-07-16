@@ -2,8 +2,9 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  xmlns:meta="http://www.vmware.com/vcloud/plugin/json"
   xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
-  jxb:extensionBindingPrefixes="inheritance"
+  jxb:extensionBindingPrefixes="meta inheritance"
   jxb:version="2.0">
 
     <jxb:bindings schemaLocation="master.xsd" node="/xs:schema">

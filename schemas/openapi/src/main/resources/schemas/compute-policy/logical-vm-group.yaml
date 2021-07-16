@@ -1,0 +1,245 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director logical vm group API allows to create and view logical vm groups that can be added to policies.
+  version: "1.0"
+  title: vCloud Director logical vm group API
+
+paths:
+  logical-vm-groups:
+    get:
+      tags:
+        - logicalVmGroups
+      summary: Get list of logical vm groups.
+      x-vcloud-added-in: 32.0
+      description: |
+        Get list of logical vm groups.
+      operationId: queryLogicalVmGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LogicalVmGroups"
+
+    post:
+      tags:
+        - logicalVmGroups
+      summary: Creates a new logical vm group
+      x-vcloud-added-in: 32.0
+      description: |
+        Creates a new logical vm group
+      operationId: createLogicalVmGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: newLogicalVmGroupParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LogicalVmGroup"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/LogicalVmGroup"
+
+  logical-vm-group:
+    parameters:
+      - name: logicalVmGroupId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - logicalVmGroups
+      summary: Get specified logical vm group
+      x-vcloud-added-in: 32.0
+      operationId: getLogicalVmGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LogicalVmGroup"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - logicalVmGroups
+      summary: Update specified logical vm group
+      x-vcloud-added-in: 32.0
+      operationId: updateLogicalVmGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: updateLogicalVmGroupParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LogicalVmGroup"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LogicalVmGroup"
+    delete:
+      tags:
+        - logicalVmGroups
+      summary: Delete specified logical vm group.
+      x-vcloud-added-in: 32.0
+      operationId: deleteLogicalVmGroup
+      responses:
+        204:
+          description: No Content
+
+  logical-vm-group-pvdc-policy-refs:
+    parameters:
+      - name: logicalVmGroupId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - logicalVmGroups
+      summary: Get all pvdc policies associated with logical vm group
+      x-vcloud-added-in: 32.0
+      operationId: getPvdcPoliciesForLogicalVmGroup
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+        404:
+          description: Not Found
+
+  logical-vm-group-named-vm-group-refs:
+    parameters:
+      - name: logicalVmGroupId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - logicalVmGroups
+      summary: Get all named vm groups associated with logical vm group
+      x-vcloud-added-in: 32.0
+      operationId: getLogicalVmGroupNamedVmGroups
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+        404:
+          description: Not Found
+    post:
+      tags:
+        - logicalVmGroups
+      summary: Assign named vm groups to logical vm group.
+      x-vcloud-added-in: 32.0
+      operationId: addNamedVmGroupsToLogicalVmGroup
+      consumes:
+        - application/json
+      parameters:
+        - name: namedVmGroupRefs
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EntityReference"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+definitions:
+
+  LogicalVmGroup:
+    type: object
+    x-vcloud-added-in: 32.0
+    properties:
+      id:
+        type: string
+        description: |
+          UUID for LogicalVmGroup. This is immutable.
+      description:
+        type: string
+        default: ""
+      name:
+        type: string
+        description: |
+          Display name.
+      namedVmGroupReferences:
+          type: array
+          description: |
+            List of named vm groups associated with logical vm group.
+          items:
+            $ref: '#/definitions/EntityReference'
+      pvdcId:
+        x-vcloud-added-in: 33.0
+        type: string
+        description: |
+          URN for Provider vDC.
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: providervdc
+    required:
+      - name
+
+  LogicalVmGroups:
+    description: |
+      A list of LogicalVmGroups.
+    x-vcloud-added-in: 32.0
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of LogicalVmGroups.
+            items:
+              $ref: '#/definitions/LogicalVmGroup'
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

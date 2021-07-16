@@ -1,0 +1,89 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Email Settings YAML
+  description: Email Settings Object in VCD
+  version: "1.0"
+
+
+definitions:
+  EmailSettings:
+    description: |
+      Email related settings for a system
+    type:
+      object
+    properties:
+      defaultSmtpServer:
+        type: boolean
+        description: |
+          Flag indicating if the smtp server settings are system default (true) or a particular organization (false)
+      defaultOrgEmail:
+        type: boolean
+        description: |
+          Flag indicating if the email settings are system default (true) or for a particular organization (false)
+      smtpServer:
+        $ref: "#/definitions/SmtpServerSpec"
+      senderEmailAddress:
+        type: string
+        description: |
+          Sender email address in an email notification or alert
+      defaultEmailSubjectPrefix:
+        type: string
+        description: |
+          The prefix used in the email subject line for all email notifications and alerts from the system
+      alertEmailToAllAdmins:
+        type: boolean
+        description: |
+          A flag to indicate the choice between sending alert emails to all system
+          administrators in the system and designated list of email recipients
+      alertEmailTo:
+        type: string
+        description: |
+          A comma separated email addresses to send all alert messages to
+
+  SmtpServerSpec:
+    description: |
+      Represent the settings of an SMTP Server which the system uses to send email notifications and alerts
+    type:
+      object
+    properties:
+      useAuthentication:
+        type: boolean
+        description: |
+          A flag to indicate if the SMTP requires login authentication. If this
+          flag is set to true, caller must provide user name and password
+      secureMode:
+        type: string
+        description: |
+          Security mode used to connect to the SMTP server
+        enum: [NONE, START_TLS, SSL]
+      # Following properties are inherited from ServerSpec (when switching to Swagger 3.0 make SmtpServerSpec actually inherit these)
+      url:
+        $ref: "../common/url.yaml#/definitions/Url"
+      sslTrustStore:
+        type: string
+        description: |
+          The custom ssl trust certs if ssl is enabled
+      userName:
+        type: string
+        description: |
+          Username to login to server
+      password:
+        type: string
+        description: |
+          Password to login to the server
+      # Following properties are inherited from EntitySpec
+      description:
+        type: string
+        description: |
+          A human readable description of the entity
+      name:
+        type: string
+        description: |
+          A human readable name of the entity

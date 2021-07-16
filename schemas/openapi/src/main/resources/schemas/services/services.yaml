@@ -1,8 +1,9 @@
-# *************************************************************************
+# ******************************************************************************
 # * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
 # * SPDX-License-Identifier: BSD-2-Clause
-# *************************************************************************
+# ******************************************************************************
+
 swagger: "2.0"
 info:
   description: |
@@ -32,7 +33,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "#/definitions/Services"
 
     post:
       tags:
@@ -102,6 +103,12 @@ paths:
         - services
       summary: Delete specified service
       operationId: deleteService
+      parameters:
+        - name: recursive
+          in: query
+          description: If true, the Service and all its service items will be deleted. If false, and there are service items in the service, delete will fail.
+          default: false
+          type: boolean
       responses:
         204:
           description: No Content
@@ -118,40 +125,20 @@ paths:
         - $ref: "./common/query.yaml#/parameters/querySortDesc"
         - $ref: "./common/query.yaml#/parameters/queryPage"
         - $ref: "./common/query.yaml#/parameters/queryPageSize"
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+        - in: query
+          name: getExternalData
+          required: false
+          type: boolean
+          default: true
+          description: Flag indicating whether data stored outside of vCloud Director should be included in results
 
-    post:
-      tags:
-        - services
-      summary: Adds service item
-      description: |
-        Adds service items to the service
-      operationId: addServiceItems
-      consumes:
-        - application/json
       produces:
         - application/json
-      parameters:
-        - name: newServiceItems
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ServiceItem'
       responses:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/ServiceItem'
+            $ref: "#/definitions/ServiceItems"
 
   service-item:
     parameters:
@@ -216,7 +203,7 @@ paths:
     get:
       tags:
         - services
-      summary: Get all workflow items in this service
+      summary: This endpoint will not produce results. It is a placeholder to enforce code generation of VroWorkflowServiceItem
       operationId: getWorkflowServiceItems
       produces:
         - application/json
@@ -269,10 +256,38 @@ paths:
         - services
       summary: Retrieves list of tenants for whom the service item is explicitly published
       description: |
-        Retrieves list of item for whom the service library is explicitly published
+        Retrieves list of item for whom the service item is explicitly published
       operationId: getServiceItemTenants
       produces:
         - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
+    put:
+      tags:
+        - services
+      summary: Resets list of tenants for whom the service item is explicitly published
+      description: |
+        Resets list of tenants for whom the service item is explicitly published
+      operationId: setServiceItemTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EntityReference'
+
       responses:
         200:
           description: OK
@@ -426,9 +441,27 @@ definitions:
         default: true
       providerScoped:
         type: boolean
+        default: true
+      publishAll:
+        description: |
+          Read-only value indicating publishAll state
+        type: boolean
         default: false
     required:
       - serviceItemType
+
+  ServiceItems:
+    description: |
+      A list of service items.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of service items.
+            items:
+              $ref: '#/definitions/ServiceItem'
 
   Service:
     type: object
@@ -445,16 +478,23 @@ definitions:
         type: string
       id:
         type: string
-      serviceItems:
-        type: array
-        items:
-          type: object
-          oneOf:
-            - $ref: "./vro/vro.yaml#/definitions/VroWorkflowServiceItem"
-    required:
-      - name
-      - iconMimeType
-      - iconData
+      required:
+        - name
+        - iconMimeType
+        - iconData
+
+  Services:
+    description: |
+      A list of services.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of services.
+            items:
+              $ref: '#/definitions/Service'
 
   EntityReference:
     $ref: "./common/entity.yaml#/definitions/EntityReference"
