@@ -1,0 +1,210 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2017-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+
+info:
+  title: Common networking schema objects
+  description: Common networking schema objects that are used across different objects
+  version: "1.0"
+
+
+definitions:
+
+  Subnets:
+    description: |
+      List of Subnets of a network
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/Subnet'
+
+  Subnet:
+    description: |
+      A network subnet defined by its gateway,
+    type: object
+    properties:
+      gateway:
+        type: string
+        description: The gateway for the subnet.
+      prefixLength:
+        type: integer
+        description: The prefix length of the subnet.
+      dnsSuffix:
+        type: string
+        description: The DNS suffix that VMs attached to this network will use.
+      dnsServer1:
+        type: string
+        description: The first DNS server that VMs attached to this network will use.
+      dnsServer2:
+        type: string
+        description: The second DNS server that VMs attached to this network will use.
+      ipRanges:
+        $ref: '#/definitions/IpRanges'
+        description: Range of IPs within the subnet that can be used in this network. A VM attached to this network is assigned one of these IPs.
+      enabled:
+        type: boolean
+        default: true
+        description: Indicates whether the external network subnet is currently enabled.
+      totalIpCount:
+        type: integer
+        description: The number of IP addresses defined by the static IP ranges.
+      usedIpCount:
+        type: integer
+        description: The number of IP address used from the static IP ranges.
+    required:
+      - gateway
+      - prefixLength
+    x-vcloud-property-annotations:
+      prefixLength:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dnsSuffix:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dnsServer1:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      dnsServer2:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      ipRanges:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      enabled:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      totalIpCount:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+      usedIpCount:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  IpRanges:
+    description: |
+      List of IpRange
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          $ref: '#/definitions/IpRange'
+
+  IpRange:
+    description: |
+      An IpRange
+    type: object
+    properties:
+      startAddress:
+        type: string
+        description: Starting IP address in the range.
+      endAddress:
+        type: string
+        description: Ending IP address in the range.
+
+  Network:
+    description: |
+      A network Object.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The unique ID for the network. This field is read-only.
+      name:
+        type: string
+        description: The name of the network.
+      description:
+        type: string
+        description: The description of the network.
+      subnets:
+        $ref: '#/definitions/Subnets'
+        description: List of subnets configured for the network.
+    x-vcloud-property-annotations:
+      id:
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+          - constraint: NonSortable
+      description:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  BackingRef:
+    x-vcloud-added-in: 33.0
+    description: |
+      Backing Id for an entity not owned by VCD.
+    type: object
+    properties:
+      id:
+        type: string
+        description: The id/moref of the backing entity.
+      name:
+        type: string
+        description: The name of backing entity.
+
+  ObjectVersion:
+    x-vcloud-added-in: 33.0
+    description: |
+      This property describes the current version of the entity. To prevent clients from overwriting each other's changes, update operations must include
+      the version which can be obtained by issuing a GET operation. If the version number on an update call is missing, the operation will be rejected. This is only needed
+      on update calls.
+    properties:
+      version:
+        type: integer
+        description: version number for the given entity.
+    required:
+      - version
+    x-vcloud-property-annotations:
+      version:
+        x-vcloud-constraints:
+          - constraint: NonSearchable
+          - constraint: NonSortable
+
+  NetworkingObjectStatusType:
+    x-vcloud-added-in: 33.0
+    description: |
+      Represents status type of a networking entity. This value will be PENDING if the entity is waiting to be realized,
+      CONFIGURING if the entity realization is currently in-progress, REALIZED if the entity is fully realized successfully,
+      or REALIZED_FAILED if the realization has failed such as failure to create the entity.
+    type: object
+    enum:
+      - PENDING
+      - CONFIGURING
+      - REALIZED
+      - REALIZATION_FAILED
+
+  NetworkingObjectStatus:
+    x-vcloud-added-in: 33.0
+    description: |
+      Represents status of a networking entity.
+    type: object
+    properties:
+      status:
+        $ref: '#/definitions/NetworkingObjectStatusType'
+        description:  |
+          Represents current status of the networking object.
+    x-vcloud-property-annotations:
+      status:
+        x-vcloud-added-in: 33.0
+        x-vcloud-constraints:
+          - constraint: ReadOnly
+
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"

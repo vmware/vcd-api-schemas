@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -55,6 +56,7 @@
                 <meta:content-type>application/vnd.vmware.vcloud.session</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">1.5</xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents a vCloud Session.
             </xs:documentation>
@@ -63,18 +65,22 @@
         <xs:complexContent>
             <xs:extension base="ResourceType">
                 <xs:sequence>
-                    <xs:element name="AuthorizedLocations" type="AuthorizedLocationsType" minOccurs="1"  maxOccurs="1" >
+                    <xs:element name="AuthorizedLocations" type="AuthorizedLocationsType" minOccurs="0"  maxOccurs="1" >
                         <xs:annotation>
-                        <xs:documentation source="modifiable">
-                            none
-                        </xs:documentation>
-                        <xs:documentation xml:lang="en">
-                            The locations, both local and remote, that can be accessed by this user in this session.
-                        </xs:documentation>
-                        <xs:documentation source="required">
-                            false
-                        </xs:documentation>
-                    </xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="MULTI_SITE"/>
+                            </xs:appinfo>
+                            <xs:documentation source="since">MULTI_SITE</xs:documentation>
+                            <xs:documentation source="modifiable">
+                                none
+                            </xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The locations, both local and remote, that can be accessed by this user in this session.
+                            </xs:documentation>
+                            <xs:documentation source="required">
+                                false
+                            </xs:documentation>
+                        </xs:annotation>
                     </xs:element>
                 </xs:sequence>
                 <xs:attribute name="user" type="xs:string">
@@ -130,3 +136,4 @@
     </xs:complexType>
 
 </xs:schema>
+

@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
@@ -116,6 +117,34 @@
                                 exist in the organization vDC that contains the
                                 object. If not specified, the default storage
                                 profile for the vDC is used.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="VdcComputePolicy" type="ReferenceType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="deprecated">33.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                 A reference to a vdc compute policy for template VM. During instantiation
+                                 this vdc compute policy should be present in destination vDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ComputePolicy" type="ComputePolicyType"  minOccurs="0"  maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <meta:version added-in="VM_SIZING_POLICY"/>
+                            </xs:appinfo>
+                            <xs:documentation source="added-in">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A reference to a vDC compute policy. This contains VM's actual
+                                vdc compute policy reference and also optionally an add-on
+                                policy which can only define VM's sizing.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -377,3 +406,4 @@
         </xs:annotation>
     </xs:element>
 </xs:schema>
+

@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
   #L%
   -->
 
+
 <xs:schema xmlns="http://www.vmware.com/vcloud/versions" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/versions" version="1.0">
 
     <xs:element name="SupportedVersions" type="SupportedVersionsType"/>
@@ -47,6 +48,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="SchemaRoot" type="xs:anyURI" minOccurs="0" />
             <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
         </xs:sequence>
         <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -83,6 +85,7 @@
                         Media type mapping. This element is not present when
                         the API version is 5.7 or higher.
                     </xs:documentation>
+                    <xs:documentation source="deprecated">33.0</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
@@ -105,6 +108,7 @@
             <xs:documentation xml:lang="en">
                 Mapping of a content media type to a xsd complex type.
             </xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="MediaType" type="xs:string">
@@ -136,3 +140,4 @@
         <xs:anyAttribute namespace="##other" processContents="lax"/>
     </xs:complexType>
 </xs:schema>
+

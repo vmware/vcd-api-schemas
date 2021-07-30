@@ -1,0 +1,38 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: Custom LDAP Actions
+  version: "1.0"
+  title: Custom LDAP YAML
+
+paths:
+  test:
+    post:
+      tags:
+        - LDAP
+      summary: Tests LDAP Connection and Settings
+      description: |
+        Tests that custom LDAP settings are valid, and that the system can use them to search for a user or group
+      operationId: testLdap
+      parameters:
+        - $ref: "./ldap/ldap.yaml#/parameters/testSearchUsername"
+        - in: body
+          name: ldapSettings
+          description: LDAP Settings to use for testing connection
+          required: true
+          schema:
+            $ref: "./ldap/ldap.yaml#/definitions/LdapSettings"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./ldap/ldap.yaml#/definitions/LdapTestResult"

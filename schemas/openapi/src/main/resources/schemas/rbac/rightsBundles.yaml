@@ -1,0 +1,393 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Rights-bundles API
+  version: "1.0"
+  title: vCloud Director Rights-bundles API
+
+paths:
+  rights-bundles:
+    get:
+      tags:
+        - rightsBundles
+      summary: Get list of rights bundles
+      description: |
+        Get list of rights bundles
+      operationId: queryRightsBundles
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/RightsBundles'
+
+    post:
+      tags:
+        - rightsBundles
+      summary: Creates a new rights bundle
+      description: |
+        Creates a new rights bundle
+      operationId: createRightsBundle
+      consumes:
+        - application/json
+      parameters:
+        - name: newRightsBundle
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RightsBundle"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/RightsBundle"
+
+  rights-bundle:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    get:
+      tags:
+        - rightsBundles
+      summary: Get specified rights bundle
+      operationId: getRightsBundle
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RightsBundle"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - rightsBundles
+      summary: Update specified rights bundle
+      operationId: updateRightsBundle
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedRightsBundle
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RightsBundle"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RightsBundle"
+    delete:
+      tags:
+        - rightsBundles
+      summary: Delete specified rights bundle
+      operationId: deleteRightsBundle
+      responses:
+        204:
+          description: No Content
+
+  rights-bundle-rights:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    get:
+      tags:
+        - rightsBundles
+      summary: Gets a paged list of rights (as references) contained by a particular bundle
+      description: |
+        Get list of rights (as references) contained by a particular bundle
+      operationId: queryRightsBundleRights
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+    put:
+      tags:
+        - rightsBundles
+      summary: Replaces the existing set of rights in bundle with the rights (as references) supplied.
+      description: |
+        Replaces the existing set of rights in bundle with the rights (as references) supplied.
+      operationId: replaceRightsInRightsBundle
+      parameters:
+        - name: rightsReferencesBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+    post:
+      tags:
+        - rightsBundles
+      summary: Adds the specified rights to a rights bundle.
+      description: |
+        Adds the list of rights (passed as references) to a rights bundle.
+      operationId: addRightsToRightsBundle
+      parameters:
+        - name: rightsReferencesBody
+          in: body
+          required: true
+          schema:
+              $ref: '#/definitions/EntityReferences'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  rights-bundle-tenants:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    get:
+      tags:
+        - rightsBundles
+      summary: Retrieves list of tenants for whom the rights bundle is explicitly published
+      description: |
+        Retrieves list of tenants for whom the rights bundle is explicitly published
+      operationId: queryRightsBundleTenants
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+    put:
+      tags:
+        - rightsBundles
+      summary: Resets list of tenants for whom the rights bundle is explicitly published
+      description: |
+        Resets list of tenants for whom the rights bundle is explicitly published
+      operationId: setRightsBundleTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  rights-bundle-tenants-publish:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    post:
+      tags:
+        - rightsBundles
+      summary: Publishes the rights bundle to the specified tenants
+      description: |
+        Publishes the rights bundle to the specified tenants
+      operationId: postRightsBundlePublish
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  rights-bundle-tenants-unpublish:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    post:
+      tags:
+        - rightsBundles
+      summary: Revokes publication of the rights bundle to the specified tenants
+      description: |
+        Revokes publication of the rights bundle to the specified tenants
+      operationId: postRightsBundleUnpublish
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: unpublishTenantsBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  rights-bundle-tenants-publish-all:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    post:
+      tags:
+        - rightsBundles
+      summary: Publishes the rights bundle to all tenants
+      description: |
+        Publishes the rights bundle to all tenants
+      operationId: postRightsBundlePublishAll
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  rights-bundle-tenants-unpublish-all:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: rightsBundle
+    post:
+      tags:
+        - rightsBundles
+      summary: Unpublishes the rights bundle from all tenants
+      description: |
+        Unpublishes the rights bundle from all tenants
+      operationId: postRightsBundleUnpublishAll
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+
+definitions:
+  RightsBundles:
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of rights bundles.
+            items:
+              $ref: '#/definitions/RightsBundle'
+
+  RightsBundle:
+    type: object
+    allOf:
+      - $ref: "./rbac/rights.yaml#/definitions/PublishableRightsMapping"
+      - type: object
+        properties:
+          id:
+            type: string
+            maxLength: 128
+            x-vcloud-constraints:
+              - constraint: Urn
+                args:
+                  - arg: rightsBundle
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"
+
