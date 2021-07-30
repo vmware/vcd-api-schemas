@@ -1,0 +1,230 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director user preferences API allows to create and view user preferences.
+  version: "1.0"
+  title: vCloud Director user preferences API
+
+paths:
+  preference-definitions:
+    get:
+      tags:
+        - preferences
+      summary: Get list of preference definitions.
+      x-vcloud-added-in: 32.0
+      description: |
+        Get list of preference definitions
+      operationId: queryPreferenceDefinitions
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PreferenceDefinitions"
+
+  preference-definition:
+    parameters:
+      - name: preferenceDefinitionId
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - preferences
+      summary: Get specified preference definition.
+      x-vcloud-added-in: 32.0
+      operationId: getPreferenceDefinition
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PreferenceDefinition"
+        404:
+          description: Not Found
+
+  preferences:
+    get:
+      tags:
+        - preferences
+      summary: Query user preferences.
+      x-vcloud-added-in: 32.0
+      description: |
+        Query user preferences
+      operationId: queryPreferences
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Preferences"
+
+  preference:
+    parameters:
+      - name: classifier
+        in: path
+        required: true
+        type: string
+    get:
+      tags:
+        - preferences
+      summary: Get specified user preference.
+      x-vcloud-added-in: 32.0
+      operationId: getPreference
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Preference"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - preferences
+      summary: Update specified user preference
+      x-vcloud-added-in: 32.0
+      operationId: updatePreference
+      consumes:
+        - application/json
+      parameters:
+        - name: updatePreferenceParams
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Preference"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Preference"
+
+definitions:
+
+  PreferenceDefinition:
+    description: |
+      The Preference Definition is immutable.
+    type: object
+    x-vcloud-added-in: 32.0
+    properties:
+      id:
+        type: string
+        description: |
+          UUID for preference definition. This is immutable.
+      name:
+        type: string
+        description: |
+          Display name.
+      description:
+        type: string
+        default: ""
+        description: |
+          Description for user preference
+      classifier:
+        type: string
+        description: |
+          unique indetifier for this preference definition. It should be of type <scope>:<name>.
+          e.g vrops:myworkflow. This is immutable.
+      dataType:
+        type: string
+        enum: [BOOLEAN, INTEGER, STRING]
+        description: |
+          user preference value data type. This is immutable.
+      constrained:
+        type: boolean
+        description: |
+          true if user preference is selected from list of values (dataType should be number or string), false otherwise. This is immutable.
+      minValue:
+        type: number
+        description: |
+          minimum value for user preference. Only valid if user preference type is number. This is immutable.
+      maxValue:
+        type: number
+        description: |
+          maximum value for user preference. Only valid if user preference type is number. This is immutable.
+      defaultValue:
+        type: string
+        desription: |
+          default value for user preference.
+      allowedValues:
+        type: array
+        items:
+          type: string
+        description:
+          array of allowed values to select from when constrained is true.. This is immutable after creation.
+    required:
+      - name
+      - classifier
+      - constrained
+      - dataType
+      - defaultValue
+
+  PreferenceDefinitions:
+    description: |
+      A list of preference definitions
+    x-vcloud-added-in: 32.0
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page for preference definitions.
+            items:
+              $ref: '#/definitions/PreferenceDefinition'
+
+  Preference:
+    type: object
+    x-vcloud-added-in: 32.0
+    properties:
+      classifier:
+        type: string
+        description: |
+          unique indetifier for this preference definition. It will be of type <scope>:<name>.
+          e.g vrops:myworkflow. This is immutable
+      name:
+        type: string
+        description: |
+          Display name. This is same as preference definition name and is immutable.
+      value:
+        type: string
+        desription: |
+          Value for user preference.
+    required:
+      - name
+      - value
+      - classifier
+
+  Preferences:
+    description: |
+      A list of user preferences
+    x-vcloud-added-in: 32.0
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The list of user preferences.
+            items:
+              $ref: '#/definitions/Preference'

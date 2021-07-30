@@ -1,0 +1,395 @@
+# ******************************************************************************
+# * api-extension-template-vcloud-director
+# * Copyright 2018-2021 VMware, Inc.  All rights reserved. *
+# * SPDX-License-Identifier: BSD-2-Clause
+# ******************************************************************************
+
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Global Roles API
+  version: "1.0"
+  title: vCloud Director Global Rolese API
+
+paths:
+  global-roles:
+    get:
+      tags:
+        - globalRoles
+      summary: Get list of global roles
+      description: |
+        Get list of global roles
+      operationId: queryGlobalRoles
+      x-vcloud-multisite: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/GlobalRoles'
+
+    post:
+      tags:
+        - globalRoles
+      summary: Creates a new global role
+      description: |
+        Creates a new global role
+      operationId: createGlobalRole
+      consumes:
+        - application/json
+      parameters:
+        - name: newGlobalRole
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GlobalRole"
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/GlobalRole"
+
+  global-role:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+    get:
+      tags:
+        - globalRoles
+      summary: Get specified global role
+      operationId: getGlobalRole
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/GlobalRole"
+        404:
+          description: Not Found
+    put:
+      tags:
+        - globalRoles
+      summary: Update specified global role
+      operationId: updateGlobalRole
+      consumes:
+        - application/json
+      parameters:
+        - name: updatedGlobalRole
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GlobalRole"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/GlobalRole"
+    delete:
+      tags:
+        - globalRoles
+      summary: Delete specified global role
+      operationId: deleteGlobalRole
+      responses:
+        204:
+          description: No Content
+
+  global-role-rights:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+    get:
+      tags:
+        - globalRoles
+      summary: Gets a paged list of rights (as references) contained by a particular global role
+      description: |
+        Get list of rights (as references) contained by a particular global role
+      operationId: queryGlobalRoleRights
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+    put:
+      tags:
+        - globalRoles
+      summary: Replaces the existing set of rights in global role with the rights (as references) supplied.
+      description: |
+        Replaces the existing set of rights in global role with the rights (as references) supplied.
+      operationId: replaceRightsInGlobalRole
+      parameters:
+        - name: rightsReferencesBody
+          in: body
+          required: true
+          schema:
+              $ref: '#/definitions/EntityReferences'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: '#/definitions/EntityReferences'
+    post:
+      tags:
+        - globalRoles
+      summary: Adds the specified rights to a global role.
+      description: |
+        Adds the list of rights (passed as references) to a global role.
+      operationId: addRightsToGlobalRole
+      parameters:
+        - name: rightsReferencesBody
+          in: body
+          required: true
+          schema:
+              $ref: '#/definitions/EntityReferences'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: '#/definitions/EntityReferences'
+
+  global-role-tenants:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+
+    get:
+      tags:
+        - globalRoles
+      summary: Retrieves list of tenants for whom the global role is explicitly published
+      description: |
+        Retrieves list of tenants for whom the global role is explicitly published
+      operationId: queryGlobalRoleTenants
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+    put:
+      tags:
+        - globalRoles
+      summary: Resets list of tenants for whom the global role is explicitly published
+      description: |
+        Resets list of tenants for whom the global role is explicitly published
+      operationId: setGlobalRoleTenants
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  global-role-tenants-publish:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+    post:
+      tags:
+        - globalRoles
+      summary: Publishes the global role to the specified tenants
+      description: |
+        Publishes the global role to the specified tenants
+      operationId: postGlobalRolePublish
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: publishTenantsBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  global-role-tenants-unpublish:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+    post:
+      tags:
+        - globalRoles
+      summary: Revokes publication of the global role to the specified tenants
+      description: |
+        Revokes publication of the global role to the specified tenants
+      operationId: postGlobalRoleUnpublish
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: unpublishTenantsBody
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EntityReferences'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  global-role-tenants-publish-all:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+    post:
+      tags:
+        - globalRoles
+      summary: Publishes the global role to all tenants
+      description: |
+        Publishes the global role to all tenants
+      operationId: postGlobalRolePublishAll
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+  global-role-tenants-unpublish-all:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: globalRole
+    post:
+      tags:
+        - globalRoles
+      summary: Unpublishes the global role from all tenants
+      description: |
+        Unpublishes the global role from all tenants
+      operationId: postGlobalRoleUnpublishAll
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/EntityReferences'
+
+definitions:
+  GlobalRoles:
+    description: |
+      A list of global roles.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of global roles.
+            items:
+              $ref: '#/definitions/GlobalRole'
+
+  GlobalRole:
+    type: object
+    allOf:
+      - $ref: "./rbac/rights.yaml#/definitions/PublishableRightsMapping"
+      - type: object
+        properties:
+          id:
+            type: string
+            maxLength: 128
+            x-vcloud-constraints:
+              - constraint: Urn
+                args:
+                  - arg: globalRole
+
+  EntityReferences:
+    $ref: "./common/entity.yaml#/definitions/EntityReferences"
+  EntityReference:
+    $ref: "./common/entity.yaml#/definitions/EntityReference"
+
+  Page:
+    $ref: "./common/query.yaml#/definitions/Page"

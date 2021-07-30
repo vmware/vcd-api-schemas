@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+
 
 <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -85,18 +86,25 @@
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>
-                <xs:attribute name="size" type="xs:long" use="required">
+                <xs:attribute name="size" type="xs:long">
                     <xs:annotation>
-                        <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                        <xs:appinfo><meta:version added-in="5.1" removed-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="deprecated">33.0</xs:documentation>
                         <xs:documentation source="modifiable">none</xs:documentation>
                         <xs:documentation xml:lang="en">
-                            Size of the disk in bytes.&lt;br&gt;
-                            &lt;br&gt;
-                            You must supply this attribute in an update request,
-                            but you cannot change its value after the object has
-                            been created.
+                            Size of the disk in bytes.
                         </xs:documentation>
-                        <xs:documentation source="required">true</xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sizeMb" type="xs:long">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Size of the disk in MB.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="iops" type="xs:long" use="optional">
@@ -253,3 +261,4 @@
     </xs:complexType>
 
 </xs:schema>
+

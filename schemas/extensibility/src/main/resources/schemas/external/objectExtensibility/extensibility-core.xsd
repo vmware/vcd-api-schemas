@@ -3,7 +3,7 @@
   #%L
   vcd-extensibility-schemas :: Object Extensibility API schemas
   %%
-  Copyright (C) 2016 - 2018 VMware
+  Copyright (C) 2016 - 2021 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,8 @@
     xmlns="http://www.vmware.com/vcloud/extensibility/v1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-    xmlns:json="http://www.vmware.com/vcloud/plugin/json"
-    jaxb:extensionBindingPrefixes="json"
+    xmlns:meta="http://www.vmware.com/vcloud/plugin/json"
+    jaxb:extensionBindingPrefixes="meta"
     elementFormDefault="qualified"
     targetNamespace="http://www.vmware.com/vcloud/extensibility/v1.0"
     version="1.0">
@@ -200,7 +200,7 @@
     <xs:complexType name="DataType" abstract="true">
         <xs:annotation>
             <xs:appinfo>
-                <json:jsonTypeInfo propertyName="type" />
+                <meta:jsonTypeInfo propertyName="type" />
             </xs:appinfo>
         </xs:annotation>
         <xs:attribute name="name" type="xs:string" use="required">
@@ -215,7 +215,7 @@
     <xs:complexType name="LongDataType">
         <xs:annotation>
             <xs:appinfo>
-                <json:jsonSubTypeInfo name="long" />
+                <meta:jsonSubTypeInfo name="long" />
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
@@ -234,7 +234,7 @@
     <xs:complexType name="BooleanDataType">
         <xs:annotation>
             <xs:appinfo>
-                <json:jsonSubTypeInfo name="boolean" />
+                <meta:jsonSubTypeInfo name="boolean" />
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
@@ -247,7 +247,7 @@
     <xs:complexType name="StringDataType">
         <xs:annotation>
             <xs:appinfo>
-                <json:jsonSubTypeInfo name="string" />
+                <meta:jsonSubTypeInfo name="string" />
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
@@ -260,7 +260,7 @@
     <xs:complexType name="StringArrayDataType">
         <xs:annotation>
             <xs:appinfo>
-                <json:jsonSubTypeInfo name="list" />
+                <meta:jsonSubTypeInfo name="list" />
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
