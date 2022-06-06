@@ -356,6 +356,11 @@
               <artifactId>vcd-xjc-plugins</artifactId>
               <version>${vcd.api.tooling.version}</version>
             </dependency>
+            <dependency>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-lang3</artifactId>
+              <version>3.9</version>
+            </dependency>
           </dependencies>
         </plugin>
 

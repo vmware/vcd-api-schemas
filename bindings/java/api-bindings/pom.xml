@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
+      <version>3.9</version>
     </dependency>
 <!--    <dependency>
       <groupId>org.jvnet.jaxb2_commons</groupId>
@@ -228,15 +228,15 @@
               <goal>xjc</goal>
             </goals>
             <configuration>
-              <catalog>${project.build.directory}/generated-sources/etc/schemas/external/catalog.xml</catalog>
+              <catalog>${unpacked.schema.dir}/etc/schemas/external/catalog.xml</catalog>
               <sources>
                 <source>${unpacked.schema.dir}/etc/1.5/schemas/master/driver.xsd</source>
                 <source>${unpacked.schema.dir}/etc/1.5/schemas/internal/internal.xsd</source>
               </sources>
               <xjbSources>
-                <xjbSource>${project.build.directory}/generated-sources/etc/1.5/schemas/vcloud/vcloud.xjb</xjbSource>
-                <xjbSource>${project.build.directory}/generated-sources/etc/1.5/schemas/vcloud/ovf.xjb</xjbSource>
-                <xjbSource>${project.build.directory}/generated-sources/etc/1.5/schemas/extension/vmwextensions.xjb</xjbSource>
+                <xjbSource>${unpacked.schema.dir}/etc/1.5/schemas/vcloud/vcloud.xjb</xjbSource>
+                <xjbSource>${unpacked.schema.dir}/etc/1.5/schemas/vcloud/ovf.xjb</xjbSource>
+                <xjbSource>${unpacked.schema.dir}/etc/1.5/schemas/extension/vmwextensions.xjb</xjbSource>
               </xjbSources>
               <outputDirectory>${project.build.directory}/generated-sources/jaxb_v15</outputDirectory>
               <staleFile>${project.build.directory}/generated-sources/jaxb_v15/.staleFlag</staleFile>
