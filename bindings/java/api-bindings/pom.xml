@@ -219,7 +219,6 @@
               </xjbSources>
               <clearOutputDir>true</clearOutputDir>
               <outputDirectory>${project.build.directory}/generated-sources/jaxb_common</outputDirectory>
-              <staleFile>${project.build.directory}/generated-sources/jaxb_common/.staleFlag</staleFile>
             </configuration>
           </execution>
           <execution>
@@ -239,7 +238,6 @@
                 <xjbSource>${unpacked.schema.dir}/etc/1.5/schemas/extension/vmwextensions.xjb</xjbSource>
               </xjbSources>
               <outputDirectory>${project.build.directory}/generated-sources/jaxb_v15</outputDirectory>
-              <staleFile>${project.build.directory}/generated-sources/jaxb_v15/.staleFlag</staleFile>
               <extension>true</extension>
               <arguments>
                 <argument>-Xrest-api</argument>
