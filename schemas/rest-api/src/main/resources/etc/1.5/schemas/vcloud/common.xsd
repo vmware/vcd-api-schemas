@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2022 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,17 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!--
+Copyright © 2013 VMware, Inc. All rights reserved.
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:meta="http://www.vmware.com/vcloud/meta"
-           jaxb:version="2.0"
-           jaxb:extensionBindingPrefixes="meta"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.vmware.com/vcloud/v1.5"
-           version="1.0">
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights, are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software.
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
 
     <xs:include schemaLocation="task.xsd"/>
 
@@ -140,8 +141,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="vendorSpecificErrorCode" type="xs:string"
-            use="optional">
+        <xs:attribute name="vendorSpecificErrorCode" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation source="modifiable">
                     none
@@ -215,7 +215,7 @@
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="VCloudExtensibleType">
-                <xs:attributeGroup ref="CommonErrorAttributes" />
+                <xs:attributeGroup ref="CommonErrorAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -237,6 +237,18 @@
                     <xs:documentation xml:lang="en">
                         An optional element that can be used to hold the result
                         of operations.
+                    </xs:documentation>
+                    <xs:documentation source="required">false</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ResultReference" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                    <xs:documentation source="since">33.0</xs:documentation>
+                    <xs:documentation source="modifiable">always</xs:documentation>
+                    <xs:documentation>
+                        An optional element that can be used to hold the reference
+                        of a result.
                     </xs:documentation>
                     <xs:documentation source="required">false</xs:documentation>
                 </xs:annotation>
@@ -272,6 +284,21 @@
                             links and link relations.
                         </xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="model" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:appinfo>
+                            <meta:version added-in="33.0"/>
+                        </xs:appinfo>
+                        <xs:documentation source="since">33.0</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Defines the model expected for modification calls. This
+                            field is populated when the href is expected to link to
+                            a vCloud OpenApi endpoint.
+                        </xs:documentation>
+                        <xs:documentation source="required">false</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -628,6 +655,22 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="ReservationUsed" type="xs:long" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation source="since">35.0</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reservation Capacity used. This field is returned
+                                only if the VDC AllocationModel is
+                                Flex type. This number represents the
+                                reservation resources used in the given VDC.
+                            </xs:documentation>
+                            <xs:appinfo>
+                                <meta:version added-in="35.0"/>
+                            </xs:appinfo>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -871,7 +914,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="References" type="ReferencesType" />
+    <xs:element name="References" type="ReferencesType"/>
     <xs:element name="Reference" type="ReferenceType"/>
 
     <xs:complexType name="QueryListType">
@@ -886,7 +929,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="QueryList" type="QueryListType" />
+    <xs:element name="QueryList" type="QueryListType"/>
 
     <xs:complexType name="MetadataDomainTagType">
         <xs:annotation>
@@ -929,7 +972,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="Key" type="xs:string" maxOccurs="1" minOccurs="1" >
+                    <xs:element name="Key" type="xs:string" maxOccurs="1" minOccurs="1">
                         <xs:annotation>
                         <xs:appinfo><meta:version added-in="1.5"/></xs:appinfo>
                            <xs:documentation source="required">true</xs:documentation>
@@ -977,7 +1020,7 @@
                MetadataDateTimeValue
             </xs:documentation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence/>
@@ -1147,12 +1190,12 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="MetadataValue" type="MetadataValueType"></xs:element>
+    <xs:element name="MetadataValue" type="MetadataValueType"/>
 
     <xs:complexType name="FileUploadParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.fileUploadParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -1179,7 +1222,7 @@
     <xs:complexType name="FileUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.vcloud.fileUploadSocket</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -1217,7 +1260,7 @@
 
     <xs:simpleType name="SmtpSecureModeType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="11.0" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="11.0"/></xs:appinfo>
             <xs:documentation source="since">11.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Security protocol to use when connecting to the SMTP server. One of:&lt;br&gt;
@@ -1227,9 +1270,26 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none" />
-            <xs:enumeration value="startTls" />
-            <xs:enumeration value="ssl" />
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="startTls"/>
+            <xs:enumeration value="ssl"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="SchemaLinksType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="33.0"/>
+                <meta:content-type>application/vnd.vmware.vcloud.schema</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">33.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Provides links to various API schema documents
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="SchemaResources" type="SchemaLinksType"/>
 </xs:schema>

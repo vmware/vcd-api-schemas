@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2022 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,21 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!-- Copyright © 2013 VMware, Inc. All rights reserved. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+    associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+    merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to
+    the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+    FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+    IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. Except
+    as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights,
+    are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/extension/v1.5" version="1.0">
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:version="2.0" jaxb:extensionBindingPrefixes="meta"
-    elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/extension/v1.5" version="1.0">
+    <xs:import namespace="http://www.vmware.com/vcloud/v1.5" schemaLocation="../master/master.xsd"/>
 
-    <xs:import namespace="http://www.vmware.com/vcloud/v1.5" schemaLocation="../master/master.xsd" />
-
-    <xs:include schemaLocation="notification.xsd" />
-    <xs:include schemaLocation="settings.xsd" />
-    <xs:include schemaLocation="taskExtensionRequest.xsd" />
+    <xs:include schemaLocation="notification.xsd"/>
+    <xs:include schemaLocation="settings.xsd"/>
+    <xs:include schemaLocation="taskExtensionRequest.xsd"/>
 
     <xs:annotation>
         <xs:documentation xml:lang="en">
@@ -44,11 +49,11 @@
         </xs:documentation>
     </xs:annotation>
 
-    <xs:element name="ExtensionServices" type="ExtensionServicesType" />
+    <xs:element name="ExtensionServices" type="ExtensionServicesType"/>
     <xs:complexType name="ExtensionServicesType">
          <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.extensionServices</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -62,11 +67,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="Service" type="AdminServiceType" />
+    <xs:element name="Service" type="AdminServiceType"/>
     <xs:complexType name="AdminServiceType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.service</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -200,11 +205,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ApiFilter" type="ApiFilterType" />
+    <xs:element name="ApiFilter" type="ApiFilterType"/>
     <xs:complexType name="ApiFilterType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.apiFilter</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -252,11 +257,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ApiFilters" type="ApiFiltersType" />
+    <xs:element name="ApiFilters" type="ApiFiltersType"/>
     <xs:complexType name="ApiFiltersType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.apiFilters</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -286,7 +291,7 @@
     <xs:complexType name="AdminApiDefinitionType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.apiDefinition</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -362,11 +367,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ApiDefinitions" type="AdminApiDefinitionsType" />
+    <xs:element name="ApiDefinitions" type="AdminApiDefinitionsType"/>
     <xs:complexType name="AdminApiDefinitionsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.apiDefinitions</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -396,7 +401,7 @@
     <xs:complexType name="VersionsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -422,11 +427,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="FileDescriptor" type="AdminFileDescriptorType" />
+    <xs:element name="FileDescriptor" type="AdminFileDescriptorType"/>
     <xs:complexType name="AdminFileDescriptorType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.fileDescriptor</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -467,7 +472,7 @@
     <xs:complexType name="AdminFileDescriptorsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -492,11 +497,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ServiceLink" type="AdminServiceLinkType" />
+    <xs:element name="ServiceLink" type="AdminServiceLinkType"/>
     <xs:complexType name="AdminServiceLinkType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.serviceLink</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -593,11 +598,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ServiceLinks" type="AdminServiceLinksType" />
+    <xs:element name="ServiceLinks" type="AdminServiceLinksType"/>
     <xs:complexType name="AdminServiceLinksType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -623,11 +628,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="BundleUploadParams" type="BundleUploadParamsType" />
+    <xs:element name="BundleUploadParams" type="BundleUploadParamsType"/>
     <xs:complexType name="BundleUploadParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.bundleUploadParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -664,11 +669,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="BundleUploadSocket" type="BundleUploadSocketType" />
+    <xs:element name="BundleUploadSocket" type="BundleUploadSocketType"/>
     <xs:complexType name="BundleUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.bundleUploadSocket</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -695,7 +700,7 @@
     <xs:complexType name="AclAccessType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.aclAccess</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -741,7 +746,7 @@
     <xs:complexType name="AclRuleType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.aclRule</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -807,11 +812,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ResourceClassAction" type="ResourceClassActionType" />
+    <xs:element name="ResourceClassAction" type="ResourceClassActionType"/>
     <xs:complexType name="ResourceClassActionType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.resourceClassAction</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -865,11 +870,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ResourceClass" type="ResourceClassType" />
+    <xs:element name="ResourceClass" type="ResourceClassType"/>
     <xs:complexType name="ResourceClassType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.resourceClass</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -962,11 +967,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="ServiceResource" type="ServiceResourceType" />
+    <xs:element name="ServiceResource" type="ServiceResourceType"/>
     <xs:complexType name="ServiceResourceType">
          <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.serviceResource</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -1008,7 +1013,7 @@
     <xs:complexType name="ResourceClassesType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -1037,7 +1042,7 @@
     <xs:complexType name="ServiceResourcesType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -1065,7 +1070,7 @@
     <xs:complexType name="ResourceClassActionsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -1093,7 +1098,7 @@
     <xs:complexType name="AclRulesType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
             <xs:documentation xml:lang="en">
@@ -1119,11 +1124,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AuthorizationCheckParams" type="AuthorizationCheckParamsType" />
+    <xs:element name="AuthorizationCheckParams" type="AuthorizationCheckParamsType"/>
     <xs:complexType name="AuthorizationCheckParamsType">
          <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.authorizationCheckParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -1170,11 +1175,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="AuthorizationCheckResponse" type="AuthorizationCheckResponseType" />
+    <xs:element name="AuthorizationCheckResponse" type="AuthorizationCheckResponseType"/>
     <xs:complexType name="AuthorizationCheckResponseType">
          <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.authorizationCheckResponse</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>

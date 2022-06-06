@@ -1,13 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
-
-<!--  DMTF Document number: DSP8004 -->
-<!--  Status: Final                                   -->
-<!--  Copyright © 2007 Distributed Management Task Force, Inc. (DMTF). All rights reserved. -->
-
-<xs:schema targetNamespace="http://schemas.dmtf.org/wbem/wscim/1/common"
-    xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    elementFormDefault="qualified">
+<?xml version="1.0" encoding="UTF-8"?><!--  DMTF Document number: DSP8004 --><!--  Status: Final                                   --><!--  Copyright © 2007 Distributed Management Task Force, Inc. (DMTF). All rights reserved. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" targetNamespace="http://schemas.dmtf.org/wbem/wscim/1/common" elementFormDefault="qualified">
 
 <!--  The following are runtime attribute definitions -->
   <xs:attribute name="Key" type="xs:boolean"/> 
@@ -20,8 +11,8 @@
     <xs:choice>
       <xs:element name="CIM_DateTime" type="xs:string" nillable="true"/>
       <xs:element name="Interval" type="xs:duration"/>
-      <xs:element name="Date" type="xs:date" />
-      <xs:element name="Time" type="xs:time" />
+      <xs:element name="Date" type="xs:date"/>
+      <xs:element name="Time" type="xs:time"/>
       <xs:element name="Datetime" type="xs:dateTime"/>
     </xs:choice>
     <xs:anyAttribute namespace="##any" processContents="lax"/>
@@ -223,7 +214,6 @@
 
 
 <!--  The following element is to be used only for defining metadata -->
-  <xs:element name="DefaultValue" type="xs:anySimpleType" />
+  <xs:element name="DefaultValue" type="xs:anySimpleType"/>
 
 </xs:schema>
-

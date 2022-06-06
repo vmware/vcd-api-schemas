@@ -1,0 +1,66 @@
+definitions:
+  Capabilities:
+    x-vcloud-added-in: 32.0
+    description: |
+      List of read-only capabilities.
+    allOf:
+      - $ref: "./common/query.yaml#/definitions/Page"
+      - type: object
+        properties:
+          values:
+            type: array
+            items:
+              $ref: './common/capability.yaml#/definitions/Capability'
+
+  Capability:
+    x-vcloud-added-in: 32.0
+    description: |
+      Describes a capability of an entity.
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of the capability.
+        readOnly: true
+      description:
+        type: string
+        description: Description of the capability as it relates to the entity.
+        readOnly: true
+      value:
+        type: object
+        description: The value of the capability.
+        readOnly: true
+      type:
+        $ref: '#/definitions/CapabilityValueType'
+        description: The type of the value.
+        readOnly: true
+      category:
+        $ref: '#/definitions/CapabilityCategory'
+        description: The category of the capabilities listed.
+        readOnly: true
+
+  CapabilityCategory:
+    x-vcloud-added-in: 32.0
+    description: |
+      Describes the category of the capability.
+    type: string
+    enum:
+      - EdgeGateway
+      - VAppNetwork
+      - OrgVdcNetwork
+      - Infra
+      - Security
+      - StoragePolicy
+      - QuotaPolicy
+      - VdcGroup
+      - NamedDisk
+
+  CapabilityValueType:
+    x-vcloud-added-in: 32.0
+    description: |
+      Describes the object type of the capability value.
+    type: string
+    enum:
+      - Boolean
+      - String
+      - List

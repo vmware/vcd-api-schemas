@@ -1,7 +1,5 @@
 # *************************************************************************
-# * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
-# * SPDX-License-Identifier: BSD-2-Clause
+# * Copyright 2017 VMware, Inc.  All rights reserved. VMware Confidential *
 # *************************************************************************
 swagger: "2.0"
 
@@ -12,6 +10,20 @@ info:
 
 
 definitions:
+
+  EntityReferences:
+    description: |
+      A list of entity references.
+    allOf:
+      - $ref: '#/definitions/Page'
+      - type: object
+        properties:
+          values:
+            type: array
+            description: The current page of entity references.
+            items:
+              $ref: '#/definitions/EntityReference'
+
   EntityReference:
     description: |
       Entity reference used to describe VCD entities
@@ -21,3 +33,6 @@ definitions:
         type: string
       id:
         type: string
+
+  Page:
+    $ref: "./query.yaml#/definitions/Page"

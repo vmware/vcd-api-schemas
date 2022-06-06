@@ -1,7 +1,5 @@
 # ******************************************************************************
-# * api-extension-template-vcloud-director
-# * Copyright 2017-2018 VMware, Inc.  All rights reserved. *
-# * SPDX-License-Identifier: BSD-2-Clause
+# * Copyright 2017 VMware, Inc.  All rights reserved. VMware Confidential *
 # ******************************************************************************
 swagger: "2.0"
 

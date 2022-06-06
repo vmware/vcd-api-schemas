@@ -1,0 +1,23 @@
+# *************************************************************************
+# * Copyright 2018 VMware, Inc.  All rights reserved. VMware Confidential *
+# *************************************************************************
+swagger: "2.0"
+
+info:
+  title: Url YAML
+  description: Url Spec Object
+  version: "1.0"
+
+
+definitions:
+  Url:
+    type: object
+    properties:
+      host:
+        type: string
+      port:
+        type: integer
+        minimum: 0
+        maximum: 65535
+      ssl:
+        type: boolean

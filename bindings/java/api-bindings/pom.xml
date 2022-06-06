@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.vmware.vcloud</groupId>
     <artifactId>vcd-api-schemas-parent</artifactId>
-    <version>9.1.1</version>
+    <version>10.2.2</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
   <packaging>jar</packaging>
@@ -46,10 +46,10 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
     </dependency>
-    <dependency>
+<!--    <dependency>
       <groupId>org.jvnet.jaxb2_commons</groupId>
       <artifactId>jaxb2-basics-tools</artifactId>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -139,7 +139,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+<!--      <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb20-plugin</artifactId>
         <executions>
@@ -197,6 +197,54 @@
               <args>
                 <arg>-Xrest-api</arg>
               </args>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>versions</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${unpacked.schema.dir}/etc/schemas/versioning/versions.xsd</source>
+              </sources>
+              <xjbSources>
+                <xjbSource>${unpacked.schema.dir}/etc/schemas/versioning/versions.xjb</xjbSource>
+              </xjbSources>
+              <clearOutputDir>true</clearOutputDir>
+              <outputDirectory>${project.build.directory}/generated-sources/jaxb_common</outputDirectory>
+              <staleFile>${project.build.directory}/generated-sources/jaxb_common/.staleFlag</staleFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>rest-api</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <catalog>${project.build.directory}/generated-sources/etc/schemas/external/catalog.xml</catalog>
+              <sources>
+                <source>${unpacked.schema.dir}/etc/1.5/schemas/master/driver.xsd</source>
+                <source>${unpacked.schema.dir}/etc/1.5/schemas/internal/internal.xsd</source>
+              </sources>
+              <xjbSources>
+                <xjbSource>${project.build.directory}/generated-sources/etc/1.5/schemas/vcloud/vcloud.xjb</xjbSource>
+                <xjbSource>${project.build.directory}/generated-sources/etc/1.5/schemas/vcloud/ovf.xjb</xjbSource>
+                <xjbSource>${project.build.directory}/generated-sources/etc/1.5/schemas/extension/vmwextensions.xjb</xjbSource>
+              </xjbSources>
+              <outputDirectory>${project.build.directory}/generated-sources/jaxb_v15</outputDirectory>
+              <staleFile>${project.build.directory}/generated-sources/jaxb_v15/.staleFlag</staleFile>
+              <extension>true</extension>
+              <arguments>
+                <argument>-Xrest-api</argument>
+                <argument>-Xrest-json-api</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>
