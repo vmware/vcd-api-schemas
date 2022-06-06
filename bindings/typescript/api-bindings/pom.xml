@@ -100,6 +100,7 @@
             </goals>
           </execution>
         </executions>
+        </executions>
         <configuration>
           <overwrite>Merge</overwrite>
           <outputDirectory>${project.build.directory}/generated-typescript-bindings</outputDirectory>
