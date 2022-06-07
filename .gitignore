@@ -23,3 +23,5 @@
 
 # intermediate build results live in 'target' directories all over the place.
 target/
+**/node
+**/node_modules
