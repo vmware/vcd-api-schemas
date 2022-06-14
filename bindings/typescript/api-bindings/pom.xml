@@ -78,7 +78,7 @@
         <configuration>
           <output>${project.build.directory}/generated-typescript-bindings</output>
           <inputSpec>${project.build.directory}/openapi-schemas/schemas/vcloud-openapi-schemas.yaml</inputSpec>
-          <language>typescript-angular</language>
+          <language>typescript-angular2</language>
           <generateApis>false</generateApis>
           <generateModelTests>false</generateModelTests>
           <generateModelDocumentation>false</generateModelDocumentation>
@@ -88,6 +88,23 @@
             <modelPropertyNaming>original</modelPropertyNaming>
           </configOptions>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Generate models.js</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/scripts/generate-models.sh</executable>
+              <arguments>${project.build.directory}/generated-typescript-bindings</arguments>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.vmware.vcloud</groupId>
