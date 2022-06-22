@@ -1,7 +1,3 @@
-/* **********************************************************************
- * Copyright 2019 VMware, Inc.  All rights reserved. VMware Confidential
- * *********************************************************************/
-
 package com.vmware.vcloud.api.rest.constants;
 
 /*-
