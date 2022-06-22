@@ -7,6 +7,6 @@ path="$1/vcloud/api/rest/schema/ovf"
 files=$(ls "$path")
 for file in $files; do
     if [ ! -d "$path/$file" ]; then
-      sed -i '' -E 's/extends JAXBElement.*{/{/g' "$path/$file"
+      sed -i '' -e 's/extends JAXBElement.*{/{/g' "$path/$file"
     fi
 done
