@@ -24,9 +24,9 @@ paths:
       summary: Browse remote vRealize Orchestrator workflows
       operationId: getRemoteWorkflows
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
       produces:
        - application/json
       responses:
@@ -79,11 +79,11 @@ paths:
       summary: Browse remote vRealize Orchestrator inventory
       operationId: getRemoteCatalog
       parameters:
-       - $ref: "./common/query.yaml#/parameters/queryFilter"
-       - $ref: "./common/query.yaml#/parameters/querySortAsc"
-       - $ref: "./common/query.yaml#/parameters/querySortDesc"
-       - $ref: "./common/query.yaml#/parameters/queryPage"
-       - $ref: "./common/query.yaml#/parameters/queryPageSize"
+       - $ref: "../common/query.yaml#/parameters/queryFilter"
+       - $ref: "../common/query.yaml#/parameters/querySortAsc"
+       - $ref: "../common/query.yaml#/parameters/querySortDesc"
+       - $ref: "../common/query.yaml#/parameters/queryPage"
+       - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
        - application/json
       responses:
@@ -112,11 +112,11 @@ paths:
       summary: Browse remote vRealize Orchestrator inventory
       operationId: getRemoteCatalogPlugin
       parameters:
-       - $ref: "./common/query.yaml#/parameters/queryFilter"
-       - $ref: "./common/query.yaml#/parameters/querySortAsc"
-       - $ref: "./common/query.yaml#/parameters/querySortDesc"
-       - $ref: "./common/query.yaml#/parameters/queryPage"
-       - $ref: "./common/query.yaml#/parameters/queryPageSize"
+       - $ref: "../common/query.yaml#/parameters/queryFilter"
+       - $ref: "../common/query.yaml#/parameters/querySortAsc"
+       - $ref: "../common/query.yaml#/parameters/querySortDesc"
+       - $ref: "../common/query.yaml#/parameters/queryPage"
+       - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
        - application/json
       responses:
@@ -150,18 +150,18 @@ paths:
       summary: Browse remote vRealize Orchestrator inventory
       operationId: getRemoteCatalogPluginType
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryPage"
+        - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-              $ref: './vro/vro-common.yaml#/definitions/Relations'
+              $ref: '../vro/vro-common.yaml#/definitions/Relations'
         404:
           description: Not Found
 
@@ -193,11 +193,11 @@ paths:
       summary: Browse remote vRealize Orchestrator inventory
       operationId: getRemoteCatalogPluginTypeItem
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryPage"
+        - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
@@ -354,7 +354,7 @@ definitions:
 
   VroWorkflowServiceItem:
     allOf:
-      - $ref: "./services/services.yaml#/definitions/ServiceItem"
+      - $ref: "../services/services.yaml#/definitions/ServiceItem"
       - type: object
         properties:
           vroWorkflowId:
