@@ -20,18 +20,18 @@ paths:
         Get list of custom entity types.
       operationId: queryCustomEntityTypes
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryPage"
+        - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "../common/query.yaml#/definitions/QueryResults"
 
     post:
       tags:
@@ -161,7 +161,7 @@ paths:
         '400':
           description: The request is invalid(validation error)
           schema:
-            $ref: "./common/error.yaml#/definitions/Error"
+            $ref: "../common/error.yaml#/definitions/Error"
         '401':
           description: The user is not authorized
         '403':
@@ -169,7 +169,7 @@ paths:
         '404':
           description: Not found
           schema:
-            $ref: "./common/error.yaml#/definitions/Error"
+            $ref: "../common/error.yaml#/definitions/Error"
 
   custom-entity-type-action:
     parameters:
@@ -192,7 +192,7 @@ paths:
         '404':
           description: Not found
           schema:
-            $ref: "./common/error.yaml#/definitions/Error"
+            $ref: "../common/error.yaml#/definitions/Error"
 
   custom-entities:
     get:
@@ -203,18 +203,18 @@ paths:
         Get list of custom entities
       operationId: queryCustomEntities
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryPage"
+        - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "../common/query.yaml#/definitions/QueryResults"
 
   custom-entity:
     parameters:
@@ -254,7 +254,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "./vro/workflowExecution.yaml#/definitions/SdkObject"
+            $ref: "../vro/workflowExecution.yaml#/definitions/SdkObject"
         404:
           description: Not Found
 

@@ -21,18 +21,18 @@ paths:
         Get list of services
       operationId: queryServices
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryPage"
+        - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "../common/query.yaml#/definitions/QueryResults"
 
     post:
       tags:
@@ -113,18 +113,18 @@ paths:
       summary: Get all items across all services
       operationId: queryServiceItems
       parameters:
-        - $ref: "./common/query.yaml#/parameters/queryFilter"
-        - $ref: "./common/query.yaml#/parameters/querySortAsc"
-        - $ref: "./common/query.yaml#/parameters/querySortDesc"
-        - $ref: "./common/query.yaml#/parameters/queryPage"
-        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+        - $ref: "../common/query.yaml#/parameters/queryFilter"
+        - $ref: "../common/query.yaml#/parameters/querySortAsc"
+        - $ref: "../common/query.yaml#/parameters/querySortDesc"
+        - $ref: "../common/query.yaml#/parameters/queryPage"
+        - $ref: "../common/query.yaml#/parameters/queryPageSize"
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-            $ref: "./common/query.yaml#/definitions/QueryResults"
+            $ref: "../common/query.yaml#/definitions/QueryResults"
 
     post:
       tags:
@@ -226,7 +226,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: './vro/vro.yaml#/definitions/VroWorkflowServiceItem'
+              $ref: '../vro/vro.yaml#/definitions/VroWorkflowServiceItem'
   #END temporary codegen placeholder - to enforce generation of referred VroWorkflowServiceItem
 
     post:
@@ -245,7 +245,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: './vro/vro.yaml#/definitions/VroRemoteWorkflowItem'
+              $ref: '../vro/vro.yaml#/definitions/VroRemoteWorkflowItem'
 
       responses:
         200:
@@ -450,11 +450,11 @@ definitions:
         items:
           type: object
           oneOf:
-            - $ref: "./vro/vro.yaml#/definitions/VroWorkflowServiceItem"
+            - $ref: "../vro/vro.yaml#/definitions/VroWorkflowServiceItem"
     required:
       - name
       - iconMimeType
       - iconData
 
   EntityReference:
-    $ref: "./common/entity.yaml#/definitions/EntityReference"
+    $ref: "../common/entity.yaml#/definitions/EntityReference"

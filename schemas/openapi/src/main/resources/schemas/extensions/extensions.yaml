@@ -360,4 +360,4 @@ definitions:
       - size
 
   EntityReference:
-    $ref: "./common/entity.yaml#/definitions/EntityReference"
+    $ref: "../common/entity.yaml#/definitions/EntityReference"
