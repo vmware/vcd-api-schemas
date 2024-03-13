@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2022 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,17 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!--
+Copyright © 2013 VMware, Inc. All rights reserved.
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:meta="http://www.vmware.com/vcloud/meta"
-           jaxb:version="2.0"
-           jaxb:extensionBindingPrefixes="meta"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.vmware.com/vcloud/v1.5"
-           version="1.0">
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights, are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software.
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:extensionBindingPrefixes="meta" jaxb:version="2.0" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
 
     <xs:include schemaLocation="common.xsd"/>
     <xs:include schemaLocation="entity.xsd"/>
@@ -140,6 +141,26 @@
         <xs:complexContent>
             <xs:extension base="EntityType">
                 <xs:sequence>
+                    <xs:element name="ComputeProviderScope" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="PVDC_TAGGING_SUPPORT"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A label which uniquely identifies the compute source of this VDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NetworkProviderScope" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="PVDC_TAGGING_SUPPORT"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A label which uniquely identifies the network provider source of this VDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="AllocationModel" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -159,7 +180,15 @@
                                 resources you allocate are committed as a pool
                                 to the organization vDC. vApps in vDCs that
                                 support this allocation model can specify
-                                values for resource and limit.)
+                                values for resource and limit.)&lt;br&gt;
+                                &lt;b&gt;Flex&lt;/b&gt; (Only a
+                                percentage of the resources you allocate are
+                                committed to the organization vDC. You can
+                                allocate zero resources also and make it behave
+                                like a Pay-As-You-Go type. Based on the values
+                                chosen for allocated resources and limits, this
+                                vDC can be made to behave as any of the existing
+                                three types.)
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -274,6 +303,28 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="DefaultComputePolicy" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="TENANT_VM_GROUP"/></xs:appinfo>
+                            <xs:documentation source="added-in">TENANT_VM_GROUP</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Default vDC compute policy in this organization vDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MaxComputePolicy" type="ReferenceType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="added-in">GENERIC_VDC_TYPE</xs:documentation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Max vDC compute policy in this organization vDC.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="VCpuInMhz2" type="xs:long" minOccurs="0" maxOccurs="1">
                         <!--
                             An element similar to this one appears in AdminVdcType (and pre-dates
@@ -307,6 +358,17 @@
                             -1 (There was an error while creating the vDC).
                         </xs:documentation>
                         <xs:documentation source="required">false</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="isLegacyType" type="xs:boolean" use="optional">
+                    <xs:annotation>
+                        <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                        <xs:documentation source="modifiable">none</xs:documentation>
+                        <xs:documentation source="since">GENERIC_VDC_TYPE</xs:documentation>
+                        <xs:documentation xml:lang="en">
+                            Whether the VDC type is Flex or a legacy one.
+                        </xs:documentation>
+                        <xs:documentation source="required">true</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -400,7 +462,16 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SupportedHardwareVersionBaseType" abstract="true" />
+    <xs:complexType name="SupportedHardwareVersionBaseType" abstract="true">
+      <xs:annotation>
+        <xs:appinfo>
+          <jaxb:property name="content"/>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string"/>
+      </xs:simpleContent>
+    </xs:complexType>
 
     <xs:complexType name="SupportedHardwareVersionType">
         <xs:annotation>
@@ -410,7 +481,7 @@
             </xs:documentation>
         </xs:annotation>
 
-        <xs:complexContent mixed="true">
+        <xs:simpleContent>
             <xs:extension base="SupportedHardwareVersionBaseType">
                 <xs:attribute name="name" type="xs:string" use="optional">
                     <xs:annotation>
@@ -454,7 +525,7 @@
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
-        </xs:complexContent>
+        </xs:simpleContent>
     </xs:complexType>
 
     <xs:element name="VirtualHardwareVersion" type="VirtualHardwareVersionType"/>
@@ -584,8 +655,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                   </xs:element>
-                  <xs:element name="HardDiskAdapter" type="HardDiskAdapterType"
-                        minOccurs="0" maxOccurs="unbounded">
+                  <xs:element name="HardDiskAdapter" type="HardDiskAdapterType" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="DYNAMIC_HW_VERSION_SUPPORT"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
@@ -603,7 +673,7 @@
 
     <xs:complexType name="ReservationPoolVdcSummaryType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
             <xs:documentation source="since">ORG_VDC_ROLLUP</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents the summary of consumed and reserved memory, CPU, and storage for a
@@ -616,7 +686,7 @@
                 <xs:sequence>
                     <xs:element name="MemoryConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of memory consumed in MB.
@@ -626,7 +696,7 @@
                     </xs:element>
                     <xs:element name="MemoryReservationMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of memory reserved in MB.
@@ -636,7 +706,7 @@
                     </xs:element>
                     <xs:element name="StorageConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of storage consumed in MB.
@@ -646,7 +716,7 @@
                     </xs:element>
                     <xs:element name="CpuReservationMhz" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of CPU reserved in MHz.
@@ -656,7 +726,7 @@
                     </xs:element>
                     <xs:element name="CpuConsumptionMhz" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of CPU consumed in MHz.
@@ -671,7 +741,7 @@
 
     <xs:complexType name="AllocationPoolVdcSummaryType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
             <xs:documentation source="since">ORG_VDC_ROLLUP</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents the summary of consumed and reserved memory, CPU, and storage for a
@@ -684,7 +754,7 @@
                 <xs:sequence>
                     <xs:element name="MemoryConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of memory consumed in MB.
@@ -694,7 +764,7 @@
                     </xs:element>
                     <xs:element name="MemoryReservationMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of memory reserved in MB.
@@ -704,7 +774,7 @@
                     </xs:element>
                     <xs:element name="StorageConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of storage consumed in MB.
@@ -714,7 +784,7 @@
                     </xs:element>
                     <xs:element name="CpuReservationMhz" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of CPU reserved in MHz.
@@ -724,7 +794,7 @@
                     </xs:element>
                     <xs:element name="CpuConsumptionMhz" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of CPU consumed in MHz.
@@ -739,7 +809,7 @@
 
     <xs:complexType name="PayGoVdcSummaryType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
             <xs:documentation source="since">ORG_VDC_ROLLUP</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents the summary of consumed CPU, memory, and storage for a
@@ -752,7 +822,7 @@
                 <xs:sequence>
                     <xs:element name="MemoryConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of memory consumed in MB.
@@ -762,7 +832,7 @@
                     </xs:element>
                     <xs:element name="CpuConsumptionMhz" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of CPU consumed in MHz.
@@ -772,7 +842,75 @@
                     </xs:element>
                     <xs:element name="StorageConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The amount of storage consumed in MB.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="FlexVdcSummaryType">
+        <xs:annotation>
+            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+            <xs:documentation source="since">GENERIC_VDC_TYPE</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Represents the summary of consumed CPU, memory, and storage for a
+                vDC using the Flex allocation model.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexContent>
+            <xs:extension base="VCloudExtensibleType">
+                <xs:sequence>
+                    <xs:element name="MemoryConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The amount of memory consumed in MB.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MemoryReservationMB" type="xs:long" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The amount of memory reserved in MB.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CpuConsumptionMhz" type="xs:long" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The amount of CPU consumed in MHz.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CpuReservationMhz" type="xs:long" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The amount of CPU reserved in MHz.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="StorageConsumptionMB" type="xs:long" minOccurs="1" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The amount of storage consumed in MB.
@@ -789,7 +927,7 @@
    <xs:complexType name="OrgVdcRollupType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="ORG_VDC_ROLLUP" />
+                <meta:version added-in="ORG_VDC_ROLLUP"/>
                 <meta:content-type>application/vnd.vmware.vcloud.orgVdcRollup</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">ORG_VDC_ROLLUP</xs:documentation>
@@ -803,9 +941,47 @@
         <xs:complexContent>
             <xs:extension base="VCloudExtensibleType">
                 <xs:sequence>
+
+                    <xs:element name="SiteReference" type="ReferenceType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A list of references to associated Site objects.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                    <xs:element name="OrgReference" type="ReferenceType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A list of references to associated Organization objects.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                    <xs:element name="OrgVdcReference" type="ReferenceType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="added-in">31.0</xs:documentation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                A list of references to associated OrgVdc objects.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
                     <xs:element name="NumberOfOrgs" type="xs:int" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
+                            <xs:documentation source="deprecated">31.0</xs:documentation>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The number of organizations used to create this summary.
@@ -815,7 +991,7 @@
                     </xs:element>
                     <xs:element name="NumberOfPoweredOnVms" type="xs:int" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 The number of powered on VMs in this organization.
@@ -825,17 +1001,27 @@
                     </xs:element>
                     <xs:element name="NumberOfDeployedVApps" type="xs:int" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                The number of deployed vApps in this organization.
+                                The number of deployed vApps in this organization (managed or unmanaged).
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NumberOfDeployedUnmanagedVApps" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP2"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                The number of deployed unmanaged vApps in this organization.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="ReservationPoolVdcSummary" type="ReservationPoolVdcSummaryType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Represents the summation of consumed and reserved memory, CPU, and storage for all
@@ -846,7 +1032,7 @@
                     </xs:element>
                     <xs:element name="AllocationPoolVdcSummary" type="AllocationPoolVdcSummaryType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Represents the summation of consumed and reserved memory, CPU, and storage for a
@@ -857,13 +1043,53 @@
                     </xs:element>
                     <xs:element name="PayGoVdcSummary" type="PayGoVdcSummaryType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="ORG_VDC_ROLLUP"/></xs:appinfo>
                             <xs:documentation source="modifiable">none</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Represents the summation of consumed memory and storage for all
                                 vDCs using the AllocationVApp (Pay-as-you-Go) allocation model.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="FlexVdcSummary" type="FlexVdcSummaryType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="GENERIC_VDC_TYPE"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Represents the summation of consumed memory and storage for all
+                                vDCs using the Flex allocation model.
+                            </xs:documentation>
+                            <xs:documentation source="required">true</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="VdcComputePolicyReferences" type="VdcComputePolicyReferencesType"/>
+    <xs:complexType name="VdcComputePolicyReferencesType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="TENANT_VM_GROUP"/>
+                <meta:content-type>application/vnd.vmware.vcloud.vdcComputePolicyReferences</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">TENANT_VM_GROUP</xs:documentation>
+            <xs:documentation xml:lang="en">
+                References to an organization vDC compute policies.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+                <xs:sequence>
+                    <xs:element name="VdcComputePolicyReference" type="ReferenceType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Reference to an organization vDC compute policy.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>

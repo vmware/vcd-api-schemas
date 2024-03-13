@@ -1,0 +1,20 @@
+swagger: "2.0"
+
+info:
+  title: User YAML
+  description: Common generic API responses
+  version: "1.0"
+
+
+components:
+  responses:
+    Accepted:
+      description: The request have been accepted and the task to monitor the request is in the Location header.
+    BadRequest:
+      description: Invalid configuration.
+      schema:
+        $ref: "./common/error.yaml#/definitions/Error"
+    NotFound:
+      description: The specified resource was not found
+      schema:
+        $ref: "./common/error.yaml#/definitions/Error"

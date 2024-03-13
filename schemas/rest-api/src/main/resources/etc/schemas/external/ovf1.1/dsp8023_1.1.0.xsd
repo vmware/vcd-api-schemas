@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
     DMTF - Distributed Management Task Force, Inc. - http://www.dmtf.org
     
     Document number: DSP8023
@@ -48,8 +47,7 @@
     1.1.0c - 2009-10-08 - Work in progress
     - Declared ovf:transport as global attribute
     1.1.0  - 2009-12-22 - DMTF Standard
--->
-<xs:schema targetNamespace="http://schemas.dmtf.org/ovf/envelope/1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" attributeFormDefault="qualified" elementFormDefault="qualified">
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" targetNamespace="http://schemas.dmtf.org/ovf/envelope/1" attributeFormDefault="qualified" elementFormDefault="qualified">
 
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 

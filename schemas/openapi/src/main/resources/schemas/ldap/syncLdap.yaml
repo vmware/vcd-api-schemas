@@ -1,0 +1,20 @@
+swagger: "2.0"
+info:
+  description: LDAP Sync Actions
+  version: "1.0"
+  title: LDAP Sync YAML
+
+paths:
+  sync:
+    post:
+      tags:
+        - LDAP
+      summary: Synchronize LDAP users/settings
+      description: |
+        Begins the LDAP sync task
+      operationId: syncLdap
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad request

@@ -1,0 +1,94 @@
+swagger: "2.0"
+info:
+  description: |
+    The vCloud Director Group API.
+  version: "1.0"
+  title: vCloud Director Group API
+
+paths:
+
+  groups:
+    get:
+      tags:
+        - Group
+      summary: Get a list of groups.
+      x-vcloud-added-in: 35.0
+      x-vcloud-multisite: true
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      description: |
+          Get a list of groups.
+      operationId: queryGroups
+      parameters:
+          - $ref: "./common/query.yaml#/parameters/queryFilter"
+          - $ref: "./common/query.yaml#/parameters/querySortAsc"
+          - $ref: "./common/query.yaml#/parameters/querySortDesc"
+          - $ref: "./common/query.yaml#/parameters/queryPage"
+          - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+          - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./ldap/ldap.yaml#/definitions/UserGroups"
+
+  group:
+    parameters:
+      - name: groupUrn
+        in: path
+        description: groupUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: group
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - Group
+      summary: Get a specified group.
+      operationId: getGroup
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./ldap/ldap.yaml#/definitions/UserGroup"
+
+  users:
+    parameters:
+      - name: groupUrn
+        in: path
+        description: groupUrn
+        required: true
+        type: string
+        x-vcloud-constraints:
+          - constraint: Urn
+            args:
+              - arg: group
+    get:
+      x-vcloud-added-in: 35.0
+      tags:
+        - Group
+      summary: Get a list of users of any type that belong to the specified group.
+      operationId: queryGroupUsers
+      x-vcloud-default-sort:
+        default-sort-field: name
+        sort-ascending: true
+      parameters:
+        - $ref: "./common/query.yaml#/parameters/queryFilter"
+        - $ref: "./common/query.yaml#/parameters/querySortAsc"
+        - $ref: "./common/query.yaml#/parameters/querySortDesc"
+        - $ref: "./common/query.yaml#/parameters/queryPage"
+        - $ref: "./common/query.yaml#/parameters/queryPageSize"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "./common/entity.yaml#/definitions/EntityReferences"

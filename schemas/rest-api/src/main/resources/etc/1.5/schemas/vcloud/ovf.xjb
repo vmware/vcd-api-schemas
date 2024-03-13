@@ -69,19 +69,19 @@
             <class name="VirtualSystemChangeableTypeType" />
         </bindings>
         <bindings node="//xsd:element[@name='ConfigurationName']">
-            <class name="VirtualSystemConfigurationName" />
+            <class name="VirtualSystemConfigurationName" ref="com.vmware.vcloud.api.rest.schema.ovf.CimString" />
         </bindings>
         <bindings node="//xsd:element[@name='ElementName']">
-            <class name="VirtualSystemElementName" />
+            <class name="VirtualSystemElementName" ref="com.vmware.vcloud.api.rest.schema.ovf.CimString" />
         </bindings>
         <bindings node="//xsd:element[@name='Generation']">
-            <class name="VirtualSystemGeneration" />
+            <class name="VirtualSystemGeneration" ref="com.vmware.vcloud.api.rest.schema.ovf.CimUnsignedLong" />
         </bindings>
         <bindings node="//xsd:element[@name='InstanceID']">
-            <class name="VirtualSystemInstanceID" />
+            <class name="VirtualSystemInstanceID" ref="com.vmware.vcloud.api.rest.schema.ovf.CimString" />
         </bindings>
         <bindings node="//xsd:element[@name='Description']">
-            <class name="VirtualSystemDescription" />
+            <class name="VirtualSystemDescription" ref="com.vmware.vcloud.api.rest.schema.ovf.CimString" />
         </bindings>
     </bindings>
 

@@ -7,13 +7,13 @@
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
-  
+
   1. Redistributions of source code must retain the above copyright notice,
      this list of conditions and the following disclaimer.
   2. Redistributions in binary form must reproduce the above copyright notice,
      this list of conditions and the following disclaimer in the documentation
      and/or other materials provided with the distribution.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,7 +32,7 @@
 
     <xs:include schemaLocation="../vcloud/common.xsd"/>
     <xs:include schemaLocation="../vcloud/entity.xsd"/>
-       <xs:annotation>
+    <xs:annotation>
         <xs:documentation xml:lang="en">
             Schema for the entities returned by the referenceView query handler.
         </xs:documentation>
@@ -40,7 +40,7 @@
     <xs:element name="ToCloudTunnelReferences" type="ReferencesType" substitutionGroup="References">
         <xs:annotation>
             <xs:documentation xml:lang="en">
-               A container for toCloudTunnel query results in references format.
+                A container for toCloudTunnel query results in references format.
             </xs:documentation>
         </xs:annotation>
     </xs:element>
@@ -48,7 +48,7 @@
     <xs:element name="ToCloudTunnelReference" type="ReferenceType" substitutionGroup="Reference">
         <xs:annotation>
             <xs:documentation xml:lang="en">
-               A single toCloudTunnel query result in reference format.
+                A single toCloudTunnel query result in reference format.
             </xs:documentation>
         </xs:annotation>
     </xs:element>
@@ -56,7 +56,7 @@
     <xs:element name="FromCloudTunnelReferences" type="ReferencesType" substitutionGroup="References">
         <xs:annotation>
             <xs:documentation xml:lang="en">
-               A container for fromCloudTunnel query results in references format.
+                A container for fromCloudTunnel query results in references format.
             </xs:documentation>
         </xs:annotation>
     </xs:element>
@@ -64,7 +64,7 @@
     <xs:element name="FromCloudTunnelReference" type="ReferenceType" substitutionGroup="Reference">
         <xs:annotation>
             <xs:documentation xml:lang="en">
-               A single fromCloudTunnel query result in reference format.
+                A single fromCloudTunnel query result in reference format.
             </xs:documentation>
         </xs:annotation>
     </xs:element>

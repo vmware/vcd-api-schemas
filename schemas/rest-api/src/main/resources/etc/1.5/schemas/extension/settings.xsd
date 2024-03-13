@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2022 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,17 +27,17 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!--
+Copyright © 2013 VMware, Inc. All rights reserved.
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/extension/v1.5"
-           xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:meta="http://www.vmware.com/vcloud/meta"
-           jaxb:version="2.0"
-           jaxb:extensionBindingPrefixes="meta"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.vmware.com/vcloud/extension/v1.5"
-           version="1.0">
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights, are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software.
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:extensionBindingPrefixes="meta" jaxb:version="2.0" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/extension/v1.5" version="1.0">
 
     <xs:import schemaLocation="../vcloud/common.xsd" namespace="http://www.vmware.com/vcloud/v1.5"/>
     <xs:import schemaLocation="../vcloud/task.xsd" namespace="http://www.vmware.com/vcloud/v1.5"/>
@@ -144,9 +144,12 @@
                     <xs:element name="KerberosSettings" type="KerberosSettingsType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                            <xs:documentation source="deprecated">34.0</xs:documentation>
                             <xs:documentation source="since">5.1</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Kerberos settings.
+                                Kerberos settings. &lt;br&gt;
+                                &lt;b&gt; Kerberos support is under accelerated deprecation,
+                                and will be removed in the next API version.&lt;/b&gt;
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -157,8 +160,10 @@
                             <xs:documentation source="since">5.1</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 vSphere lookup service settings.
+                              This element is deprecated and no longer required or used.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="deprecated">34.0</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="CatalogSettings" type="CatalogSettingsType" minOccurs="0" maxOccurs="1">
@@ -177,6 +182,16 @@
                             <xs:documentation source="since">20.0</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Global Tenant Throttling limits
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CpomSettings" type="CpomSettingsType" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="since">32.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                CPoM Settings.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -422,13 +437,24 @@
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="SyncStartDate" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+                    <xs:element name="SyncEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="35.2"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Flag to determine if LDAP sync is enabled
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SyncStartDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                Number of minutes to timeout client session.
+                                Timestamp of next time LDAP syncs. As of API version 35.2,
+                                this field will not be present if SyncEnabled is false.
                             </xs:documentation>
-                            <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="SyncIntervalInHours" type="xs:long" minOccurs="1" maxOccurs="1">
@@ -538,8 +564,14 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Password for the vCenter truststore, if used. If empty or no password is passed then no update is performed.
+                                vCenter truststore type (JKS, JCEKS, PKCS12).
+                                Notes:
+                                - This field is deprecated. Use /cloudapi/1.0.0/trustedCertificates instead.
+                                - This field is input-only. Specified type assists in storing VcTruststoreContents properly, but the password is never returned.
+                                - This field is inapplicable if VCD is operating in FIPS mode. If supplied, it will be ignored.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="deprecated">35.2</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="VcTruststoreContents" type="xs:hexBinary" minOccurs="0" maxOccurs="1">
@@ -547,8 +579,13 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 vCenter truststore bytes (if used).
+                                Notes:
+                                - This field is deprecated. Use /cloudapi/1.0.0/trustedCertificates instead.
+                                - This field is input-only. Supplied contents will be properly stored in system org's trusted certificates, but is never returned.
+                                - This field is inapplicable if VCD is operating in FIPS mode. If supplied, it will be rejected and cause a bad request exception to be thrown.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
+                            <xs:documentation source="deprecated">35.2</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="VcTruststoreType" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -556,8 +593,13 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 vCenter truststore type (JKS, JCEKS, PKCS12).
+                                Notes:
+                                - This field is deprecated. Use /cloudapi/1.0.0/trustedCertificates instead.
+                                - This field is input-only. Specified type assists in storing VcTruststoreContents properly, but the type is never returned.
+                                - This field is inapplicable if VCD is operating in FIPS mode.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="deprecated">35.2</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="VmrcVersion" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -595,8 +637,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="AdvancedNetworkingEnabled"
-                        type="xs:boolean" minOccurs="0" maxOccurs="1">
+                    <xs:element name="AdvancedNetworkingEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="7.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -606,8 +647,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="AdvancedNetworkingDfwApiUrl"
-                        type="xs:string" minOccurs="0" maxOccurs="1">
+                    <xs:element name="AdvancedNetworkingDfwApiUrl" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="7.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -617,8 +657,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="AdvancedNetworkingDfwUiUrl"
-                        type="xs:string" minOccurs="0" maxOccurs="1">
+                    <xs:element name="AdvancedNetworkingDfwUiUrl" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="7.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -628,8 +667,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="AdvancedNetworkingGatewayApiUrl"
-                        type="xs:string" minOccurs="0" maxOccurs="1">
+                    <xs:element name="AdvancedNetworkingGatewayApiUrl" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="7.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -639,8 +677,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="AdvancedNetworkingGatewayUiUrl"
-                        type="xs:string" minOccurs="0" maxOccurs="1">
+                    <xs:element name="AdvancedNetworkingGatewayUiUrl" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="7.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -650,7 +687,6 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-
                     <xs:element name="MaxVdcQuota" type="xs:int" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="6.0"/></xs:appinfo>
@@ -661,8 +697,7 @@
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="SubInterfacesEnabled"
-                        type="xs:boolean" minOccurs="0" maxOccurs="1">
+                    <xs:element name="SubInterfacesEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="11.0"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
@@ -784,6 +819,7 @@
                                Accept all SSL certificates. Must be set to true in case of SSL enabled.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="deprecated">35.2</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="AmqpPrefix" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -919,7 +955,7 @@
                         </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:long">
-                                <xs:minInclusive value="0"></xs:minInclusive>
+                                <xs:minInclusive value="0"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:element>
@@ -981,7 +1017,7 @@
                         </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:int">
-                                <xs:minInclusive value="1"></xs:minInclusive>
+                                <xs:minInclusive value="1"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:element>
@@ -1039,6 +1075,23 @@
                                 True if the LDAP service accepts all SSL certificates.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
+                            <xs:documentation source="deprecated">35.2</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="CustomTruststore" type="xs:string" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="31.0"/></xs:appinfo>
+                            <xs:documentation source="deprecated">34.0</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Optional Custom Truststore for the LDAP HostName. Until it is removed
+                                the certificate can still be set here, however this field will
+                                always be null on return. This field is under
+                                accelerated deprecation and will be removed more quickly than the
+                                normal deprecation cycle. In order to manage LDAP certificates, please
+                                instead use the Centralized SSL management API.
+                            </xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="Realm" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -1176,8 +1229,10 @@
                           <xs:annotation>
                                 <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                                 <xs:documentation source="since">5.1</xs:documentation>
+                                <xs:documentation source="deprecated">34.0</xs:documentation>
                                 <xs:documentation xml:lang="en">
-                                     Set to true to use an external Kerberos service.
+                                     Set to true to use an external Kerberos service. &lt;em&gt; Kerberos support
+                                     is under accelerated deprecation, and will be removed in the next API version.&lt;/em&gt;
                                 </xs:documentation>
                                 <xs:documentation source="required">false</xs:documentation>
                           </xs:annotation>
@@ -1304,7 +1359,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                LDAP attribute to use for the user&apos;s email address.
+                                LDAP attribute to use for the user's email address.
                                 For example mail.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
@@ -1314,7 +1369,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                LDAP attribute to use for the user&apos;s full name. For
+                                LDAP attribute to use for the user's full name. For
                                 example displayName.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
@@ -1324,7 +1379,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                LDAP attribute to use for the user&apos;s given name. For
+                                LDAP attribute to use for the user's given name. For
                                 example, givenName.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
@@ -1334,7 +1389,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                LDAP attribute to use for the user&apos;s surname. For example sn.
+                                LDAP attribute to use for the user's surname. For example sn.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
                         </xs:annotation>
@@ -1343,7 +1398,7 @@
                         <xs:annotation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
-                                LDAP attribute to use for the user&apos;s telephone number.
+                                LDAP attribute to use for the user's telephone number.
                                 For example telephoneNumber.
                             </xs:documentation>
                             <xs:documentation source="required">true</xs:documentation>
@@ -1402,7 +1457,7 @@
                     <xs:element name="LoginPageCustomizationTheme" type="xs:hexBinary" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="5.1" />
+                                <meta:version added-in="5.1"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation source="since">5.1</xs:documentation>
@@ -1425,7 +1480,7 @@
                     <xs:element name="PreviewCustomTheme" type="xs:hexBinary" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="5.1" />
+                                <meta:version added-in="5.1"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation source="since">5.1</xs:documentation>
@@ -1438,7 +1493,7 @@
                     <xs:element name="FinalCustomTheme" type="xs:hexBinary" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
                             <xs:appinfo>
-                                <meta:version added-in="5.1" />
+                                <meta:version added-in="5.1"/>
                             </xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation source="since">5.1</xs:documentation>
@@ -1489,7 +1544,7 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 A URL to a site that allows a user of your
-                                company&apos;s vCloud Director service to
+                                company's vCloud Director service to
                                 recover a forgotten user name or password.
                                 This URL will be used for the Forgot Password
                                 link on the vCloud Director Web console Login page.
@@ -1820,17 +1875,19 @@
                     </xs:element>
                     <xs:element name="ssl" type="xs:boolean" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
+                            <xs:appinfo><meta:version removed-in="API_VERSION_POST9_1_UPDATE"/></xs:appinfo>
                             <xs:documentation xml:lang="en">
                                 True if the SMTP server requires an SSL
                                 connection.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                             <xs:documentation source="deprecated">11.0</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="SmtpSecureMode" type="vcloud:SmtpSecureModeType" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="11.0" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="11.0"/></xs:appinfo>
                             <xs:documentation source="since">11.0</xs:documentation>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
@@ -1844,7 +1901,7 @@
                     </xs:element>
                     <xs:element name="SslTrustStore" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="11.0" /></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="11.0"/></xs:appinfo>
                             <xs:documentation source="since">11.0</xs:documentation>
                             <xs:documentation xml:lang="en">
                                  Custom truststore to use to trust peer certificates when establishing a secure connection using SSL/STARTTLS (when enabled).
@@ -1882,14 +1939,17 @@
                 <meta:content-type>application/vnd.vmware.admin.kerberosSettings</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">34.0</xs:documentation>
             <xs:documentation xml:lang="en">
-               Global Kerberos settings.
+               Global Kerberos settings. &lt;br&gt;
+               &lt;b&gt; Kerberos support is under accelerated deprecation,
+               and will be removed in the next API version.&lt;/b&gt;
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="vcloud:ResourceType">
                 <xs:sequence>
-                    <xs:element name="Realm" type="RealmType" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:element name="Realm" type="RealmType" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
                             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
                             <xs:documentation source="required">true</xs:documentation>
@@ -1913,8 +1973,11 @@
         <xs:annotation>
             <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">34.0</xs:documentation>
             <xs:documentation xml:lang="en">
-                Kerberos realm information.
+                Kerberos realm information. &lt;br&gt;
+                &lt;b&gt; Kerberos support is under accelerated deprecation,
+                and will be removed in the next API version.&lt;/b&gt;
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -1952,8 +2015,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="LookupServiceSettings" type="LookupServiceSettingsType" />
-    <xs:element name="LookupServiceParams" type="LookupServiceParamsType" />
+    <xs:element name="LookupServiceSettings" type="LookupServiceSettingsType"/>
+    <xs:element name="LookupServiceParams" type="LookupServiceParamsType"/>
 
     <xs:complexType name="LookupServiceSettingsType">
         <xs:annotation>
@@ -1962,9 +2025,10 @@
                 <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">34.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Information that allows vCloud Director to connect to a
-                vSphere lookup service.
+                vSphere lookup service. This element is deprecated and no longer required or used.
             </xs:documentation>
         </xs:annotation>
 
@@ -1992,6 +2056,7 @@
                 <meta:version added-in="5.1"/>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
+            <xs:documentation source="deprecated">34.0</xs:documentation>
             <xs:documentation xml:lang="en">
                 Parameters for a register or unregister Lookup Service request.
                 If LookupServiceUrl is present and not empty, the request
@@ -2005,9 +2070,10 @@
                 <xs:sequence>
                     <xs:element name="VCDUrl" type="xs:string" minOccurs="0" maxOccurs="1">
                         <xs:annotation>
-                            <xs:appinfo><meta:version added-in="5.1"/></xs:appinfo>
+                            <xs:appinfo><meta:version added-in="5.1" removed-in="API_VERSION_POST9_1_UPDATE"/></xs:appinfo>
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation source="deprecated">5.6</xs:documentation>
+                            <xs:documentation source="removed-in">API_VERSION_POST9_1_UPDATE</xs:documentation>
                             <xs:documentation xml:lang="en">
                                The vCloud Director public login URL. This
                                element is deprecated and should be left empty
@@ -2047,7 +2113,7 @@
     <xs:complexType name="VcTrustStoreUpdateParamsType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.vcTrustStoreUpdateParams</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -2088,7 +2154,7 @@
     <xs:complexType name="VcTrustStoreUploadSocketType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.1" />
+                <meta:version added-in="5.1"/>
                 <meta:content-type>application/vnd.vmware.admin.vcTrustStoreUploadSocket</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.1</xs:documentation>
@@ -2097,11 +2163,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="vcloud:FileUploadSocketType" />
+            <xs:extension base="vcloud:FileUploadSocketType"/>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:element name="CatalogSettings" type="CatalogSettingsType" />
+    <xs:element name="CatalogSettings" type="CatalogSettingsType"/>
 
     <xs:complexType name="CatalogSettingsType">
         <xs:annotation>
@@ -2141,6 +2207,16 @@
                             <xs:documentation source="modifiable">always</xs:documentation>
                             <xs:documentation xml:lang="en">
                                 Date and Time at which the synchronization will stop.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="NextSyncDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="33.0"/></xs:appinfo>
+                            <xs:documentation source="modifiable">none</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Date and Time at which the next synchronization will start.
                             </xs:documentation>
                             <xs:documentation source="required">false</xs:documentation>
                         </xs:annotation>
@@ -2242,6 +2318,77 @@
                         </xs:annotation>
                     </xs:element>
                  </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="CpomSettings" type="CpomSettingsType"/>
+    <xs:complexType name="CpomSettingsType">
+        <xs:annotation>
+            <xs:appinfo>
+                <meta:version added-in="CPOM"/>
+                <meta:content-type>application/vnd.vmware.admin.cpomSettings</meta:content-type>
+            </xs:appinfo>
+            <xs:documentation source="since">32.0</xs:documentation>
+            <xs:documentation xml:lang="en">
+                Specifies default CPoM settings for all organizations in the system.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="vcloud:ResourceType">
+                <xs:sequence>
+                    <xs:element name="MaxActiveSddcProxyQuota" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Maximum number of active SDDC proxies allowed for the system. A value of -1 means there is no maximum. A value of 0 means the system cannot enable any SDDC proxies.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="MaxActiveSddcProxyPerUserQuota" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Maximum number of active SDDC proxies per user allowed for the system. A value of -1 means there is no maximum. A value of 0 means the system cannot enable any SDDC proxies.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="SddcProxiedHostConnectionTimeoutSeconds" type="xs:int" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                Timeout value for connecting to an SDDC proxied host (in seconds). Any value less than 1 is invalid.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AllowVcTenantAndProviderScoped" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                          <xs:appinfo><meta:version added-in="CPOM" removed-in="33.0"/></xs:appinfo>
+                          <xs:documentation source="removed-in">33.0</xs:documentation>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True to allow VCs to be both provider scoped (used to back a PVDC), and tenant scoped (encapsulated within an SDDC).
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="AllowInsecureSddcProxying" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:appinfo><meta:version added-in="CPOM"/></xs:appinfo>
+                            <xs:documentation source="modifiable">always</xs:documentation>
+                            <xs:documentation xml:lang="en">
+                                True to allow proxying over insecure HTTP in addition to HTTPS. It is recommended that insecure proxying be left disabled.
+                            </xs:documentation>
+                            <xs:documentation source="required">false</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

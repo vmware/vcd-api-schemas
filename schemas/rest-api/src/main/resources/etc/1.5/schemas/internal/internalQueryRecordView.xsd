@@ -7,13 +7,13 @@
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
-  
+
   1. Redistributions of source code must retain the above copyright notice,
      this list of conditions and the following disclaimer.
   2. Redistributions in binary form must reproduce the above copyright notice,
      this list of conditions and the following disclaimer in the documentation
      and/or other materials provided with the distribution.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,7 +28,7 @@
   #L%
   -->
 
-    <xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
+<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
            xmlns:meta="http://www.vmware.com/vcloud/meta"
@@ -49,7 +49,7 @@
     </xs:annotation>
 
     <xs:element name="LicensingReportRecord" type="QueryResultLicensingReportRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -107,7 +107,7 @@
     </xs:complexType>
 
     <xs:element name="LicensingReportSampleRecord" type="QueryResultLicensingReportSampleRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -245,7 +245,7 @@
     </xs:complexType>
 
     <xs:element name="LicensingManagedServerRecord" type="QueryResultLicensingManagedServerRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -353,7 +353,7 @@
     </xs:complexType>
 
     <xs:element name="LicensingVirtualMachineRecord" type="QueryResultLicensingVirtualMachineRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.5</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -441,7 +441,7 @@
     </xs:complexType>
 
     <xs:element name="AdminEventCBMRecord" type="QueryResultAdminEventCBMRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.1</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -599,7 +599,7 @@
     </xs:complexType>
 
     <xs:element name="ToCloudTunnelRecord" type="QueryResultToCloudTunnelRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">5.6</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>
@@ -687,7 +687,7 @@
     </xs:complexType>
 
     <xs:element name="FromCloudTunnelRecord" type="QueryResultFromCloudTunnelRecordType"
-        substitutionGroup="Record">
+                substitutionGroup="Record">
         <xs:annotation>
             <xs:documentation source="added-in">6.0</xs:documentation>
             <xs:documentation source="modifiable">always</xs:documentation>

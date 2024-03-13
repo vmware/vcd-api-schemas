@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.vmware.vcloud</groupId>
     <artifactId>vcd-api-schemas-parent</artifactId>
-    <version>9.1.1</version>
+    <version>10.2.2</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
   <packaging>jar</packaging>
@@ -39,6 +39,10 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
+        <configuration>
+          <nodeVersion>v18.3.0</nodeVersion>
+          <npmVersion>8.9.0</npmVersion>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -67,7 +71,6 @@
       <plugin>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-codegen-maven-plugin</artifactId>
-        <version>2.3.1</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -79,7 +82,7 @@
         <configuration>
           <output>${project.build.directory}/generated-typescript-bindings</output>
           <inputSpec>${project.build.directory}/openapi-schemas/schemas/vcloud-openapi-schemas.yaml</inputSpec>
-          <language>typescript-angular</language>
+          <language>typescript-angular2</language>
           <generateApis>false</generateApis>
           <generateModelTests>false</generateModelTests>
           <generateModelDocumentation>false</generateModelDocumentation>
@@ -89,6 +92,34 @@
             <modelPropertyNaming>original</modelPropertyNaming>
           </configOptions>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Generate models.js</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/scripts/generate-models.sh</executable>
+              <arguments>${project.build.directory}/generated-typescript-bindings</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Clean TypeScript</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/scripts/patch-jaxbelement.sh</executable>
+              <arguments>${project.build.directory}/generated-typescript-bindings</arguments>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.vmware.vcloud</groupId>

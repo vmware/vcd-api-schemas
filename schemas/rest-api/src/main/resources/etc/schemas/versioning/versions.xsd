@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2022 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,17 @@
   #L%
   -->
 
+<!--
+Copyright © 2013 VMware, Inc. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights, are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software.
+-->
 <xs:schema xmlns="http://www.vmware.com/vcloud/versions" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/versions" version="1.0">
 
     <xs:element name="SupportedVersions" type="SupportedVersionsType"/>
@@ -47,6 +58,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="SchemaRoot" type="xs:anyURI" minOccurs="0" />
             <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
         </xs:sequence>
         <xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -83,6 +95,7 @@
                         Media type mapping. This element is not present when
                         the API version is 5.7 or higher.
                     </xs:documentation>
+                    <xs:documentation source="deprecated">33.0</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
@@ -105,6 +118,7 @@
             <xs:documentation xml:lang="en">
                 Mapping of a content media type to a xsd complex type.
             </xs:documentation>
+            <xs:documentation source="deprecated">33.0</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="MediaType" type="xs:string">

@@ -3,7 +3,7 @@
   #%L
   vcd-rest-api-schemas :: vCloud Director REST API schemas
   %%
-  Copyright (C) 2013 - 2018 VMware
+  Copyright (C) 2013 - 2022 VMware
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,17 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
+<!--
+Copyright © 2013 VMware, Inc. All rights reserved.
 
-<xs:schema xmlns="http://www.vmware.com/vcloud/v1.5"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:meta="http://www.vmware.com/vcloud/meta"
-           jaxb:version="2.0"
-           jaxb:extensionBindingPrefixes="meta"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.vmware.com/vcloud/v1.5"
-           version="1.0">
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as explicitly provided herein, no express or implied licenses, under any VMware patents, copyrights, trademarks, or any other intellectual property rights, are granted or waived by implication, exhaustion, estoppel, or otherwise, on modified versions of the Software.
+--><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:meta="http://www.vmware.com/vcloud/meta" jaxb:extensionBindingPrefixes="meta" jaxb:version="2.0" elementFormDefault="qualified" targetNamespace="http://www.vmware.com/vcloud/v1.5" version="1.0">
     <xs:include schemaLocation="common.xsd"/>
     <xs:annotation>
         <xs:documentation xml:lang="en">
@@ -46,26 +47,26 @@
 
     <xs:simpleType name="TimeUnitType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
             <xs:documentation xml:lang="en">
                 An enumeration of time units that can be used to define a relative time
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="second" />
-            <xs:enumeration value="minute" />
-            <xs:enumeration value="hour" />
-            <xs:enumeration value="day" />
-            <xs:enumeration value="week" />
+            <xs:enumeration value="second"/>
+            <xs:enumeration value="minute"/>
+            <xs:enumeration value="hour"/>
+            <xs:enumeration value="day"/>
+            <xs:enumeration value="week"/>
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="TimeType" abstract="true"></xs:complexType>
+    <xs:complexType name="TimeType" abstract="true"/>
 
     <xs:complexType name="RelativeTimeType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
             <xs:documentation xml:lang="en">
                 Specifies an earlier time relative to the current time
@@ -75,7 +76,7 @@
             <xs:extension base="TimeType">
                 <xs:attribute name="interval" type="xs:short" use="required">
                     <xs:annotation>
-                        <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                        <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                         <xs:documentation source="since">5.6</xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
                         <xs:documentation xml:lang="en">
@@ -85,7 +86,7 @@
                 </xs:attribute>
                 <xs:attribute name="unit" type="TimeUnitType" use="required">
                     <xs:annotation>
-                        <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                        <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                         <xs:documentation source="since">5.6</xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
                         <xs:documentation xml:lang="en">
@@ -99,7 +100,7 @@
 
     <xs:complexType name="AbsoluteTimeType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
             <xs:documentation xml:lang="en">
                 Specifies an absolute time in UTC
@@ -109,7 +110,7 @@
             <xs:extension base="TimeType">
                 <xs:attribute name="time" type="xs:dateTime" use="required">
                     <xs:annotation>
-                        <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                        <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                         <xs:documentation source="since">5.6</xs:documentation>
                         <xs:documentation source="required">true</xs:documentation>
                         <xs:documentation xml:lang="en">
@@ -123,7 +124,7 @@
 
      <xs:complexType name="SimpleMetricType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
             <xs:documentation xml:lang="en">
                 A simple scalar metric value
@@ -131,7 +132,7 @@
         </xs:annotation>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
-                <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                 <xs:documentation source="since">5.6</xs:documentation>
                 <xs:documentation source="required">true</xs:documentation>
                 <xs:documentation xml:lang="en">
@@ -141,7 +142,7 @@
         </xs:attribute>
         <xs:attribute name="unit" type="xs:string" use="required">
             <xs:annotation>
-                <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                 <xs:documentation source="since">5.6</xs:documentation>
                 <xs:documentation source="required">true</xs:documentation>
                 <xs:documentation xml:lang="en">
@@ -151,7 +152,7 @@
         </xs:attribute>
         <xs:attribute name="value" type="xs:decimal" use="required">
             <xs:annotation>
-                <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                 <xs:documentation source="since">5.6</xs:documentation>
                 <xs:documentation source="required">true</xs:documentation>
                 <xs:documentation xml:lang="en">
@@ -163,30 +164,30 @@
 
     <xs:complexType name="SampleType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
             <xs:documentation xml:lang="en">
                 Represents a data point in a metric series
             </xs:documentation>
         </xs:annotation>
-        <xs:attribute name="timestamp" type="xs:dateTime" use="required"></xs:attribute>
-        <xs:attribute name="value" type="xs:decimal" use="required"></xs:attribute>
+        <xs:attribute name="timestamp" type="xs:dateTime" use="required"/>
+        <xs:attribute name="value" type="xs:decimal" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TimeSeriesMetricType">
         <xs:annotation>
-            <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+            <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
             <xs:documentation xml:lang="en">
                 A sequence of metric values measured at specified times
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Sample" type="SampleType" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="Sample" type="SampleType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
-                <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                 <xs:documentation source="since">5.6</xs:documentation>
                 <xs:documentation source="required">true</xs:documentation>
                 <xs:documentation xml:lang="en">
@@ -196,7 +197,7 @@
         </xs:attribute>
         <xs:attribute name="unit" type="xs:string" use="required">
             <xs:annotation>
-                <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                 <xs:documentation source="since">5.6</xs:documentation>
                 <xs:documentation source="required">true</xs:documentation>
                 <xs:documentation xml:lang="en">
@@ -206,7 +207,7 @@
         </xs:attribute>
         <xs:attribute name="expectedInterval" type="xs:int" use="required">
             <xs:annotation>
-                <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                 <xs:documentation source="since">5.6</xs:documentation>
                 <xs:documentation source="required">true</xs:documentation>
                 <xs:documentation xml:lang="en">
@@ -219,7 +220,7 @@
     <xs:complexType name="CurrentUsageSpecType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.6" />
+                <meta:version added-in="5.6"/>
                 <meta:content-type>application/vnd.vmware.vcloud.metrics.currentUsageSpec</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
@@ -230,7 +231,7 @@
         <xs:sequence>
             <xs:element name="MetricPattern" type="xs:string" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                    <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                     <xs:documentation source="since">5.6</xs:documentation>
                     <xs:documentation xml:lang="en">
                         A metric name pattern.  Asterisk matches any character or group of
@@ -240,12 +241,12 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="CurrentUsageSpec" type="CurrentUsageSpecType" />
+    <xs:element name="CurrentUsageSpec" type="CurrentUsageSpecType"/>
 
     <xs:complexType name="CurrentUsageType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.6" />
+                <meta:version added-in="5.6"/>
                 <meta:content-type>application/vnd.vmware.vcloud.metrics.currentUsage</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
@@ -256,17 +257,17 @@
         <xs:complexContent>
             <xs:extension base="ResourceType">
                 <xs:sequence>
-                    <xs:element name="Metric" type="SimpleMetricType" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="Metric" type="SimpleMetricType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="CurrentUsage" type="CurrentUsageType" />
+    <xs:element name="CurrentUsage" type="CurrentUsageType"/>
 
     <xs:complexType name="HistoricUsageSpecType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.6" />
+                <meta:version added-in="5.6"/>
                 <meta:content-type>application/vnd.vmware.vcloud.metrics.historicUsageSpec</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
@@ -276,16 +277,16 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="1">
-                <xs:element name="AbsoluteStartTime" type="AbsoluteTimeType"></xs:element>
-                <xs:element name="RelativeStartTime" type="RelativeTimeType"></xs:element>
+                <xs:element name="AbsoluteStartTime" type="AbsoluteTimeType"/>
+                <xs:element name="RelativeStartTime" type="RelativeTimeType"/>
             </xs:choice>
             <xs:choice minOccurs="0" maxOccurs="1">
-                <xs:element name="AbsoluteEndTime" type="AbsoluteTimeType"></xs:element>
-                <xs:element name="RelativeEndTime" type="RelativeTimeType"></xs:element>
+                <xs:element name="AbsoluteEndTime" type="AbsoluteTimeType"/>
+                <xs:element name="RelativeEndTime" type="RelativeTimeType"/>
             </xs:choice>
             <xs:element name="MetricPattern" type="xs:string" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:appinfo><meta:version added-in="5.6" /></xs:appinfo>
+                    <xs:appinfo><meta:version added-in="5.6"/></xs:appinfo>
                     <xs:documentation source="since">5.6</xs:documentation>
                     <xs:documentation xml:lang="en">
                         A metric name pattern.  Asterisk matches any character or group of
@@ -295,12 +296,12 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="HistoricUsageSpec" type="HistoricUsageSpecType" />
+    <xs:element name="HistoricUsageSpec" type="HistoricUsageSpecType"/>
 
     <xs:complexType name="HistoricUsageType">
         <xs:annotation>
             <xs:appinfo>
-                <meta:version added-in="5.6" />
+                <meta:version added-in="5.6"/>
                 <meta:content-type>application/vnd.vmware.vcloud.metrics.historicUsage</meta:content-type>
             </xs:appinfo>
             <xs:documentation source="since">5.6</xs:documentation>
@@ -311,10 +312,10 @@
         <xs:complexContent>
             <xs:extension base="ResourceType">
                 <xs:sequence>
-                    <xs:element name="MetricSeries" type="TimeSeriesMetricType" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="MetricSeries" type="TimeSeriesMetricType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
           </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="HistoricUsage" type="HistoricUsageType" />
+    <xs:element name="HistoricUsage" type="HistoricUsageType"/>
 </xs:schema>
